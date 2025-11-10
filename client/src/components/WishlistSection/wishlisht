@@ -1,0 +1,34 @@
+// src/components/EmptyWishlist.tsx
+import React from 'react';
+import { Heart } from 'lucide-react'; // Recommended: lucide-react for perfect heart
+
+export default function EmptyWishlist() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="text-center py-20 max-w-md mx-auto">
+        
+        {/* Heart Icon */}
+        <div className="mb-10">
+          <Heart 
+            className="w-24 h-24 mx-auto text-gray-800" 
+            strokeWidth={1.5} 
+            fill="none" 
+          />
+        </div>
+
+        {/* Message */}
+        <p className="text-gray-600 text-lg font-medium mb-10">
+          The wishlist table is empty.
+        </p>
+
+        {/* Button */}
+        <a
+          href="/shop"
+          className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+        >
+          Return to shop
+        </a>
+      </div>
+    </div>
+  );
+}

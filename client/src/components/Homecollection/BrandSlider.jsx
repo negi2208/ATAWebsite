@@ -17,7 +17,7 @@ export default function BrandSlider() {
   return (
     <div className="relative w-full bg-white py-6 overflow-hidden">
       {/* Full-width Top Divider – width kam ki (thinner line) */}
-      <div className="absolute inset-x-0 top-0 h-0.5 bg-gray-200" />
+     <hr className="border-gray-200 w-[1400px] m-auto pt-4" />
 
       {/* Slider Container with Fade Effect */}
       <div className="relative">

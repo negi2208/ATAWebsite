@@ -2,14 +2,14 @@ export default function CategorySection() {
   const categories = [
     { id: 1, img: "/images/categories/category-air-condition.png", title: "Head light visor", slug: "Head light visor" },
     { id: 2, img: "/images/categories/category-wiper.png", title: "Front mudguard", slug: "Front mudguard" },
-    { id: 3, img: "/images/categories/category-brakes.png", title: "pannels", slug: "Tail pannels" },
+    { id: 3, img: "/images/categories/category-brakes.png", title: "Pannels", slug: "Tail pannels" },
     { id: 4, img: "/images/categories/category-care.png", title: "Side pannel", slug: "Side pannel " },
     { id: 5, img: "/images/categories/category-engine.png", title: "Scooty Front nose", slug: "Scooty Front nose" },
     { id: 6, img: "/images/categories/category-damping.png", title: "Front wings", slug: "Front wings" },
   ];
 
   return (
-    <section className="w-full py-12 bg-gray-50">
+    <section className="w-full py-12">
       <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-4">
           {categories.map((cat) => (
