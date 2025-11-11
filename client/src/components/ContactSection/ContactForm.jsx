@@ -13,8 +13,8 @@ export default function ContactPage() {
         {/* Feature Cards */}
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div className="bg-white rounded-lg shadow-sm p-6 flex items-start space-x-4">
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Package className="w-6 h-6 text-blue-600" />
+            <div className="bg-primary-100 p-3 rounded-full">
+              <Package className="w-6 h-6 text-primary-600" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900">Original Products</h3>
@@ -23,8 +23,8 @@ export default function ContactPage() {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 flex items-start space-x-4">
-            <div className="bg-blue-100 p-3 rounded-full">
-              <DollarSign className="w-6 h-6 text-blue-600" />
+            <div className="bg-primary-100 p-3 rounded-full">
+              <DollarSign className="w-6 h-6 text-primary-600" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900">Affordable Rates</h3>
@@ -33,8 +33,8 @@ export default function ContactPage() {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm p-6 flex items-start space-x-4">
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Globe className="w-6 h-6 text-blue-600" />
+            <div className="bg-primary-100 p-3 rounded-full">
+              <Globe className="w-6 h-6 text-primary-600" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900">Wide Variety</h3>
@@ -58,18 +58,18 @@ export default function ContactPage() {
               {/* United States */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-blue-600" />
+                  <MapPin className="w-5 h-5 text-black-600" />
                   United States
                 </h3>
                 <p className="text-gray-700 mt-2">205 Middle Road, 2nd Floor, New York</p>
                 <p className="text-gray-600">2485</p>
                 <div className="flex items-center gap-2 mt-3 text-gray-700">
-                  <Phone className="w-4 h-4" />
+                  <Phone className="w-4 h-4 text-black-600" />
                   <span>+02 1234 567 88</span>
                 </div>
                 <div className="flex items-center gap-2 mt-2 text-gray-700">
-                  <Mail className="w-4 h-4" />
-                  <a href="mailto:info@example.com" className="hover:text-blue-600 transition">
+                  <Mail className="w-4 h-4 text-black-600" />
+                  <a href="mailto:info@example.com" className="hover:text-black-600 transition">
                     info@example.com
                   </a>
                 </div>
@@ -78,7 +78,7 @@ export default function ContactPage() {
               {/* Netherlands */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-blue-600" />
+                  <MapPin className="w-5 h-5 text-black-600" />
                   Netherlands
                 </h3>
                 <p className="text-gray-700 mt-2">205 Middle Road, 2nd Floor, New York</p>
@@ -89,7 +89,7 @@ export default function ContactPage() {
                 </div>
                 <div className="flex items-center gap-2 mt-2 text-gray-700">
                   <Mail className="w-4 h-4" />
-                  <a href="mailto:info@example.com" className="hover:text-blue-600 transition">
+                  <a href="mailto:info@example.com" className="hover:text-black-600 transition">
                     info@example.com
                   </a>
                 </div>

@@ -5,6 +5,11 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import UserAuth from "./pages/UserAuth";
 import Wishlist from "./pages/Wishlist";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import ShopPage from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
+
 function App() {
   return (
     
@@ -16,6 +21,10 @@ function App() {
         <Route path="/contact" element={<Contact />} />
        <Route path="/my-account" element={<UserAuth />} />
        <Route path="/wishlist" element={<Wishlist />} />
+       <Route path="/cart" element={<Cart />} />
+       <Route path="/checkout" element={<Checkout />} />
+       <Route path="/shop" element={<ShopPage />} />
+       <Route path="/product/:id" element={<ProductDetail />} />
       </Route>
     </Routes>
   )

@@ -16,10 +16,6 @@ export default function Header() {
   // Zustand Auth Store
   const { user, isLoggedIn, logout } = useAuthStore();
 
-  // Optional: Agar tumhare pass wishlist/cart count store mein hai to ye use karo
-  // const wishlistCount = useWishlistStore((state) => state.items.length);
-  // const cartCount = useCartStore((state) => state.items.length);
-  // Abhi ke liye hardcode (baad mein replace kar dena)
   const wishlistCount = 1;
   const cartCount = 3;
 
@@ -56,13 +52,13 @@ export default function Header() {
 
               {/* Search Bar */}
               <div className="flex-1 max-w-3xl mx-8 hidden md:block">
-                <div className="relative">
+                <div className=" Rc relative">
                   <input
                     type="text"
                     placeholder="Search popular products..."
                     className="w-full rounded-full border border-gray-300 bg-white py-3 pl-6 pr-14 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                   />
-                  <button className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary-600 p-2.5 hover:bg-primary-700 transition-all hover:scale-110">
+                  <button className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary-600 p-2.5 hover:bg-primary-700">
                     <Search className="w-5 h-5 text-white" />
                   </button>
                 </div>
@@ -149,7 +145,7 @@ export default function Header() {
                     />
                   </div>
                   {wishlistCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm animate-pulse">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
                       {wishlistCount}
                     </span>
                   )}
@@ -176,7 +172,7 @@ export default function Header() {
                     />
                   </div>
                   {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm animate-pulse">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
                       {cartCount}
                     </span>
                   )}
@@ -219,7 +215,7 @@ export default function Header() {
         </nav>
       </header>
 
-      {/* Mobile Search (Optional - agar mobile mein search chahiye) */}
+      {/* Mobile Search */}
       <div className="md:hidden container mx-auto px-4 py-3 border-b">
         <div className="relative">
           <input
