@@ -114,3 +114,12 @@ html, body, #root {
   transform: scale(1.4);
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
 }
+/* SIRF MOBILE PE BADA ICON + TEXT */
+@media (max-width: 767px) {
+  .mobile-only-bigger\:w-16 { width: 4rem; }    
+  .mobile-only-bigger\:h-16 { height: 4rem; }
+  .mobile-only-bigger\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
+  .mobile-only-bigger\:font-bold { font-weight: 700; }
+  .mobile-only-bigger\:text-base { font-size: 1rem; }
+  .mobile-only-bigger\:leading-relaxed { line-height: 1.5; }
+}

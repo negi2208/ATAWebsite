@@ -7,6 +7,15 @@ import {
   Box,
   Disc,
   Feather,
+  Zap,
+  Wrench,
+  Gauge,
+  Car,
+  PanelLeft,
+  PanelRight,
+  Lightbulb,
+  Wind,
+  Package,
 } from "lucide-react";
 
 const CategoriesDropdown = ({ isOpen, onClose }) => {
@@ -43,7 +52,7 @@ const CategoriesDropdown = ({ isOpen, onClose }) => {
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        {/* Header */}
+        {/* Header - PURANA WAHI */}
         <div className="sticky top-0 bg-white p-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-bold text-[#314350]">Categories</h2>
           <button
@@ -54,7 +63,7 @@ const CategoriesDropdown = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Categories List */}
+        {/* Categories List - PURANA STYLE, NAYI CATEGORIES */}
         <nav className="px-4 py-4 space-y-1">
           {categories.map((cat) => (
             <button
@@ -71,16 +80,23 @@ const CategoriesDropdown = ({ isOpen, onClose }) => {
   );
 };
 
-// Categories
+// TUMHARE SCREENSHOT KE EXACT 15 CATEGORIES ADD KAR DI
 const categories = [
-
-  // 🆕 Added 6 new categories
-  { id: 1, name: "Head Light Visor", icon: Sun },
-  { id: 2, name: "Front Mudguard", icon: Shield },
-  { id: 3, name: "Tail Panels", icon: Layout },
-  { id: 4, name: "Side Panel", icon: Box },
-  { id: 5, name: "Scooty Front Nose", icon: Disc },
-  { id: 6, name: "Front Wings", icon: Feather },
+  { id: 1, name: "Mudguard/Front Fender", icon: Shield },
+  { id: 2, name: "Head Light Visor", icon: Lightbulb },
+  { id: 3, name: "Head Light Visor Glass", icon: Sun },
+  { id: 4, name: "Tail Panel", icon: PanelLeft },
+  { id: 5, name: "Side Panel", icon: PanelRight },
+  { id: 6, name: "TPFC", icon: Zap },
+  { id: 7, name: "Back Plate", icon: Box },
+  { id: 8, name: "Chain Cover PVC/Metal", icon: Package },
+  { id: 9, name: "Full Body Kit", icon: Car },
+  { id: 10, name: "Side Box", icon: Wrench },
+  { id: 11, name: "Blinker/Indicator", icon: Gauge },
+  { id: 12, name: "Rear Mudguard", icon: Shield },
+  { id: 13, name: "Meter Cowling", icon: Disc },
+  { id: 14, name: "Visor Glass", icon: Wind },
+  { id: 15, name: "Inner Body", icon: Layout },
 ];
 
 export default CategoriesDropdown;

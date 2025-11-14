@@ -1,15 +1,32 @@
 // src/components/Logout.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuthStore from '../store/authStore';
+import useAuthStore from '../store/authStore'; // ya useUserStore
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const Logout = () => {
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const { logout: storeLogout } = useAuthStore();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
+  const handleLogout = async () => {
+    try {
+      // API CALL TO LOGOUT ENDPOINT
+      await axios.post('/api/auth/logout', {}, { withCredentials: true });
+      // ya jo bhi aapka endpoint hai
+
+      // Clear local state
+      storeLogout();
+
+      toast.success('Logout successful!');
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      toast.error('Logout failed. Please try again.');
+      // Optional: still logout locally
+      storeLogout();
+      navigate('/login', { replace: true });
+    }
   };
 
   return (
@@ -38,7 +55,7 @@ const Logout = () => {
           </button>
 
           <button
-            onClick={() => navigate('/my-account')}
+            onClick={() => navigate(-1)}
             className="px-8 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-all duration-200"
           >
             Cancel
