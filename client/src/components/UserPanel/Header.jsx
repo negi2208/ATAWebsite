@@ -1,5 +1,5 @@
 // src/components/UserPanel/Header.jsx
-import { useUserStore } from '../../store/useUserStore';
+import { useUserStore } from '../../store/authStore';
 
 export default function UserHeader() {
   const { user } = useUserStore();

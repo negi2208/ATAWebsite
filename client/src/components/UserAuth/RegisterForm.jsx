@@ -1,9 +1,8 @@
 // src/components/UserAuth/RegisterForm.jsx
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useUserStore } from '../../store/useUserStore';
-import { toast } from 'react-hot-toast'; // Toast library
-
+import { useUserStore } from '../../store/authStore';
+import { toast } from 'react-hot-toast'; 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({

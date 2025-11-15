@@ -2,7 +2,7 @@
 import React from 'react';
 import Sidebar from '@/components/UserPanel/Sidebar';
 import Header from '@/components/UserPanel/Header';
-import { useUserStore } from '@/store/useUserStore';
+import { useUserStore } from '../store/authStore';
 
 export default function UserLayout({ children, activePage = "dashboard" }) {
   const { sidebarOpen } = useUserStore();

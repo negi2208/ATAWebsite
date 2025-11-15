@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import UserLayout from '../../Layout/UserLayout';
 import { Camera, Mail, Phone, User, X, MapPin } from 'lucide-react';
-import { useUserStore } from '../../store/useUserStore';
+import { useUserStore } from '../../store/authStore';
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);

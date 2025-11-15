@@ -1,7 +1,7 @@
 // src/components/Logout.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuthStore from '../store/authStore'; // ya useUserStore
+import useAuthStore from '../store/authStore'; 
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
