@@ -2,7 +2,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authStore from "../../store/authStore";
+import {useAuthStore} from "../../store/authStore";
 import toast from "react-hot-toast";
 
 export default function LoginForm({ onForgotPassword }) {
@@ -15,7 +15,7 @@ export default function LoginForm({ onForgotPassword }) {
     password: "",
   });
 
-  const login = authStore((s) => s.login);
+  const login = useAuthStore((s) => s.login);
   const navigate = useNavigate();
 
   const handleChange = (e) => {

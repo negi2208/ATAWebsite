@@ -1,8 +1,8 @@
 // src/components/Layout/Header.jsx
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import useAuthStore from "@/store/authStore";
-import CategoriesDropdown from "@/components/Layout/CategoriesDropdown";
+import {useAuthStore} from "../../store/authStore";
+import CategoriesDropdown from "./CategoriesDropdown";
 import { 
   Menu, Search, User, Heart, ShoppingCart, 
   HelpCircle, LogOut, Package, HeartHandshake 

@@ -1,7 +1,7 @@
 // src/pages/adminauth/AdminLogin.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import authStore from '../../store/authStore'; 
+import {useAuthStore} from '../../store/authStore'; 
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -13,7 +13,7 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const login = authStore((s) => s.login); // Zustand login
+  const login = useAuthStore((s) => s.login); // Zustand login
 
   const handleSubmit = async (e) => {
     e.preventDefault();

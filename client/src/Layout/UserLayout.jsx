@@ -1,11 +1,10 @@
-// src/components/Layout/UserLayout.jsx
 import React from 'react';
 import Sidebar from '@/components/UserPanel/Sidebar';
 import Header from '@/components/UserPanel/Header';
-import { useUserStore } from '../store/authStore';
+import { useAuthStore } from '../store/authStore';
 
 export default function UserLayout({ children, activePage = "dashboard" }) {
-  const { sidebarOpen } = useUserStore();
+  const { sidebarOpen } = useAuthStore();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-pink-100 flex">
@@ -19,3 +18,4 @@ export default function UserLayout({ children, activePage = "dashboard" }) {
     </div>
   );
 }
+

@@ -1,98 +1,74 @@
-// src/stores/authStore.js
+// src/store/authStore.js
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import Cookies from "js-cookie";
 
-const authStore = create(
+const TOKEN_KEY = "auth_token";
+
+const cookieStorage = {
+  getItem: (name) => Cookies.get(name) || null,
+  setItem: (name, value) => {
+    Cookies.set(name, value, {
+      expires: 7,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+    });
+  },
+  removeItem: (name) => Cookies.remove(name, { path: "/" }),
+};
+
+const useAuthStore = create(
   persist(
     (set, get) => ({
-      // Default state
       user: null,
       admin: null,
-      isAuthenticated: false,
-      role: null,
       token: null,
-      currentTime: "Loading...",
-      country: "IN",
+      role: null, // "user" | "admin" | null
+      isAuthenticated: false,
+      lastActivity: Date.now(),
 
-      // Login
-      login: (data, role = "user") => {
-        const token = data.token || `mock-${role}-${Date.now()}`;
-        localStorage.setItem("token", token);
+      login: (data, token, role = "user") => {
+        Cookies.set(TOKEN_KEY, token, { expires: 7, secure: true, sameSite: "strict" });
         set({
-          [role === "admin" ? "admin" : "user"]: { ...data, role },
-          isAuthenticated: true,
-          role,
           token,
+          role,
+          isAuthenticated: true,
+          lastActivity: Date.now(),
+          user: role === "user" ? data : null,
+          admin: role === "admin" ? data : null,
         });
       },
 
-      // Logout
       logout: () => {
-        localStorage.removeItem("token");
+        Cookies.remove(TOKEN_KEY);
         set({
           user: null,
           admin: null,
-          isAuthenticated: false,
-          role: null,
           token: null,
+          role: null,
+          isAuthenticated: false,
+          lastActivity: null,
         });
       },
 
-      // Check Auth
-      checkAuth: () => {
-        try {
-          const token = localStorage.getItem("token");
-          if (!token) return;
-
-          const role = token.includes("admin") ? "admin" : "user";
-          const mockData = {
-            id: 1,
-            name: role === "admin" ? "Admin" : "User",
-            email: role === "admin" ? "admin@hashtaggroup.co.in" : "user@example.com",
-            token,
-          };
-
-          set({
-            [role]: { ...mockData, role },
-            isAuthenticated: true,
-            role,
-            token,
-          });
-        } catch (err) {
-          console.error("checkAuth error:", err);
+      updateActivity: () => {
+        if (get().isAuthenticated) {
+          set({ lastActivity: Date.now() });
         }
-      },
-
-      // Start Clock
-      startClock: () => {
-        const update = () => {
-          try {
-            const date = new Date();
-            const time = date.toLocaleString("en-IN", {
-              timeZone: "Asia/Kolkata",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-              hour12: true,
-            });
-            set({ currentTime: time });
-          } catch (err) {
-            set({ currentTime: "Error" });
-          }
-        };
-        update();
-        const id = setInterval(update, 1000);
-        return () => clearInterval(id);
       },
     }),
     {
       name: "auth-storage",
-      skipHydration: true, // Prevents crash on SSR
+      getStorage: () => cookieStorage,
+      partialize: (state) => ({
+        token: state.token,
+        role: state.role,
+        user: state.user,
+        admin: state.admin,
+      }),
     }
   )
 );
 
-export default authStore;
+export default useAuthStore;

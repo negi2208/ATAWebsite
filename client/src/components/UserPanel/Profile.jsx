@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import UserLayout from '../../Layout/UserLayout';
 import { Camera, Mail, Phone, User, X, MapPin } from 'lucide-react';
-import { useUserStore } from '../../store/authStore';
+import { useAuthStore } from '../../store/authStore';
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
 
-  const { user, updateProfile } = useUserStore();
+  const { user, updateProfile } = useAuthStore();
 
   const [editForm, setEditForm] = useState({
     name: '',
@@ -17,6 +17,7 @@ export default function Profile() {
     address: ''
   });
 
+  
   useEffect(() => {
     if (user) {
       setEditForm({

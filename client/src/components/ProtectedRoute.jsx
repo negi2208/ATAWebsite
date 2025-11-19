@@ -1,10 +1,11 @@
 // src/components/ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
-import authStore from "../store/authStore";
+import authStore from "../stores/authStore";
 
-// UserInfo Component (inside same file)
+// UserInfo (inside same file)
 const UserInfo = () => {
-  const { currentTime = "Loading...", country = "IN" } = authStore();
+  const { currentTime, country } = authStore();
+  if (!currentTime) return null;
 
   return (
     <div className="fixed top-4 left-4 bg-white p-3 rounded-lg shadow-md text-xs font-medium text-gray-700 border border-gray-200 z-50">
@@ -20,21 +21,18 @@ const UserInfo = () => {
   );
 };
 
-// Main ProtectedRoute (handles both user & admin)
-export default function ProtectedRoute({ children, allowedRole }) {
+// Protected Route (Admin + User)
+export default function ProtectedRoute({ children, role: requiredRole }) {
   const { isAuthenticated, role } = authStore();
 
-  // Not logged in → redirect to login
   if (!isAuthenticated) {
-    return <Navigate to={`/${allowedRole}/login`} replace />;
+    return <Navigate to={`/${requiredRole}/login`} replace />;
   }
 
-  // Wrong role → go home
-  if (role !== allowedRole) {
+  if (role !== requiredRole) {
     return <Navigate to="/" replace />;
   }
 
-  // Correct → show UserInfo + children
   return (
     <>
       <UserInfo />

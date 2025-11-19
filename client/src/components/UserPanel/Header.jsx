@@ -1,8 +1,8 @@
-// src/components/UserPanel/Header.jsx
-import { useUserStore } from '../../store/authStore';
+
+import {useAuthStore} from '../../store/authStore';
 
 export default function UserHeader() {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
   const userName = user?.name || "Rahul Sharma";
   const firstLetter = userName[0].toUpperCase();
 

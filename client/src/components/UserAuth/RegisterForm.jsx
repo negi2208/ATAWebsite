@@ -1,7 +1,7 @@
 // src/components/UserAuth/RegisterForm.jsx
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useUserStore } from '../../store/authStore';
+import  {useAuthStore}  from '../../store/authStore';
 import { toast } from 'react-hot-toast'; 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,7 +13,7 @@ export default function RegisterForm() {
     address: ''
   });
 
-  const { login } = useUserStore();
+  const { login } = useAuthStore();
 
   const handleChange = (e) => {
     const { name, value } = e.target;

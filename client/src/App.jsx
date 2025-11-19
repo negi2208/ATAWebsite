@@ -1,6 +1,7 @@
-// src/App.jsx
-import { Routes, Route } from 'react-router-dom';
-import Layout from './Layout/Layout';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+// Pages
 import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
@@ -11,6 +12,11 @@ import Checkout from "./pages/Checkout";
 import ShopPage from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 
+// Layouts
+import Layout from './Layout/Layout';
+import UserLayout from './Layout/UserLayout';
+import AdminLayout from './Layout/AdminLayout';
+
 // User Panel
 import Dashboard from './components/UserPanel/Dashboard';
 import OrderHistory from './components/UserPanel/OrderHistory';
@@ -18,15 +24,26 @@ import Profile from './components/UserPanel/Profile';
 import WishlistPage from './components/UserPanel/WishlistPage.jsx';
 import SupportPage from './components/UserPanel/SupportPage.jsx';
 import MyReviewsPage from './components/UserPanel/MyReviewsPage.jsx';
-import OrderTrackingPage from './components/UserPanel/OrderTrackingPage.jsx'; 
+import OrderTrackingPage from './components/UserPanel/OrderTrackingPage.jsx';
 
-// Admin Panel
+// Admin Auth
 import AdminLogin from './pages/AdminAuth/AdminLogin.jsx';
 import ForgotPassword from './pages/AdminAuth/ForgotPassword.jsx';
 import ResetPassword from './pages/AdminAuth/ResetPassword.jsx';
 
-// Protected Route
-import ProtectedRoute from './components/ProtectedRoute';
+// Admin Panel
+import AdminDashboard from './components/AdminPanel/AdminDashboard.jsx';
+import AdminUsers from "./components/AdminPanel/UserManagement.jsx";
+import AdminProduct from "./components/AdminPanel/AdminProduct.jsx";
+import AdminOrder from "./components/AdminPanel/AdminOrder.jsx";
+import AdminPayments from "./components/AdminPanel/Payments.jsx";
+import Review from "./components/AdminPanel/Review.jsx";
+import Profilesetting from "./components/AdminPanel/ProfileSettings.jsx";
+
+// IMPORT THE PROTECTED ROUTES
+import AdminProtectedRoute from './pages/AdminAuth/AdminProtectedRoute.jsx';
+import UserProtectedRoute from './components/UserAuth/UserProtectedRoute.jsx';
+import UserPublicRoute from './components/UserAuth/UserPublicRoute.jsx'; 
 
 function App() {
   return (
@@ -44,80 +61,43 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
       </Route>
 
-      {/* User Panel - Protected */}
-      <Route path="/user/dashboard" element={
-          <ProtectedRoute allowedRole="user">
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/user/orders"
-        element={
-          <ProtectedRoute allowedRole="user">
-            <OrderHistory />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/user/profile"
-        element={
-          <ProtectedRoute allowedRole="user">
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/user/wishlist"
-        element={
-          <ProtectedRoute allowedRole="user">
-            <WishlistPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/user/support"
-        element={
-          <ProtectedRoute allowedRole="user">
-            <SupportPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/user/reviews"
-        element={
-          <ProtectedRoute allowedRole="user">
-            <MyReviewsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/user/track"
-        element={
-          <ProtectedRoute allowedRole="user">
-            <OrderTrackingPage />
-          </ProtectedRoute>
-        }
-      />
+      {/* Admin Protected Routes */}
+      <Route element={<AdminProtectedRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/products" element={<AdminProduct />} />
+          <Route path="/admin/products/:productId" element={<AdminProduct />} />
+          <Route path="/admin/orders" element={<AdminOrder />} />
+          <Route path="/admin/orders/:orderId" element={<AdminOrder />} />
+          <Route path="/admin/payments" element={<AdminPayments />} />
+          <Route path="/admin/reviews" element={<Review />} />
+          <Route path="/admin/profile-settings" element={<Profilesetting />} />
+        </Route>
+      </Route>
 
-      {/* Admin Panel */}
+      {/* User Protected Routes */}
+      <Route element={<UserProtectedRoute />}>
+        <Route element={<UserLayout />}>
+          <Route path="/user/dashboard" element={<Dashboard />} />
+          <Route path="/user/orders" element={<OrderHistory />} />
+          <Route path="/user/profile" element={<Profile />} />
+          <Route path="/user/wishlist" element={<WishlistPage />} />
+          <Route path="/user/support" element={<SupportPage />} />
+          <Route path="/user/reviews" element={<MyReviewsPage />} />
+          <Route path="/user/track" element={<OrderTrackingPage />} />
+        </Route>
+      </Route>
+
+      {/* Optional: Prevent logged-in users from seeing login */}
+      <Route element={<UserPublicRoute />}>
+        <Route path="/my-account" element={<UserAuth />} />
+      </Route>
+
+      {/* Admin Auth Routes (Public) */}
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/forgot-password" element={<ForgotPassword />} />
       <Route path="/admin/reset-password" element={<ResetPassword />} />
-
-      {/* Admin Dashboard - Protected */}
-      <Route
-        path="/admin/*"
-        element={
-          <ProtectedRoute allowedRole="admin">
-            <div className="p-8 bg-gray-50 min-h-screen">
-              <h1 className="text-3xl font-bold text-red-600 mb-4">Admin Panel</h1>
-              <p className="text-gray-700">Welcome to Admin Dashboard!</p>
-              {/* Add your admin sidebar/layout here */}
-            </div>
-          </ProtectedRoute>
-        }
-      />
     </Routes>
   );
 }
