@@ -18,7 +18,7 @@ const cookieStorage = {
   removeItem: (name) => Cookies.remove(name, { path: "/" }),
 };
 
-const useAuthStore = create(
+export const useAuthStore = create(
   persist(
     (set, get) => ({
       user: null,
@@ -71,4 +71,3 @@ const useAuthStore = create(
   )
 );
 
-export default useAuthStore;

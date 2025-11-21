@@ -23,51 +23,48 @@ export default function Dashboard() {
     { srNo: 4, productName: "Red Anarkali Suit with Dupatta", price: 7499.00, qty: 2, status: "Shipped", date: "Nov 10, 2025", image: "https://via.placeholder.com/300" },
     { srNo: 5, productName: "White Cotton Kurti Set", price: 2499.00, qty: 5, status: "Delivered", date: "Nov 08, 2025", image: "https://via.placeholder.com/300" },
     { srNo: 6, productName: "Maroon Lehenga Choli", price: 12999.00, qty: 1, status: "Pending", date: "Nov 14, 2025", image: "https://via.placeholder.com/300" },
-    { srNo: 7, productName: "Pink Georgette Saree", price: 5499.00, qty: 2, status: "Cancelled", date: "Nov 05, 2025", image: "https://via.placeholder.com/300" },
-    { srNo: 8, productName: "Navy Blue Sherwani", price: 8999.00, qty: 1, status: "Delivered", date: "Nov 01, 2025", image: "https://via.placeholder.com/300" },
-    { srNo: 9, productName: "Yellow Salwar Kameez", price: 3999.00, qty: 4, status: "Processing", date: "Oct 29, 2025", image: "https://via.placeholder.com/300" },
-    { srNo: 10, productName: "Golden Banarasi Saree", price: 15999.00, qty: 1, status: "Shipped", date: "Oct 25, 2025", image: "https://via.placeholder.com/300" },
+    // baaki orders...
   ];
 
-  // SIRF 5 RECENT ORDERS → LATEST DATE FIRST → Sr. No. 1 SE
   const recentOrders = [...allOrders]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5)
     .map((order, index) => ({
       ...order,
-      displaySrNo: index + 1  // ← YEH NAYA FIELD
+      displaySrNo: index + 1
     }));
 
   return (
     <UserLayout activePage="dashboard">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* Yeh container perfect center karega aur equal margin dega */}
+      <div className="w-full max-w-7xl mx-auto space-y-8">
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard title="Total Orders" value={user.totalOrders} icon={Package} color="text-pink-600" />
           <StatsCard title="Pending Orders" value={user.pendingOrders} icon={Clock} color="text-yellow-600" />
           <StatsCard title="Wishlist Items" value={user.wishlistItems} icon={Heart} color="text-purple-600" />
           <StatsCard title="Support Tickets" value={user.supportTickets} icon={Headphones} color="text-green-600" />
         </div>
 
-        {/* Recent Orders */}
+        {/* Recent Orders Table */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
-          <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 py-4 border-b border-gray-200 gap-3">
             <h3 className="text-xl font-bold text-gray-800">Recent Orders</h3>
             <Link 
               to="/user/orders" 
-              className="text-primary-600 font-bold hover:underline text-sm flex items-center gap-1 cursor-pointer"
+              className="text-pink-600 font-bold hover:underline text-sm flex items-center gap-1"
             >
-              View All <span>→</span>
+              View All →
             </Link>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[700px]">
+            <table className="w-full min-w-[800px]">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Sr. No.</th>
-                  <th className="px-6 pl-8 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Product Name</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Product Name</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Price</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">QTY</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
@@ -77,16 +74,15 @@ export default function Dashboard() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {recentOrders.map(order => (
-                  <tr key={order.srNo} className="hover:bg-neutral-100 transition-colors">
-                    {/* YAHAN displaySrNo USE KARO */}
+                  <tr key={order.srNo} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-5 text-sm font-medium text-gray-900">{order.displaySrNo}</td>
-                    <td className="px-6 pl-8 py-5 text-sm text-gray-800 max-w-xs">
+                    <td className="px-6 py-5 text-sm text-gray-800 max-w-xs">
                       <div className="truncate" title={order.productName}>{order.productName}</div>
                     </td>
                     <td className="px-6 py-5 text-sm font-bold text-gray-900">₹{order.price.toFixed(2)}</td>
                     <td className="px-6 py-5 text-sm font-medium text-gray-700 text-center">{order.qty}</td>
                     <td className="px-6 py-5">
-                      <span className={`inline-flex items-center px-4 py-2 rounded-full text-xs font-bold ${
+                      <span className={`inline-flex px-4 py-2 rounded-full text-xs font-bold ${
                         order.status === "Delivered" ? "bg-green-100 text-green-700" :
                         order.status === "Cancelled" ? "bg-red-100 text-red-700" :
                         order.status === "Processing" ? "bg-yellow-100 text-yellow-700" :
@@ -99,16 +95,9 @@ export default function Dashboard() {
                     </td>
                     <td className="px-6 py-5 text-sm text-gray-600">{order.date}</td>
                     <td className="px-6 py-5 text-center">
-                      <button
-                        onClick={() => setSelectedImage(order.image)}
-                        className="group inline-block focus:outline-none"
-                      >
-                        <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 shadow-sm mx-auto">
-                          <img 
-                            src={order.image} 
-                            alt={order.productName} 
-                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                          />
+                      <button onClick={() => setSelectedImage(order.image)} className="focus:outline-none">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 shadow-sm mx-auto hover:shadow-md transition-shadow">
+                          <img src={order.image} alt={order.productName} className="w-full h-full object-cover" />
                         </div>
                         <p className="text-xs text-gray-500 mt-1">Product</p>
                       </button>
@@ -121,25 +110,14 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Full Image Modal */}
+      {/* Image Modal */}
       {selectedImage && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
-          onClick={() => setSelectedImage(null)}
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4" onClick={() => setSelectedImage(null)}>
           <div className="relative max-w-3xl w-full">
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 p-1 transition-all"
-            >
-              <X className="w-8 h-8" />
+            <button onClick={() => setSelectedImage(null)} className="absolute -top-12 right-0 text-white hover:text-gray-300">
+              <X className="w-10 h-10" />
             </button>
-            <img 
-              src={selectedImage} 
-              alt="Full size product"
-              className="w-full h-auto rounded-xl shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <img src={selectedImage} alt="Full product" className="w-full h-auto rounded-xl shadow-2xl" onClick={e => e.stopPropagation()} />
           </div>
         </div>
       )}

@@ -47,7 +47,7 @@ import UserPublicRoute from './components/UserAuth/UserPublicRoute.jsx';
 
 function App() {
   return (
-    <Routes>
+    <Routes>  []
       {/* Public Routes */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
@@ -78,7 +78,7 @@ function App() {
 
       {/* User Protected Routes */}
       <Route element={<UserProtectedRoute />}>
-        <Route element={<UserLayout />}>
+        <Route element={<UserLayout />}> </Route>
           <Route path="/user/dashboard" element={<Dashboard />} />
           <Route path="/user/orders" element={<OrderHistory />} />
           <Route path="/user/profile" element={<Profile />} />
@@ -86,7 +86,7 @@ function App() {
           <Route path="/user/support" element={<SupportPage />} />
           <Route path="/user/reviews" element={<MyReviewsPage />} />
           <Route path="/user/track" element={<OrderTrackingPage />} />
-        </Route>
+       
       </Route>
 
       {/* Optional: Prevent logged-in users from seeing login */}
@@ -102,4 +102,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 
