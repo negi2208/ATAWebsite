@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "axios": "^1.12.2",
@@ -22,6 +23,7 @@
     "lucide-react": "^0.542.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-hook-form": "^7.66.1",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
     "react-paginate": "^8.3.0",
@@ -32,6 +34,7 @@
     "swiper": "^12.0.3",
     "tailwind-scrollbar-hide": "^4.0.0",
     "xlsx": "^0.18.5",
+    "zod": "^4.1.13",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

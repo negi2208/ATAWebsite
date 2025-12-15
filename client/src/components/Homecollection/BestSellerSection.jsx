@@ -1,178 +1,148 @@
-import { useState, useRef, useEffect } from "react";
-import { Heart, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { useRef } from "react";
+import { Heart } from "lucide-react";
 
 export default function BestSeller() {
   const scrollRef = useRef(null);
 
-  // API READY — Future mein backend se aayega
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const products = [
+    { id: 1, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 7 Retro", subtitle: "Pure Money", price: 1499 },
+    { id: 2, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 1 Retro High OG FK", subtitle: "\"Banned\"", price: 1249 },
+    { id: 3, image: "images/bestseller/bestseller-demo.webp", title: "Jordan Spiz'ike", subtitle: "Poison", price: 1249 },
+    { id: 4, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 4 Retro", subtitle: "\"Black Cat\"", price: 1899 },
+    { id: 5, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 11 Retro", subtitle: "\"Space Jam\"", price: 2199 },
+    { id: 6, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 1 Low", subtitle: "\"Travis Scott\"", price: 3499 },
+  ];
 
-  // Demo data (baad mein API se replace hoga)
-  useEffect(() => {
-    const demoData = [
-      { id: 1, front: "images/bestseller/bestseller-demo.webp", back: "images/bestseller/bestseller-back.webp", title: "Zerex G05 Phosphate Free", rating: 4.8, reviews: 23, price: 33.43, oldPrice: 48.55 },
-      { id: 2, front: "images/bestseller/bestseller-demo.webp", back: "images/bestseller/bestseller-back.webp", title: "Anzo USA – 111630 FORD F-150", rating: 4.2, reviews: 15, price: 117.25, oldPrice: 171.89 },
-      { id: 3, front: "images/bestseller/bestseller-demo.webp", back: "images/bestseller/bestseller-back.webp", title: "Premium Ceramic Brake Pads", rating: 4.9, reviews: 42, price: 89.99, oldPrice: 129.99 },
-      { id: 4, front: "images/bestseller/bestseller-demo.webp", back: "images/bestseller/bestseller-back.webp", title: "High Performance Calipers", rating: 4.7, reviews: 28, price: 299.99, oldPrice: 399.99 },
-      { id: 5, front: "images/bestseller/bestseller-demo.webp", back: "images/bestseller/bestseller-back.webp", title: "Drilled & Slotted Rotors", rating: 4.6, reviews: 35, price: 179.99, oldPrice: 249.99 },
-    ];
-    setProducts(demoData);
-    setLoading(false);
-  }, []);
-
-  const scrollLeft = () => scrollRef.current?.scrollBy({ left: -300, behavior: "smooth" });
-  const scrollRight = () => scrollRef.current?.scrollBy({ left: 300, behavior: "smooth" });
-
-  const ProductCard = ({ product }) => {
-    const [isFlipped, setIsFlipped] = useState(false);
-
-    return (
-      <div className="flex-shrink-0 w-72 group">
-        <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-          
-          {/* FLIP + ZOOM ON BACK IMAGE */}
-          <div 
-            className="relative h-64 bg-gradient-to-b from-gray-50 to-gray-100"
-            style={{ perspective: "1200px" }}
-            onMouseEnter={() => setIsFlipped(true)}
-            onMouseLeave={() => setIsFlipped(false)}
-          >
-            {/* Front Image */}
-            <div className={`absolute inset-0 flex items-center justify-center p-5 transition-all duration-700 preserve-3d ${isFlipped ? "rotate-y-180" : ""}`}>
-              <img
-                src={product.front}
-                alt={product.title}
-                className="max-w-full max-h-full object-contain backface-hidden"
-              />
-            </div>
-
-            {/* Back Image — FLIP KE BAAD ZOOM HOGA */}
-            <div className={`absolute inset-0 flex items-center justify-center p-5 transition-all duration-700 preserve-3d ${isFlipped ? "zoom-in" : "rotate-y-180"}`}>
-              <img
-                src={product.back}
-                alt="Gallery view"
-                className="max-w-full max-h-full object-contain backface-hidden"
-              />
-            </div>
-
-            {/* Wishlist */}
-            <button className="absolute top-4 right-4 z-20 bg-white p-2.5 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-110">
-              <Heart className="w-5 h-5 text-gray-600 hover:text-red-600 transition" />
-            </button>
-          </div>
-
-          {/* Product Info — TUMHARA WAHI FONT & STYLE */}
-          <div className="p-6 text-center">
-            <h3 className="text-sm font-bold text-gray-900 line-clamp-2 mb-3 leading-tight">
-              {product.title}
-            </h3>
-
-            <div className="flex items-center justify-center gap-1 mb-3">
-              <div className="flex text-yellow-500">
-                {"★★★★★".substring(0, Math.floor(product.rating))}
-                {product.rating % 1 >= 0.5 && "★"}
-              </div>
-              <span className="text-xs text-gray-500 ml-2">({product.reviews} reviews)</span>
-            </div>
-
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <span className="text-2xl font-bold text-red-600">${product.price.toFixed(2)}</span>
-              {product.oldPrice && (
-                <span className="text-sm text-gray-500 line-through">${product.oldPrice.toFixed(2)}</span>
-              )}
-            </div>
-
-            <button className="w-full bg-red-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-red-700 transition-all hover:scale-105">
-              Add to Cart
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const scrollLeft = () => scrollRef.current?.scrollBy({ left: -380, behavior: "smooth" });
+  const scrollRight = () => scrollRef.current?.scrollBy({ left: 380, behavior: "smooth" });
 
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
-        
-        {/* Header — Tabs HATA DIYE, View All with Arrow */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-10">
-          <h2 className="text-4xl font-black text-gray-900">Best Seller</h2>
-          
-          <a 
-            href="/shop" 
-            className="flex items-center gap-2 text-red-600 font-bold text-lg hover:underline mt-4 md:mt-0"
-          >
-            View All
-            <ArrowRight className="w-5 h-5" />
-          </a>
+    <section className="py-16 md:py-24 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
+
+        {/* Header */}
+        <div className="text-center mb-12 md:mb-16">
+
+          {/* Updated heading (same as KitHighlightSection) */}
+          <h2 className="text-3xl md:text-4xl font-bold leading-tight text-gray-900">
+            Bestseller Products
+          </h2>
+
+          <div className="flex items-center justify-center mt-4 md:mt-6">
+            <div className="flex-1 h-px bg-gray-300 hidden md:block"></div>
+
+            <a 
+              href="/shop" 
+              className="mx-6 md:mx-10 text-primary-700 font-medium hover:underline text-lg"
+            >
+              See all products
+            </a>
+
+            <div className="flex-1 h-px bg-gray-300 hidden md:block"></div>
+          </div>
         </div>
 
-        <hr className="border-gray-300 mb-12" />
+        <div className="relative">
 
-        {/* Loading */}
-        {loading ? (
-          <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-red-600 border-t-transparent"></div>
+          {/* Arrows - hidden on mobile */}
+          <button
+            onClick={scrollLeft}
+            className="hidden md:block absolute -left-5 lg:-left-10 top-1/2 -translate-y-1/2 z-10 
+                       text-primary-600 text-3xl lg:text-4xl font-thin hover:text-primary-700 transition-all"
+          >
+            ←
+          </button>
+
+          <button
+            onClick={scrollRight}
+            className="hidden md:block absolute -right-5 lg:-right-10 top-1/2 -translate-y-1/2 z-10 
+                       text-primary-700 text-3xl lg:text-4xl font-thin hover:text-primary-800 transition-all"
+          >
+            →
+          </button>
+
+          {/* Bottom Line Indicator */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 md:w-32 h-px bg-gray-300 flex items-center justify-center">
+            <div className="w-10 md:w-12 h-1 bg-primary-700 rounded-full"></div>
           </div>
-        ) : (
-          /* Carousel */
-          <div className="relative group">
-            <button 
-              onClick={scrollLeft} 
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-16 h-16 bg-white rounded-full shadow-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
-            >
-              <ChevronLeft className="w-8 h-8 text-gray-800" />
-            </button>
-            <button 
-              onClick={scrollRight} 
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-16 h-16 bg-white rounded-full shadow-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
-            >
-              <ChevronRight className="w-8 h-8 text-gray-800" />
-            </button>
 
-            <div 
-              ref={scrollRef} 
-              className="flex gap-8 overflow-x-auto scrollbar-hide scroll-smooth py-6"
-            >
-              {products.map((p) => (
-                <ProductCard key={p.id} product={p} />
+          {/* Slider */}
+          <div
+            ref={scrollRef}
+            className="overflow-x-auto scrollbar-hide scroll-smooth"
+          >
+            <div className="flex gap-6 md:gap-12 justify-start md:justify-center py-8 md:py-12 min-w-max">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </div>
-        )}
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProductCard({ product }) {
+  return (
+    <div className="
+      group 
+      w-64 sm:w-72 md:w-80 
+      bg-white shadow-md hover:shadow-xl 
+      transition-all duration-500 
+      p-4 sm:p-5 md:p-6 
+      relative overflow-hidden
+    ">
+
+      {/* Heart Icon */}
+      <button className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
+        <Heart className="w-6 h-6 md:w-7 md:h-7 text-gray-600 hover:text-red-600 hover:fill-red-600 transition" />
+      </button>
+
+      {/* PRODUCT IMAGE */}
+      <div className="flex justify-center items-center 
+          h-40 sm:h-48 md:h-52 
+          transition-all duration-500 
+          group-hover:h-32 sm:group-hover:h-40 md:group-hover:h-40"
+      >
+        <img
+          src={product.image}
+          alt={product.title}
+          className="h-full object-contain transition-all duration-500 group-hover:scale-90"
+        />
       </div>
 
-      {/* CSS — FLIP + ZOOM ON BACK */}
-      <style jsx>{`
-        .preserve-3d {
-          transform-style: preserve-3d;
-        }
-        .backface-hidden {
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
-        }
-        .rotate-y-180 {
-          transform: rotateY(180deg);
-        }
-        .zoom-in {
-          transform: rotateY(0deg) scale(1.15);
-          animation: zoomIn 0.6s ease-out forwards;
-        }
-        @keyframes zoomIn {
-          0% { transform: rotateY(180deg) scale(0.9); opacity: 0.8; }
-          100% { transform: rotateY(0deg) scale(1.15); opacity: 1; }
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-,}
-      `}</style>
-    </section>
+      {/* TITLE */}
+      <h3 className="text-base sm:text-lg font-medium text-gray-800 mt-3 text-center">
+        {product.title}
+      </h3>
+
+      {/* SUBTITLE */}
+      <p className="text-gray-500 text-center text-xs sm:text-sm mt-1">
+        {product.subtitle}
+      </p>
+
+      {/* PRICE */}
+      <p className="text-2xl sm:text-3xl font-bold text-primary-700 text-center mt-3">
+        {product.price.toLocaleString()} kr.
+      </p>
+
+      {/* BUTTONS (hover only) */}
+      <div className="flex justify-center items-center gap-3 sm:gap-4 mt-4 sm:mt-6 
+                      opacity-0 group-hover:opacity-100 transition-all duration-500">
+
+        <button className="bg-primary-700 text-white px-5 sm:px-8 py-2 sm:py-3 rounded-full font-semibold text-xs sm:text-sm 
+                           hover:bg-primary-800 transition shadow">
+          Add to Cart
+        </button>
+
+        <button className="text-primary-700 font-semibold text-xs sm:text-sm ">
+          QUICK VIEW
+        </button>
+
+      </div>
+
+    </div>
   );
 }

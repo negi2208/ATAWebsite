@@ -1,4 +1,3 @@
-// src/components/Shop/CategoryFilter.jsx
 import React from "react";
 
 const categories = [
@@ -8,7 +7,7 @@ const categories = [
 
 export default function CategoryFilter({ selected, onSelect }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
+    <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-xs lg:max-w-none">
       <h3 className="text-lg font-bold text-gray-800 mb-4">Product Categories</h3>
       <div className="space-y-2">
         {categories.map((cat) => (
@@ -22,7 +21,7 @@ export default function CategoryFilter({ selected, onSelect }) {
               value={cat}
               checked={selected === cat}
               onChange={() => onSelect(cat)}
-              className="w-4 h-4 text-primary-600"
+              className="w-4 h-4 text-primary-600 accent-primary-600"
             />
             <span className={`text-sm ${selected === cat ? "font-bold text-primary-600" : "text-gray-700"}`}>
               {cat}

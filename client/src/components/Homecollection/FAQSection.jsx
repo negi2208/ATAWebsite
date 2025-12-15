@@ -29,26 +29,25 @@ export default function FAQSection() {
   ];
 
   return (
-    <section className="pb-10 bg-white py-12 md:py-16 lg:py-20">
+    <section className="pb-10 bg-white py-8 sm:py-12 md:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-12 items-stretch">
-          {/* Left: Full Card - Height Matches Right */}
-          <div className="relative bg-gray-100 rounded-3xl overflow-hidden flex flex-col justify-between min-h-[520px] md:min-h-0">
-            {/* Background Image */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+
+          {/* Left: Image + Info */}
+          <div className="relative bg-gray-100 rounded-2xl overflow-hidden flex flex-col justify-between min-h-[400px] sm:min-h-[500px] md:min-h-[520px]">
             <img
               src="/images/faqs/faq-image.png"
               alt="Mechanic background"
-              className="absolute inset-0 w-full h-full object-cover object-right"
+              className="absolute inset-0 w-full h-full object-cover object-center"
             />
 
-            {/* Text Overlay */}
-            <div className="relative z-10 p-6 md:p-10 max-w-md">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+            <div className="relative z-10 p-6 sm:p-8 md:p-10 max-w-full sm:max-w-md">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
                 Questions you may <br />
-               be curious about.
+                be curious about.
               </h2>
 
-              <div className="mt-4 space-y-3 text-gray-700 text-sm md:text-base">
+              <div className="mt-3 sm:mt-4 space-y-2 text-gray-700 text-sm sm:text-base md:text-base">
                 <p>
                   <strong>Item currently in stock.</strong> Items with this status
                   are shipped within <strong>4–5 days</strong> of payment.
@@ -56,14 +55,14 @@ export default function FAQSection() {
                 <p>Do you need more information?</p>
               </div>
 
-              <button className="mt-5 bg-primary-500 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-600 transition-colors shadow-md">
+              <button className="mt-4 sm:mt-5 bg-primary-500 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-sm sm:text-base font-medium hover:bg-primary-600 transition-colors shadow-md">
                 More Information
               </button>
             </div>
           </div>
 
-          {/* Right: Accordion - Auto Height */}
-          <div className="space-y-0">
+          {/* Right: Accordion */}
+          <div className="space-y-2 sm:space-y-3">
             {faqs.map((faq, index) => (
               <div
                 key={index}
@@ -71,13 +70,13 @@ export default function FAQSection() {
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full flex justify-between items-center text-left py-4 group"
+                  className="w-full flex justify-between items-center text-left py-3 sm:py-4 group"
                 >
-                  <h3 className="text-base md:text-lg font-semibold text-gray-900 group-hover:text-primary-500 transition-colors pr-4">
+                  <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 group-hover:text-primary-500 transition-colors pr-4">
                     {faq.question}
                   </h3>
                   <ChevronDown
-                    className={`w-5 h-5 text-gray-500 transition-transform duration-300 flex-shrink-0 ${
+                    className={`w-4 sm:w-5 h-4 sm:h-5 text-gray-500 transition-transform duration-300 flex-shrink-0 ${
                       openIndex === index ? "rotate-180" : ""
                     }`}
                   />
@@ -86,13 +85,14 @@ export default function FAQSection() {
                 <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
                   openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                 }`}>
-                  <p className="text-gray-600 pb-6 pr-10 leading-relaxed text-sm md:text-base">
+                  <p className="text-gray-600 pb-4 sm:pb-6 pr-2 sm:pr-10 leading-relaxed text-xs sm:text-sm md:text-base">
                     {faq.answer}
                   </p>
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </section>

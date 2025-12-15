@@ -1,12 +1,9 @@
-// src/components/Shop/Pagination.jsx
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Pagination({ current, total, onPageChange }) {
   const pages = [];
-  for (let i = 1; i <= total; i++) {
-    pages.push(i);
-  }
+  for (let i = 1; i <= total; i++) pages.push(i);
 
   return (
     <div className="flex items-center justify-center gap-2 mt-10 flex-wrap">
@@ -22,7 +19,7 @@ export default function Pagination({ current, total, onPageChange }) {
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`w-12 h-12 rounded-lg font-bold text-lg transition-all ${
+          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg font-bold text-lg transition-all ${
             current === page
               ? "bg-primary-600 text-white shadow-lg"
               : "bg-white shadow hover:bg-gray-100 text-gray-700"
