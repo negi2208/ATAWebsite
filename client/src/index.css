@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Montserrat:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Montserrat:wght@700;900&family=Carlito:wght@400;700;900&family=Protest+Strike:wght@400;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #FFFFFF;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ===== HOME BANNER ANIMATIONS ===== */
+/* Reset animation on active slide */
+.swiper-slide-active .animate-slide {
+  opacity: 0;
+  transform: translateY(100px);
+  animation: none !important;
+}
+
+.swiper-slide-active .animate-slide.animate-in {
+  animation-fill-mode: forwards;
+}
+
+/* Background - Slide UP */
+.swiper-slide-active .animate-bg {
+  opacity: 0;
+  transform: translateY(120px);
+  animation: slideUp 1.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0.2s forwards;
+}
+
+/* Text - Slide from LEFT */
+.swiper-slide-active .animate-text {
+  opacity: 0;
+  transform: translateX(-180px);
+  animation: slideFromLeft 1.6s cubic-bezier(0.25, 0.8, 0.25, 1) 0.5s forwards;
+}
+
+/* Image - Slide from RIGHT */
+.swiper-slide-active .animate-image {
+  opacity: 0;
+  transform: translateX(180px);
+  animation: slideFromRight 1.8s cubic-bezier(0.25, 0.8, 0.25, 1) 0.8s forwards;
+}
+
+/* Keyframes */
+@keyframes slideUp {
+  to { 
+    opacity: 0.3; 
+    transform: translateY(0); 
+  }
+}
+@keyframes slideFromLeft {
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+@keyframes slideFromRight {
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+.swiper-button-prev, .swiper-button-next {
+    svg {
+        width: 50%;
+        height: 50%;
+        -o-object-fit: contain;
+        object-fit: contain;
+        transform-origin: center;
+        /* fill: currentColor; */
+        pointer-events: none;
+        color: white;
+    }
+}
+/* Custom Swiper Navigation Arrows */
+.swiper-button-next,
+.swiper-button-prev {
+  background: rgba(0, 0, 0, 0.5) !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;  
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  transition: all 0.3s ease;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 24px !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+/* Pagination Bullets */
+.swiper-pagination-bullet {
+  background: white;
+  opacity: 0.6;
+  width: 12px;
+  height: 12px;
+  transition: all 0.3s ease;
+}
+
+.swiper-pagination-bullet-active {
+  background: #ff0000;
+  opacity: 1;
+  transform: scale(1.4);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+}
+/* SIRF MOBILE PE BADA ICON + TEXT */
+@media (max-width: 767px) {
+  .mobile-only-bigger\:w-16 { width: 4rem; }    
+  .mobile-only-bigger\:h-16 { height: 4rem; }
+  .mobile-only-bigger\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
+  .mobile-only-bigger\:font-bold { font-weight: 700; }
+  .mobile-only-bigger\:text-base { font-size: 1rem; }
+  .mobile-only-bigger\:leading-relaxed { line-height: 1.5; }
+}
