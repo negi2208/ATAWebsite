@@ -1,14 +1,17 @@
 {
-  "name": "server",
+  "name": "ata-ecommerce-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend server for ATA e-commerce platform",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
-  "author": "shivani",
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   }
 }
