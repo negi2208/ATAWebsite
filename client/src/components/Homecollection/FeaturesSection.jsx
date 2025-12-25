@@ -3,17 +3,17 @@ export default function FeaturesSection() {
     {
       icon: "/images/feature-icons/iconbox.svg",
       title: "Original Products",
-      desc: "Vestibulum ante ipsum primis in faucibus.",
+      desc: "Genuine two-wheeler plastic parts ensuring quality and durability.",
     },
     {
       icon: "/images/feature-icons/iconbox2.svg",
       title: "Affordable Rates",
-      desc: "Vestibulum ante ipsum primis in faucibus.",
+      desc: "High-quality two-wheeler plastic parts at competitive, value-driven prices.",
     },
     {
       icon: "/images/feature-icons/iconbox3.svg",
       title: "Wide Variety",
-      desc: "Vestibulum ante ipsum primis in faucibus.",
+      desc: "Extensive range of two-wheeler plastic parts covering multiple models.",
     },
   ];
 

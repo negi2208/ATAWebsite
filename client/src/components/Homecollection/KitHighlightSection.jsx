@@ -4,18 +4,18 @@ export default function KitHighlightSection() {
   const kitSteps = [
     {
       num: "01",
-      title: "Engine Tune-Up Kit",
-      desc: "Complete oil change, spark plugs, air filter – everything your engine needs.",
+      title: "Front Body Kit",
+      desc: "Includes Headlight Visor, Scooty Front Nose & Front Wings. Premium front-body components designed for style, protection, and aerodynamic performance.",
     },
     {
       num: "02",
-      title: "Brake Performance Kit",
-      desc: "High-quality brake pads, rotors, and fluid for maximum stopping power.",
+      title: "Side & Rear Body Kit",
+      desc: "Includes Side Panels & Tail Panels\nStrong, lightweight, and precision-moulded parts that restore the original look of the two-wheeler.",
     },
     {
       num: "03",
-      title: "Suspension Upgrade Kit",
-      desc: "Shocks, struts, and bushings for smoother ride and better handling.",
+      title: "Protection & Utility Kit",
+      desc: "Includes Front Mudguards & Supporting Panels Engineered to handle rough roads while protecting critical parts from mud, water, and debris.",
     },
   ];
 
@@ -27,26 +27,25 @@ export default function KitHighlightSection() {
 
           {/* LEFT: Text + CTA */}
           <div className="space-y-5">
-            <p className="text-xs text-gray-500 uppercase tracking-widest">
+            {/* <p className="text-xs text-gray-500 uppercase tracking-widest">
               DUIS COMmodo at risus
-            </p>
+            </p> */}
 
             <h1 className="text-3xl md:text-4xl font-bold leading-tight">
-              <span className="block">Poskapet pred det vill site poly liga dekavin euras</span>
+              <span className="block">ATA Genuine Parts – Built for Mechanics, Trusted by Riders.</span>
             </h1>
 
             <p className="text-gray-600 leading-relaxed text-sm">
-              Vestibulum condimentum libero elit, at pretium purus molestie ornare. 
-              Sed turpis justo, facilisis cursus elit in, lobortis molestie. 
-              Morbi sed rhoncus erat. Aenean quis lacus tellus. Duis commodo at 
-              risus sit amet maximus molestie.
+              At ATA Genuine Parts, every component is engineered to deliver strength, perfect fitment, and long-lasting performance. Our plastic body parts are designed to match OEM specifications, ensuring reliability on Indian roads and confidence for mechanics and riders alike.
+
+Built using advanced injection moulding technology, ATA products offer superior finish, durability, and impact resistance — making them the preferred choice across workshops and dealerships.
             </p>
 
             <a
               href="/shop/kits"
               className="inline-flex items-center gap-2 text-primary-600 font-semibold hover:text-primary-700 transition text-sm"
             >
-              Read and Shop Now
+              Shop Now
               <ArrowRight className="w-4 h-4" />
             </a>
           </div>
@@ -62,12 +61,12 @@ export default function KitHighlightSection() {
 
           {/* RIGHT: Kit Steps */}
           <div className="space-y-6">
-            <div>
+            {/* <div>
               <h3 className="font-bold text-lg mb-1">From Garage to Road</h3>
               <p className="text-sm text-gray-600">
                 Vestibulum condimentum libero elit, at pretium purus molestie ornare.
               </p>
-            </div>
+            </div> */}
 
             <div className="space-y-5">
               {kitSteps.map((step) => (

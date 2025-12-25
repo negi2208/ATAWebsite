@@ -74,24 +74,20 @@ const ProductSection = () => {
           {/* Text */}
           <div className="flex-1 text-left">
             <h3 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight">
-              Need Help Finding the Right Product?
+              Need Help Choosing the Right ATA Genuine Part?
             </h3>
             <p className="text-primary-100 text-sm mt-1 sm:mt-2">
-              Our Parts Experts Can Help. Call for immediate assistance.
+            Our Product Experts Are Here to Assist You — Fast & Reliable Support.
             </p>
-          </div>
-
-          {/* Button */}
-          <div className="flex justify-center">
-            <button className="px-6 sm:px-8 py-2 sm:py-3 bg-white text-primary-500 font-medium rounded-full hover:bg-gray-100 transition-colors whitespace-nowrap">
-              Request a Call
-            </button>
           </div>
 
           {/* Phone */}
           <div className="text-left md:text-right">
-            <p className="text-lg sm:text-xl md:text-2xl font-semibold">+(800) 1234 5678 90</p>
-            <p className="text-primary-100 text-xs sm:text-sm">You can contact us 24/7.</p>
+            <div className="flex justify-center">
+            <button className="px-6 sm:px-8 py-2 sm:py-3 bg-white text-primary-500 font-medium rounded-full hover:bg-gray-100 transition-colors whitespace-nowrap">
+            +(800) 1234 5678 90
+            </button>
+          </div>
           </div>
         </div>
       </div>

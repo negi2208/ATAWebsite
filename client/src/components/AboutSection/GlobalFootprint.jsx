@@ -9,19 +9,20 @@ export default function GlobalFootprint() {
           {/* LEFT: Text + Button */}
           <div className="space-y-3 sm:space-y-4">
             <p className="text-primary-500 text-xs sm:text-sm font-bold uppercase tracking-widest">
-              OUR FOOTPRINTS
+              OUR PRODUCT RANGE
             </p>
 
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-snug text-gray-900">
-              Reaching Every Corner of
+              Covering Every Essential 
               <br />
-              <span className="text-primary-600">the Automotive World</span>
+              <span className="text-primary-600">Two-Wheeler Plastic Component</span>
             </h2>
 
             <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed max-w-full md:max-w-lg py-2 sm:py-4">
-              Sai Group Global's influence spans a vast network, serving customers and 
-              partners across continents. Our solutions are trusted by automotive leaders 
-              worldwide, as we continue to expand our global footprint with every project.
+             ATA Genuine Parts offers a complete range of high-quality plastic body components designed to meet the demands of today’s two-wheeler market. From front-end styling parts to rear body protection panels, our product categories are engineered for OEM-level fitment, durability, and long-term performance.
+
+
+
             </p>
 
             {/* READ MORE Button */}

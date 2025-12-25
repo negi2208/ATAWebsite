@@ -5,21 +5,21 @@ export default function CategorySection() {
   const scrollRef = useRef(null);
 
   const categories = [
-    { id: 1, img: "/images/categories/category-air-condition.png", title: "Head light visor", slug: "head-light-visor" },
-    { id: 2, img: "/images/categories/category-wiper.png", title: "Front mudguard", slug: "front-mudguard" },
-    { id: 3, img: "/images/categories/category-brakes.png", title: "Tail panels", slug: "tail-panels" },
-    { id: 4, img: "/images/categories/category-care.png", title: "Side panel", slug: "side-panel" },
-    { id: 5, img: "/images/categories/category-engine.png", title: "Scooty front nose", slug: "scooty-front-nose" },
-    { id: 6, img: "/images/categories/category-damping.png", title: "Front wings", slug: "front-wings" },
-    { id: 7, img: "/images/categories/category-wiper.png", title: "Seat cover", slug: "seat-cover" },
-    { id: 8, img: "/images/categories/category-wiper.png", title: "Tyres", slug: "tyres" },
-    { id: 9, img: "/images/categories/category-wiper.png", title: "Chain sprocket", slug: "chain-sprocket" },
-    { id: 10, img: "/images/categories/category-wiper.png", title: "Battery", slug: "battery" },
-    { id: 11, img: "/images/categories/category-wiper.png", title: "Side mirror", slug: "side-mirror" },
-    { id: 12, img: "/images/categories/category-wiper.png", title: "Handle bar", slug: "handle-bar" },
-    { id: 13, img: "/images/categories/category-wiper.png", title: "Leg guard", slug: "leg-guard" },
-    { id: 14, img: "/images/categories/category-wiper.png", title: "Silencer", slug: "silencer" },
-    { id: 15, img: "/images/categories/category-wiper.png", title: "Indicators", slug: "indicators" },
+    { id: 1, img: "/images/categories/Back-Plate.png", title: "Back Plate", slug: "Back Plate" },
+    { id: 2, img: "/images/categories/Chain-Cover-PVCMetal.png", title: "Chain Cover PVC/Metal", slug: "Chain Cover PVC/Metal" },
+    { id: 3, img: "/images/categories/Blinker-Indicator.png", title: "Blinker/Indicator", slug: "Blinker/Indicator" },
+    { id: 4, img: "/images/categories/Front-Visor.png", title: "Front Visor", slug: "front-visor" },
+    { id: 5, img: "/images/categories/Head-Light-Visor-Glass.png", title: "Head Light Visor Glass", slug: "Head Light Visor Glass" },
+    { id: 6, img: "/images/categories/Inner-Body.png", title: "Inner Body", slug: "Inner Body" },
+    { id: 7, img: "/images/categories/Meter-Cowling.png", title: "Meter Cowling", slug: "Meter Cowling" },
+    { id: 8, img: "/images/categories/Visor-Glass.png", title: "Visor Glass", slug: "Visor Glass" },
+    { id: 9, img: "/images/categories/Rear-Mudguard.png", title: "Rear Mudguard", slug: "Rear Mudguard" },
+    { id: 10, img: "/images/categories/Side-Box.png", title: "Side Box", slug: "Side Box" },
+    { id: 11, img: "/images/categories/Tail-Panel.png", title: "Tail Panel", slug: "Tail Panel" },
+    { id: 12, img: "/images/categories/Side-Panel.png", title: "Side Panel", slug: "Side Panel" },
+    { id: 13, img: "/images/categories/High-Quality-Mudguard.png", title: "Mudguard/Front Fender", slug: "Mudguard/Front Fender" },
+    
+    
   ];
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export default function CategorySection() {
                            group-hover/item:scale-110"
                       />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 text-center transition-colors duration-300 
+                    <h3 className="text-sm font-semibold text-gray-900 text-center transition-colors duration-300 
                       group-hover/item:text-white">
                       {cat.title}
                     </h3>
