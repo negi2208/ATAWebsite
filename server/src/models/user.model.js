@@ -24,4 +24,3 @@ export const User = sequelize.define(
     paranoid: false,
   }
 );
-

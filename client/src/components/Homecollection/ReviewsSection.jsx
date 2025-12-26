@@ -9,26 +9,26 @@ export default function ReviewsSection() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const dummyReviews = [
-    { name: "Jessica Lindström", date: "3 days ago", rating: 5, comment: "Great quality, fast delivery and excellent customer service..." },
-    { name: "John Malkovich", date: "3 days ago", rating: 5, comment: "Great quality, fast delivery and excellent customer service..." },
-    { name: "Teresa Holland", date: "3 days ago", rating: 5, comment: "Great quality, fast delivery and excellent customer service..." },
-    { name: "Michael Smith", date: "5 days ago", rating: 5, comment: "High quality, arrived on time, very satisfied with the purchase." },
-  ];
+  // const dummyReviews = [
+  //   { name: "Jessica Lindström", date: "3 days ago", rating: 5, comment: "Great quality, fast delivery and excellent customer service..." },
+  //   { name: "John Malkovich", date: "3 days ago", rating: 5, comment: "Great quality, fast delivery and excellent customer service..." },
+  //   { name: "Teresa Holland", date: "3 days ago", rating: 5, comment: "Great quality, fast delivery and excellent customer service..." },
+  //   { name: "Michael Smith", date: "5 days ago", rating: 5, comment: "High quality, arrived on time, very satisfied with the purchase." },
+  // ];
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/reviews`);
-        setReviews(res.data);
-      } catch {
-        setReviews(dummyReviews);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchReviews();
-  }, []);
+  // useEffect(() => {
+  //   const fetchReviews = async () => {
+  //     try {
+  //       const res = await axios.get(`${import.meta.env.VITE_API_URL}/reviews`);
+  //       setReviews(res.data);
+  //     } catch {
+  //       setReviews(dummyReviews);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchReviews();
+  // }, []);
 
   const scrollLeft = () =>
     scrollRef.current?.scrollBy({ left: -320, behavior: "smooth" });
@@ -66,7 +66,7 @@ export default function ReviewsSection() {
         <div className="flex flex-col md:flex-row gap-10">
 
           {/* LEFT TEXT */}
-          <div className="w-full md:w-80">
+          {/* <div className="w-full md:w-80">
             <h2 className="text-3xl font-bold mb-2">Excellent</h2>
 
             <div className="flex items-center gap-1 mb-1">
@@ -82,7 +82,7 @@ export default function ReviewsSection() {
             <p className="text-gray-600 italic">
               All comments are from real users who purchased.
             </p>
-          </div>
+          </div> */}
 
           {/* RIGHT SECTION */}
           <div className="flex-1 min-w-0">

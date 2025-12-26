@@ -45,7 +45,7 @@ export default function BrandSlider() {
           }}
           className="!overflow-visible"
         >
-          {brands.map((brand) => (
+          {/* {brands.map((brand) => (
             <SwiperSlide key={brand.id} className="flex justify-center">
               <img
                 src={brand.img}
@@ -53,7 +53,7 @@ export default function BrandSlider() {
                 className="h-10 w-auto object-contain opacity-80 hover:opacity-100 transition"
               />
             </SwiperSlide>
-          ))}
+          ))} */}
         </Swiper>
       </div>
 
