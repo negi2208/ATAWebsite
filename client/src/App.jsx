@@ -62,7 +62,7 @@ function App() {
       </Route>
 
       {/* Admin Protected Routes */}
-      <Route element={<AdminProtectedRoute />}>
+      {/* <Route element={<AdminProtectedRoute />}> */}
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
@@ -74,7 +74,7 @@ function App() {
           <Route path="/admin/reviews" element={<Review />} />
           <Route path="/admin/profile-settings" element={<Profilesetting />} />
         </Route>
-      </Route>
+      {/* </Route> */}
 
       {/* User Protected Routes */}
       <Route element={<UserProtectedRoute />}>
