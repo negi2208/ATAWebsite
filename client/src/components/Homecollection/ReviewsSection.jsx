@@ -19,7 +19,7 @@ export default function ReviewsSection() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/reviews`);
         setReviews(res.data);
       } catch {
         setReviews(dummyReviews);

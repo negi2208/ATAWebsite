@@ -75,14 +75,14 @@ export default function AddressForm({ onNext }) {
         className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-600"
       />
 
-      <input
+      {/* <input
         type="text"
         name="landmark"
         placeholder="Landmark (Optional)"
         value={form.landmark}
         onChange={handleChange}
         className="w-full px-5 py-4 border border-gray-300 rounded-xl"
-      />
+      /> */}
 
       <button
         type="submit"

@@ -17,7 +17,7 @@ const UsersManagement = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/admin/management/user`,
+        `${import.meta.env.VITE_API_URL}/api/admin/management/user`,
         {
           params: {
             search:search,

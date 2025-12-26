@@ -21,7 +21,7 @@ const ProductManagement = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/admin/management/product`,
+        `${import.meta.env.VITE_API_URL}/api/admin/management/product`,
         {
           params: {
             search,
@@ -65,7 +65,7 @@ const ProductManagement = () => {
   const updateStatus = async (productId, newStatus) => {
     try {
       await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/admin/management/product/${productId}/status`,
+        `${import.meta.env.VITE_API_URL}/api/admin/management/product/${productId}/status`,
         { status: newStatus },
         { withCredentials: true }
       );

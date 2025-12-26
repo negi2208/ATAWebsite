@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import AddressForm from "./AddressForm";
 import OrderSummary from "./OrderSummary";
 import { ArrowRight } from "lucide-react";
+import axios from "axios";
+
 
 export default function CheckoutPage() {
   const [step, setStep] = useState(1);
@@ -23,32 +25,72 @@ export default function CheckoutPage() {
   };
 
   // Razorpay Payment
-  const payNow = () => {
+const payNow = async () => {
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/payment/create`,
+      {
+        user: {
+          full_name: address.name,
+          email: address.email 
+          ? address.email 
+          : `guest_${Date.now()}@ata.com`,
+          phone: address.phone,
+          address: `${address.address}, ${address.city} - ${address.pincode}`,
+        },
+        amount: totalAmount, 
+      }
+    );
+
+    const { key, order } = res.data;
+
+    // For mock orders, simulate payment success directly
+    if (order.id.startsWith("order_mock")) {
+      const mockResponse = {
+        razorpay_order_id: order.id,
+        razorpay_payment_id: `pay_mock_${Date.now()}`,
+        razorpay_signature: "mock_signature"
+      };
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/payment/verify`,
+        mockResponse
+      );
+      window.location.href = "/order-success";
+      return;
+    }
+
     const options = {
-      key: "rzp_test_9Bv6J1I2K3L4M5",
-      amount: totalAmount * 100,
-      currency: "INR",
+      key,                      
+      amount: order.amount,     
+      currency: order.currency,
+      order_id: order.id,
+
       name: "ATA Tires & Wheels",
-      description: "Premium Tire Purchase",
-      image: "/images/Logo/ata-logo-84.png",
-      handler: function (response) {
-        alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+      description: "Order Payment",
+
+      handler: async function (response) {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/payment/verify`,
+          response
+        );
+
         window.location.href = "/order-success";
       },
+
       prefill: {
         name: address.name,
-        contact: address.phone,
-        email: "customer@atatires.com"
-      },
-      notes: {
-        address: `${address.address}, ${address.city} - ${address.pincode}`
-      },
-      theme: { color: "#e11d48" }
+        contact: address.phone,      },
+
+      theme: { color: "#e11d48" },
     };
 
     const rzp = new window.Razorpay(options);
     rzp.open();
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Payment failed. Please try again.");
+  }
+};
 
   return (
     <>

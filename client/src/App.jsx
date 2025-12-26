@@ -11,6 +11,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ShopPage from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import OrderSuccess from "./pages/OrderSuccess";
 
 // Layouts
 import Layout from './Layout/Layout';
@@ -59,6 +60,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
       </Route>
 
       {/* Admin Protected Routes */}
