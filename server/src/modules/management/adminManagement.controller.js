@@ -1,7 +1,7 @@
 // import { getAdminDashboardService, getAllUsers, getPaymentsWithFiltersService, getAllProductsService, getProductByIdService, updateProductStatusService, getVendorByIdService, updateVendorStatusService, getAllVendorsService, getAllOrdersService, getOrderDetailsService, getPaymentCommissionService } from "../../services/admin/adminManagementService.js";
 import { successResponse, errorResponse } from "../../utils/helper.js";
 import logger from "../../config/logger.js";
-import { getAllUsers } from "./adminManagementService.js"
+import { getAllUsers, getAllProductsService, getProductByIdService } from "./adminManagement.service.js"
 // // admin dashboard Management
 // export const getAdminDashboardController = async (req, res) => {
 //   try {
@@ -16,7 +16,7 @@ import { getAllUsers } from "./adminManagementService.js"
 // // user management Controller
 export const getAllUsersController = async (req, res) => {
     try {
-        const search = req.query.search || req.query.name || req.query.email || req.query.phone || "";
+        const search = req.query.search || req.query.name || req.query.phone || req.query.address || "";
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const result = await getAllUsers({ search, page, limit });
@@ -24,10 +24,8 @@ export const getAllUsersController = async (req, res) => {
         const filteredUsers = result?.users?.map(user => ({
             id: user.id,
             name: user.name,
-            email: user.email,
             phone: user.phone,
-            city: user.city,
-            state: user.state,
+            city: user.address,
             created_at: user.created_at
         }));
 
@@ -44,109 +42,41 @@ export const getAllUsersController = async (req, res) => {
     }
 };
 
-// export const getAllVendorsController = async (req, res) => {
-//   try {
-//     const search = req.query.search || req.query.name || req.query.email || req.query.phone || "";
-//     const status = req.query.status || "all";
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 10;
+// product management Controller
+export const getAllProductsController = async (req, res) => {
+  try {
+    // Accept both search or model_name param
+    const search = req.query.search || req.query.model_name || req.query.sku || "";
+    const status = req.query.status || "all";
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
-//     const result = await getAllVendorsService({ search, status, page, limit });
+    const result = await getAllProductsService({ search, status, page, limit });
 
-//     return successResponse(res, 200, "Fetched vendors successfully", {
-//       total: result.total,
-//       page,
-//       limit,
-//       vendors: result.vendors,
-//     });
-//   } catch (error) {
-//     logger.error("Error fetching vendors:", error);
-//     return errorResponse(res, 500, error.message || "Error fetching vendors");
-//   }
-// };
+    return successResponse(res, 200, "Fetched products successfully", {
+      total: result.total,
+      page,
+      limit,
+      products: result.products,
+    });
+  } catch (error) {
+    logger.error("Error fetching products:", error);
+    return errorResponse(res, 500, error.message || "Error fetching products");
+  }
+};
 
-// // Get vendor by ID
-// export const getVendorByIdController = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const vendor = await getVendorByIdService(id);
+export const getProductByIdController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await getProductByIdService(id);
+    if (!product) return successResponse(res, 200, "No product found", null);
 
-//     if (!vendor) {
-//       return errorResponse(res, 404, "Vendor not found");
-//     }
-
-//     return successResponse(res, 200, "Vendor details fetched", vendor);
-//   } catch (error) {
-//     logger.error("Error fetching vendor:", error);
-//     return errorResponse(res, 500, error.message || "Error fetching vendor");
-//   }
-// };
-
-// // Update vendor status
-// export const updateVendorStatusController = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { status } = req.body;
-
-//     const updatedVendor = await updateVendorStatusService(id, status);
-
-//     return successResponse(res, 200, "Vendor status updated", updatedVendor);
-//   } catch (error) {
-//     logger.error("Error updating vendor status:", error);
-//     return errorResponse(res, 500, error.message || "Error updating vendor status");
-//   }
-// };
-
-// // product management Controller
-// export const getAllProductsController = async (req, res) => {
-//   try {
-//     // Accept both search or model_name param
-//     const search = req.query.search || req.query.model_name || req.query.sku || "";
-//     const status = req.query.status || "all";
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 10;
-
-//     const result = await getAllProductsService({ search, status, page, limit });
-
-//     return successResponse(res, 200, "Fetched products successfully", {
-//       total: result.total,
-//       page,
-//       limit,
-//       products: result.products,
-//     });
-//   } catch (error) {
-//     logger.error("Error fetching products:", error);
-//     return errorResponse(res, 500, error.message || "Error fetching products");
-//   }
-// };
-
-// export const getProductByIdController = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const product = await getProductByIdService(id);
-//     if (!product) return successResponse(res, 200, "No product found", null);
-
-//     return successResponse(res, 200, "Product details fetched", product);
-//   } catch (error) {
-//     logger.error("Error fetching product details:", error);
-//     return errorResponse(res, 500, error.message || "Error fetching product details");
-//   }
-// };
-
-// export const updateProductStatusController = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { status } = req.body;
-
-//     const product = await updateProductStatusService(id, status);
-//     if (!product) return successResponse(res, 200, "Product not found or invalid status", null);
-
-//     return successResponse(res, 200, `Product ${status} successfully`, product);
-//   } catch (error) {
-//     logger.error("Error updating product status:", error);
-//     return errorResponse(res, 500, error.message || "Error updating product status");
-//   }
-// };
+    return successResponse(res, 200, "Product details fetched", product);
+  } catch (error) {
+    logger.error("Error fetching product details:", error);
+    return errorResponse(res, 500, error.message || "Error fetching product details");
+  }
+};
 
 // // orders management Controller
 // export const getAllOrders = async (req, res) => {

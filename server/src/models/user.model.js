@@ -1,3 +1,6 @@
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
+
 export const User = sequelize.define(
   "users",
   {
@@ -7,10 +10,6 @@ export const User = sequelize.define(
       primaryKey: true,
     },
     full_name: DataTypes.STRING(255),
-    email: {
-      type: DataTypes.STRING(255),
-      unique: true,
-    },
     phone: {
       type: DataTypes.STRING(20),
       unique: true,

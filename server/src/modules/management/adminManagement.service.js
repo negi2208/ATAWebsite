@@ -1,4 +1,8 @@
+import { Op } from "sequelize";
 import { User } from "../../models/user.model.js";
+import { Product } from "../../models/product.model.js";
+import { ProductVariant } from "../../models/productVariant.model.js";
+import { ProductImage } from "../../models/productImage.model.js";
 // import { Vendor } from "../../models/vendorModel.js";
 // import { Product } from "../../models/productModel.js"
 // import { Order } from "../../models/orderModel.js"
@@ -55,7 +59,7 @@ import { User } from "../../models/user.model.js";
 //   }
 // };
 
-// // user management Service
+// user management Service
 export const getAllUsers = async ({ search, page, limit }) => {
   const offset = (page - 1) * limit;
 
@@ -63,8 +67,8 @@ export const getAllUsers = async ({ search, page, limit }) => {
     ? {
       [Op.or]: [
         { name: { [Op.like]: `%${search}%` } },
-        { email: { [Op.like]: `%${search}%` } },
         { phone: { [Op.like]: `%${search}%` } },
+        { address: { [Op.like]: `%${search}%` } },
       ],
     }
     : {};
@@ -73,115 +77,95 @@ export const getAllUsers = async ({ search, page, limit }) => {
     where,
     offset,
     limit,
-    order: [["created_at", "DESC"]],
+    order: [["created_at", "ASC"]],
   });
 
   return { total: count, users: rows };
 };
 
-// // vendor management Service
-// // Get all vendors with search, status filter, pagination
-// export const getAllVendorsService = async ({ search, status, page, limit }) => {
-//   const offset = (page - 1) * limit;
-//   const where = {};
 
-//   // Search filter (name, email, phone)
-//   if (search) {
-//     where[Op.or] = [
-//       { name: { [Op.like]: `%${search}%` } },
-//       { email: { [Op.like]: `%${search}%` } },
-//       { phone: { [Op.like]: `%${search}%` } },
-//     ];
-//   }
+// product management Service
+// Fetch all products with filters & pagination
+export const getAllProductsService = async ({ search, status, page, limit }) => {
+  const offset = (page - 1) * limit;
 
-//   // Status filter
-//   if (status && status.toLowerCase() !== "all") {
-//     where.status = status.toLowerCase();
-//   }
+  const where = {};
 
-//   const { count, rows } = await Vendor.findAndCountAll({
-//     where,
-//     offset,
-//     limit,
-//     order: [["created_at", "DESC"]],
-//     attributes: ["id", "name", "email", "phone", "status", "created_at"],
-//   });
+  // Search across name / part_no / variant_name / brand
+  if (search) {
+    where[Op.or] = [
+      { name: { [Op.like]: `%${search}%` } },
+      { brand: { [Op.like]: `%${search}%` } },
+      { "$variants.part_no$": { [Op.like]: `%${search}%` } },
+      { "$variants.variant_name$": { [Op.like]: `%${search}%` } },
+    ];
+  }
 
-//   return { total: count, vendors: rows };
-// };
+  // Status (is_active)
+  if (status && status.toLowerCase() !== "all") {
+    where.is_active = status.toLowerCase() === "active" ? 1 : 0;
+  }
 
-// // Get vendor by ID
-// export const getVendorByIdService = async (id) => {
-//   return Vendor.findByPk(id);
-// };
+  const { count, rows } = await Product.findAndCountAll({
+    where,
+    offset,
+    limit,
+    order: [["id", "ASC"]],
+    attributes: ["id", "name", "brand", "price"],
 
-// // Update vendor status
-// export const updateVendorStatusService = async (id, status) => {
-//   const validStatuses = ["pending", "approved", "rejected"];
-//   if (!validStatuses.includes(status.toLowerCase())) return null;
-//   const vendor = await Vendor.findByPk(id);
-//   if (!vendor) throw new Error("Vendor not found");
-//   vendor.status = status;
-//   await vendor.save();
-//   return vendor;
-// };
+    include: [
+      {
+        model: ProductVariant,
+        as: "variants",
+        attributes: ["id", "part_no", "variant_name", "color"],
+        include: [
+          {
+            model: ProductImage,
+            as: "ProductImage",
+            attributes: ["front_img", "left_img", "right_img"],
+          },
+        ],
+      },
+    ],
+  });
 
+  return { total: count, products: rows };
+};
 
-// // vendor details page
-// export const getVendorById = async (id) => {
-//   const vendor = await Vendor.findByPk(id); // Sequelize method
-//   return vendor;
-// };
+// Get product by ID
+export const getProductByIdService = async (id) => {
+  const product = await Product.findByPk(id, {
+    attributes: [
+      "id",
+      "name",
+      "brand",
+      "price",
+      "category_id",
+      "model_year",
+    ],
+    include: [
+      {
+        model: ProductVariant,
+        as: "variants",
+        attributes: [
+          "id",
+          "part_no",
+          "variant_name",
+          "color",
+        ],
+        include: [
+          {
+            model: ProductImage,
+            as: "ProductImage",
+            attributes: ["front_img", "left_img", "right_img"],
+          },
+        ],
+      },
+    ],
+  });
 
-// // product management Service
-// // Fetch all products with filters & pagination
-// export const getAllProductsService = async ({ search, status, page, limit }) => {
-//   const offset = (page - 1) * limit;
-
-//   const where = {};
-
-//   // Search filter
-//   if (search) {
-//     where[Op.or] = [
-//       { product_type: { [Op.like]: `%${search}%` } },
-//       { sku: { [Op.like]: `%${search}%` } },
-//     ];
-//   }
-
-//   // Status filter
-//   if (status && status.toLowerCase() !== "all") {
-//     where.status = status.toLowerCase();
-//   }
-
-//   const { count, rows } = await Product.findAndCountAll({
-//     where,
-//     offset,
-//     limit,
-//     order: [["created_at", "DESC"]],
-//     attributes: ["id", "sku", "product_type", "brand", "selling_price", "status"],
-//   });
-
-//   return { total: count, products: rows };
-// };
-
-// // Get product by ID
-// export const getProductByIdService = async (id) => {
-//   const product = await Product.findByPk(id);
-//   return product;
-// };
-
-// // Update product status (approve/reject)
-// export const updateProductStatusService = async (id, status) => {
-//   const validStatuses = ["pending", "approved", "rejected"];
-//   if (!validStatuses.includes(status.toLowerCase())) return null;
-
-//   const product = await Product.findByPk(id);
-//   if (!product) return null;
-
-//   product.status = status.toLowerCase();
-//   await product.save();
-//   return product;
-// };
+  return product;
+};
 
 // // orders management Service
 // export const getAllOrdersService = async ({ order_id, status, start_date, end_date, page = 1, limit = 10 }) => {
@@ -449,10 +433,10 @@ export const getAllUsers = async ({ search, page, limit }) => {
 //         fn(
 //           "SUM",
 //           literal(
-//             `CASE 
-//               WHEN payment_status = 'success' 
-//               THEN admin_commission 
-//               ELSE 0 
+//             `CASE
+//               WHEN payment_status = 'success'
+//               THEN admin_commission
+//               ELSE 0
 //             END`
 //           )
 //         ),
@@ -464,10 +448,10 @@ export const getAllUsers = async ({ search, page, limit }) => {
 //         fn(
 //           "SUM",
 //           literal(
-//             `CASE 
-//               WHEN payment_status = 'success' 
-//               THEN vendor_earning 
-//               ELSE 0 
+//             `CASE
+//               WHEN payment_status = 'success'
+//               THEN vendor_earning
+//               ELSE 0
 //             END`
 //           )
 //         ),
@@ -479,10 +463,10 @@ export const getAllUsers = async ({ search, page, limit }) => {
 //         fn(
 //           "SUM",
 //           literal(
-//             `CASE 
-//               WHEN payment_status = 'success' 
-//               THEN vendor_earning 
-//               ELSE 0 
+//             `CASE
+//               WHEN payment_status = 'success'
+//               THEN vendor_earning
+//               ELSE 0
 //             END`
 //           )
 //         ),
@@ -494,10 +478,10 @@ export const getAllUsers = async ({ search, page, limit }) => {
 //         fn(
 //           "SUM",
 //           literal(
-//             `CASE 
-//               WHEN payment_status = 'pending' 
-//               THEN amount 
-//               ELSE 0 
+//             `CASE
+//               WHEN payment_status = 'pending'
+//               THEN amount
+//               ELSE 0
 //             END`
 //           )
 //         ),
@@ -509,10 +493,10 @@ export const getAllUsers = async ({ search, page, limit }) => {
 //         fn(
 //           "SUM",
 //           literal(
-//             `CASE 
-//               WHEN payment_status = 'failed' 
-//               THEN amount 
-//               ELSE 0 
+//             `CASE
+//               WHEN payment_status = 'failed'
+//               THEN amount
+//               ELSE 0
 //             END`
 //           )
 //         ),

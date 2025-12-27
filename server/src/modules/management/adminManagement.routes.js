@@ -1,25 +1,19 @@
-// import express from "express";
+import express from "express";
 // import { getAdminDashboardController, getAllUsersController, getAllVendorsController, getVendorByIdController, updateVendorStatusController, getAllProductsController , getPaymentsController, getProductByIdController, updateProductStatusController, getAllOrders, getOrderDetails, getPaymentCommission } from "../../controllers/admin/adminManagementController.js";
+import { getAllUsersController, getAllProductsController, getProductByIdController } from "./adminManagement.controller.js"
 // import { isAdminLoginIn } from "../../middlewares/authMiddlewares.js"
 
-// const router = express.Router();
+const router = express.Router();
 
-// // dashboard
+// dashboard
 // router.get("/dashboard", getAdminDashboardController);
 
-// // users management
-// router.get("/user", getAllUsersController);
+// users management
+router.get("/user", getAllUsersController);
 
-// // vendors management
-// // router.patch('/vendors/:id', updateVendorStatusController);
-// router.get("/vendor", getAllVendorsController); // Get all vendors
-// router.get("/vendor/:id", getVendorByIdController); // Get vendor details
-// router.patch("/vendor/:id/status", updateVendorStatusController); // Update vendor status
-
-// // products management
-// router.get("/product/", getAllProductsController);
-// router.get("/product/:id", getProductByIdController);
-// router.patch("/product/:id/status", updateProductStatusController);
+// products management
+router.get("/product/", getAllProductsController);
+router.get("/product/:id", getProductByIdController);
 
 // // orders management
 // router.get("/order", getAllOrders);       
@@ -31,4 +25,4 @@
 // // payment commission
 // router.get("/payment-commission",getPaymentCommission);
 
-// export default router;
+export default router;

@@ -1,31 +1,16 @@
-export const Payment = sequelize.define("payments", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
 
-  order_id: { type: DataTypes.INTEGER, allowNull: false },
-
-  razorpay_order_id: { type: DataTypes.STRING, allowNull: false },
-
-  razorpay_payment_id: { type: DataTypes.STRING },
-
-  razorpay_signature: { type: DataTypes.STRING },
-
-  amount: {
-    type: DataTypes.INTEGER, // paisa
-    allowNull: false,
+export const Product = sequelize.define(
+  "Product",
+  {
+    id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
+    name: { type: DataTypes.STRING(200), allowNull: false },
+    category_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: false },
+    brand: { type: DataTypes.STRING(50), allowNull: false },
+    price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
+    model_year: { type: DataTypes.STRING(20) },
+    is_active: { type: DataTypes.TINYINT, defaultValue: 1 },
   },
-
-  currency: {
-    type: DataTypes.STRING,
-    defaultValue: "INR",
-  },
-
-  status: {
-    type: DataTypes.ENUM(
-      "CREATED",
-      "SUCCESS",
-      "FAILED",
-      "REFUNDED"
-    ),
-    defaultValue: "CREATED",
-  },
-});
+  { tableName: "products", timestamps: true }
+);

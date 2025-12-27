@@ -1,15 +1,20 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
+import { Product } from "./product.model.js";
 
 export const ProductVariant = sequelize.define(
-  "product_variants",
+  "ProductVariant",
   {
     id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
-    product_id: DataTypes.BIGINT.UNSIGNED,
-    part_no: { type: DataTypes.STRING(30), unique: true },
-    variant_name: DataTypes.STRING(200),
-    color: DataTypes.STRING(80),
+    product_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: false },
+    part_no: { type: DataTypes.STRING(30), allowNull: false, unique: true },
+    variant_name: { type: DataTypes.STRING(200) },
+    color: { type: DataTypes.STRING(80) },
     is_active: { type: DataTypes.TINYINT, defaultValue: 1 },
   },
-  { timestamps: true, createdAt: "created_at", updatedAt: "updated_at" }
+  { tableName: "product_variants", timestamps: true }
 );
+
+// relations
+Product.hasMany(ProductVariant, { foreignKey: "product_id", as: "variants" });
+ProductVariant.belongsTo(Product, { foreignKey: "product_id",  as: "product" });
