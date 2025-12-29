@@ -10,4 +10,5 @@ export const Order = sequelize.define("orders", {
   order_status: {
     type: DataTypes.ENUM("PLACED","CONFIRMED","SHIPPED","DELIVERED","CANCELLED")
   }
-});
+},
+ { tableName: "orders", timestamps: true, createdAt: "created_at", updatedAt: false });

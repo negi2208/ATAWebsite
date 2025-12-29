@@ -3,14 +3,36 @@ import {
   addToCart,
   getCart,
   updateCartItem,
-  removeCartItem
+  removeCartItem,
 } from "./cart.controller.js";
+
+import { validate } from "../../middlewares/validate.js";
+import {
+  addToCartSchema,
+  getCartSchema,
+  updateCartItemSchema,
+} from "./cart.validation.js";
 
 const router = express.Router();
 
-router.post("/add", addToCart);
-router.get("/", getCart);
-router.put("/update", updateCartItem);
+router.post(
+  "/add",
+  validate(addToCartSchema),
+  addToCart
+);
+
+router.get(
+  "/",
+  validate(getCartSchema, "query"),
+  getCart
+);
+
+router.put(
+  "/update",
+  validate(updateCartItemSchema),
+  updateCartItem
+);
+
 router.delete("/remove/:id", removeCartItem);
 
 export default router;

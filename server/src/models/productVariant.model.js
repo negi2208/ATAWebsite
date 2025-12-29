@@ -12,7 +12,7 @@ export const ProductVariant = sequelize.define(
     color: { type: DataTypes.STRING(80) },
     is_active: { type: DataTypes.TINYINT, defaultValue: 1 },
   },
-  { tableName: "product_variants", timestamps: true }
+  { tableName: "product_variants", timestamps: true, createdAt: "created_at", updatedAt: false  }
 );
 
 // relations

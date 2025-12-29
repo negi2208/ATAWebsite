@@ -1,6 +1,8 @@
 // src/components/Product/RelatedProducts.jsx
 import React from "react";
 import { Heart } from "lucide-react";
+import { addToWishlist } from "../../utils/Addwishlist";
+import { toast } from "react-hot-toast";
 
 export default function RelatedProducts() {
   const related = [
@@ -10,6 +12,14 @@ export default function RelatedProducts() {
     { name: "Catalytic Cleaner", price: 2118, old: 3845, off: "45%" },
      { name: "Catalytic Cleaner", price: 2118, old: 3845, off: "45%" },
   ];
+const handleWishlist = async () => {
+  try {
+    await addToWishlist(product.id);
+    toast.success("Added to wishlist ❤️");
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to add to wishlist");
+  }
+};
 
   return (
     <div className="mt-16">
@@ -22,9 +32,9 @@ export default function RelatedProducts() {
               <span className="absolute top-2 left-2 bg-primary-600 text-white text-xs px-2 py-1 rounded">
                 {p.off} OFF
               </span>
-              <button className="absolute top-2 right-2 p-2 bg-white rounded-full shadow">
+              {/* <button onClick={handleWishlist} className="absolute top-2 right-2 p-2 bg-white rounded-full shadow">
                 <Heart className="w-5 h-5" />
-              </button>
+              </button> */}
             </div>
             <div className="p-3">
               <p className="text-sm line-clamp-2 mb-2">{p.name}</p>

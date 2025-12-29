@@ -31,4 +31,7 @@ export const Payment = sequelize.define("payments", {
     ),
     defaultValue: "CREATED",
   },
-});
+  
+},
+ { tableName: "payments", timestamps: true, createdAt: true, updatedAt: true }
+);

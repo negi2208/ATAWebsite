@@ -1,20 +1,61 @@
-import { useRef } from "react";
-import { Heart } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { Heart, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { addToWishlist } from "../../utils/Addwishlist";
+import { toast } from "react-hot-toast";
 
 export default function BestSeller() {
   const scrollRef = useRef(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const products = [
-    { id: 1, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 7 Retro", subtitle: "Pure Money", price: 1499 },
-    { id: 2, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 1 Retro High OG FK", subtitle: "\"Banned\"", price: 1249 },
-    { id: 3, image: "images/bestseller/bestseller-demo.webp", title: "Jordan Spiz'ike", subtitle: "Poison", price: 1249 },
-    { id: 4, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 4 Retro", subtitle: "\"Black Cat\"", price: 1899 },
-    { id: 5, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 11 Retro", subtitle: "\"Space Jam\"", price: 2199 },
-    { id: 6, image: "images/bestseller/bestseller-demo.webp", title: "Air Jordan 1 Low", subtitle: "\"Travis Scott\"", price: 3499 },
-  ];
+  useEffect(() => {
+    const fetchBestsellers = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/bestsellers?limit=10`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch bestsellers');
+        }
+        const data = await response.json();
+        if (data.success) {
+          setProducts(data.data);
+        } else {
+          throw new Error(data.message || 'Failed to fetch bestsellers');
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBestsellers();
+  }, []);
 
   const scrollLeft = () => scrollRef.current?.scrollBy({ left: -380, behavior: "smooth" });
   const scrollRight = () => scrollRef.current?.scrollBy({ left: 380, behavior: "smooth" });
+
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+          <Loader2 className="animate-spin mx-auto w-8 h-8 text-primary-700" />
+          <p className="mt-4 text-gray-600">Loading bestsellers...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+          <p className="text-red-600">Error loading bestsellers: {error}</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 md:py-24 bg-gray-50">
@@ -89,6 +130,15 @@ export default function BestSeller() {
 }
 
 function ProductCard({ product }) {
+  const handleWishlist = async () => {
+  try {
+    await addToWishlist(product.id);
+    toast.success("Added to wishlist ❤️");
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to add to wishlist");
+  }
+};
+
   return (
     <div className="
       group 
@@ -100,9 +150,9 @@ function ProductCard({ product }) {
     ">
 
       {/* Heart Icon */}
-      <button className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
+      {/* <button onClick={handleWishlist} className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
         <Heart className="w-6 h-6 md:w-7 md:h-7 text-gray-600 hover:text-red-600 hover:fill-red-600 transition" />
-      </button>
+      </button> */}
 
       {/* PRODUCT IMAGE */}
       <div className="flex justify-center items-center 
@@ -141,9 +191,12 @@ function ProductCard({ product }) {
           Add to Cart
         </button> */}
 
-        <button className="text-primary-700 font-semibold text-xs sm:text-sm ">
+        <Link 
+          to={`/product/${product.id}`}
+          className="text-primary-700 font-semibold text-xs sm:text-sm hover:underline"
+        >
           QUICK VIEW
-        </button>
+        </Link>
 
       </div>
 

@@ -15,7 +15,7 @@ export default function UserSidebar() {
     { icon: Package, label: "Orders", path: "/user/orders" },
     { icon: ShoppingBag, label: "Track Orders", path: "/user/track" },
     { icon: User, label: "Profile", path: "/user/profile" },
-    { icon: Heart, label: "Wishlist", path: "/user/wishlist" },
+    // { icon: Heart, label: "Wishlist", path: "/user/wishlist" },
     { icon: MessageCircle, label: "Support", path: "/user/support" },
     { icon: Star, label: "Reviews", path: "/user/reviews" },
   ];

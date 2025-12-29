@@ -1,5 +1,10 @@
+import { sequelize } from "../../config/database.js";
+import { Cart } from "../../models/cart.model.js";
+import { Order } from "../../models/order.model.js";
+import { OrderItem } from "../../models/orderItem.model.js";
 import { Payment } from "../../models/payment.model.js";
 import { User } from "../../models/user.model.js";
+import { OrderService } from "../order/order.service.js";
 import {
   createPaymentOrder,
   verifyPayment,
@@ -9,27 +14,38 @@ import {
 
 export const placeOrder = async (req, res) => {
   try {
-    const { user, amount } = req.body;
+    const { user, amount, guest_token } = req.body;
 
-    let userId;
+    let finalUser;
+
     if (!user?.id) {
-      const newUser = await User.create({
+      finalUser = await User.create({
         full_name: user.full_name,
         phone: user.phone,
         address: user.address,
         status: 1,
       });
-      userId = newUser.id;
+
+      await Cart.update(
+        { user_id: finalUser.id },
+        {
+          where: {
+            guest_token,
+            status: "ACTIVE",
+          },
+        }
+      );
     } else {
-      userId = user.id;
+      finalUser = await User.findByPk(user.id);
     }
 
-    const razorpayOrder = await createPaymentOrder(userId, amount);
+    const razorpayOrder = await createPaymentOrder(finalUser.id, amount);
 
-    res.json({
+    return res.json({
       success: true,
-      key: process.env.RAZORPAY_KEY_ID, // ✅ REQUIRED
+      key: process.env.RAZORPAY_KEY_ID,
       order: razorpayOrder,
+      user_id: finalUser.id,
     });
   } catch (err) {
     console.error("Error in placeOrder:", err);
@@ -37,24 +53,57 @@ export const placeOrder = async (req, res) => {
   }
 };
 
-
 export const confirmPayment = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      user_id,
+      guest_token,
+    } = req.body;
 
-    const isValid = await verifyPayment({ razorpay_order_id, razorpay_payment_id, razorpay_signature });
+    // 1️⃣ Verify Razorpay signature
+    const isValid = verifyPayment({
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    });
 
     if (!isValid) {
       await updatePaymentStatus(razorpay_order_id, "FAILED");
-      return res.status(400).json({ success: false, message: "Payment verification failed" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment",
+      });
     }
 
-    const payment = await updatePaymentStatus(razorpay_order_id, "SUCCESS", razorpay_payment_id, razorpay_signature);
+    // 2️⃣ Create order FROM CART (🔥 FIX)
+    const order = await OrderService.createFromCart({
+      user_id,
+      guest_token,
+      
+    });
 
-    res.json({ success: true, message: "Payment successful", payment });
+    // 3️⃣ Update payment status
+    await updatePaymentStatus(
+      razorpay_order_id,
+      "SUCCESS",
+      razorpay_payment_id,
+      razorpay_signature
+    );
+
+    return res.json({
+      success: true,
+      order_id: order.id,
+      message: "Order placed successfully",
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("CONFIRM PAYMENT ERROR:", err);
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 

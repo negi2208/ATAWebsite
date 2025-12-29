@@ -5,6 +5,8 @@ import cors from "cors";
 import paymentRoutes from "./modules/payment/payment.route.js";
 import categoryRoutes from "./modules/category/category.routes.js";
 import productRoutes from "./modules/product/product.route.js";
+import wishlistRoutes from "./modules/wishlist/wishlist.route.js";
+import cartRoutes from "./modules/cart/cart.route.js";
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.use(
 app.use("/api/payment", paymentRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/cart", cartRoutes);
 
 // health check
 app.get("/health", (req, res) => {

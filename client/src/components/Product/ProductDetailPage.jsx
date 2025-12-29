@@ -1,31 +1,101 @@
 // src/components/Product/ProductDetailPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import ImageGallery from "./ImageGallery";
 import QuantitySelector from "./QuantitySelector";
 import RelatedProducts from "./RelatedProducts";
 import ReviewSection from "./ReviewSection"; // YE IMPORT KIYA
-import { Heart, Truck, Shield } from "lucide-react";
+import { Heart, Truck, Shield, Loader2 } from "lucide-react";
+import { addToWishlist } from "../../utils/Addwishlist";
+import { toast } from "react-hot-toast";
+
 
 export default function ProductDetailPage() {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
 
-  const product = {
-    name: "Castrol GTX High Mileage 5W-30 Synthetic Blend Motor Oil, 5 Quarts",
-    sku: "MN020WGB",
-    rating: 4.3,
-    reviews: 124,
-    price: 4116,
-    oldPrice: 5777,
-    discount: 29,
-    images: [
-      "/images/bestseller/bestseller-back.webp",
-      "/images/bestseller/bestseller-demo.webp",
-      "/images/bestseller/bestseller-back.webp",
-      "/images/bestseller/bestseller-demo.webp",
-      "/images/bestseller/bestseller-back.webp"
-    ]
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/${id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch product');
+        }
+        const data = await response.json();
+        if (data.success) {
+          setProduct(data.data);
+        } else {
+          throw new Error(data.message || 'Failed to fetch product');
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProduct();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4 text-center">
+          <Loader2 className="animate-spin mx-auto w-8 h-8 text-primary-700" />
+          <p className="mt-4 text-gray-600">Loading product...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-red-600">Error: {error || 'Product not found'}</p>
+        </div>
+      </section>
+    );
+  }
+
+  // Collect all images from variants
+  const allImages = [];
+  if (product.ProductVariants) {
+    product.ProductVariants.forEach(variant => {
+      if (variant.ProductImages) {
+        variant.ProductImages.forEach(img => {
+          if (img.front_img) allImages.push(img.front_img);
+          if (img.left_img) allImages.push(img.left_img);
+          if (img.right_img) allImages.push(img.right_img);
+        });
+      }
+    });
+  }
+
+  const productData = {
+    name: product.name,
+    sku: product.id, // or some sku
+    rating: 4.3, // hardcoded for now
+    reviews: 124, // hardcoded
+    price: product.price,
+    oldPrice: null, // hardcoded
+    discount: null, // hardcoded
+    images: allImages.length > 0 ? allImages : ["/images/placeholder.webp"], // fallback
   };
+const handleWishlist = async () => {
+  try {
+    await addToWishlist(product.id);
+    toast.success("Added to wishlist ❤️");
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to add to wishlist");
+  }
+};
 
   return (
     <>
@@ -33,8 +103,8 @@ export default function ProductDetailPage() {
       <section className="bg-gray-100 py-4 border-b">
         <div className="container mx-auto px-4 text-sm text-gray-600">
           <a href="/" className="hover:text-primary-600">Home</a> / 
-          <a href="/shop" className="hover:text-primary-600 ml-1">Oils and fluids</a> / 
-          <span className="ml-1 text-gray-900 font-medium">{product.name}</span>
+          <a href="/shop" className="hover:text-primary-600 ml-1">{product.category?.name || 'Shop'}</a> / 
+          <span className="ml-1 text-gray-900 font-medium">{productData.name}</span>
         </div>
       </section>
 
@@ -45,13 +115,13 @@ export default function ProductDetailPage() {
             
             {/* LEFT: Image Gallery */}
             <div className="order-2 lg:order-1">
-              <ImageGallery images={product.images} discount={product.discount} />
+              <ImageGallery images={productData.images} discount={productData.discount} />
             </div>
 
             {/* RIGHT: Product Details */}
             <div className="order-1 lg:order-2">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-                {product.name}
+                {productData.name}
               </h1>
 
               {/* Rating + SKU + Wishlist */}
@@ -60,26 +130,27 @@ export default function ProductDetailPage() {
                   <div className="flex items-center gap-2">
                     <div className="flex text-yellow-400">
                       {[...Array(5)].map((_, i) => (
-                        <span key={i} className={i < Math.floor(product.rating) ? "fill-yellow-400" : ""}>★</span>
+                        <span key={i} className={i < Math.floor(productData.rating) ? "fill-yellow-400" : ""}>★</span>
                       ))}
                     </div>
-                    <span className="font-medium text-gray-700">{product.rating}</span>
-                    <span className="text-gray-500">({product.reviews} reviews)</span>
+                    <span className="font-medium text-gray-700">{productData.rating}</span>
+                    <span className="text-gray-500">({productData.reviews} reviews)</span>
                   </div>
-                  <span className="text-gray-500">SKU: {product.sku}</span>
+                  <span className="text-gray-500">SKU: {productData.sku}</span>
                 </div>
 
-                <button className="flex items-center gap-2 text-gray-600 hover:text-red-600 transition whitespace-nowrap">
+                {/* <button onClick={handleWishlist} className="flex items-center gap-2 text-gray-600 hover:text-red-600 transition whitespace-nowrap">
                   <Heart className="w-5 h-5" />
                   <span className="font-medium hover:underline">Add to wishlist</span>
-                </button>
+                </button> */}
               </div>
 
               {/* Price */}
               <div className="flex items-baseline gap-4 mb-6">
-                <span className="text-4xl font-bold text-green-600">₹{product.price.toLocaleString("en-IN")}</span>
-                <span className="text-2xl text-gray-500 line-through">₹{product.oldPrice.toLocaleString("en-IN")}</span>
-
+                <span className="text-4xl font-bold text-green-600">{productData.price.toLocaleString()} kr.</span>
+                {productData.oldPrice && (
+                  <span className="text-2xl text-gray-500 line-through">{productData.oldPrice.toLocaleString()} kr.</span>
+                )}
               </div>
 
               {/* Quantity + Add to Cart */}
@@ -95,8 +166,8 @@ export default function ProductDetailPage() {
 
               {/* Category & Brand */}
               <div className="mt-8 text-sm text-gray-600 space-y-1 border-t pt-6">
-                <p><strong>Category:</strong> Oils and fluids</p>
-                <p><strong>Brand:</strong> Castrol</p>
+                <p><strong>Category:</strong> {product.category?.name || 'N/A'}</p>
+                <p><strong>Brand:</strong> {product.brand || 'N/A'}</p>
               </div>
             </div>
           </div>

@@ -43,7 +43,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard title="Total Orders" value={user.totalOrders} icon={Package} color="text-pink-600" />
           <StatsCard title="Pending Orders" value={user.pendingOrders} icon={Clock} color="text-yellow-600" />
-          <StatsCard title="Wishlist Items" value={user.wishlistItems} icon={Heart} color="text-purple-600" />
+          {/* <StatsCard title="Wishlist Items" value={user.wishlistItems} icon={Heart} color="text-purple-600" /> */}
           <StatsCard title="Support Tickets" value={user.supportTickets} icon={Headphones} color="text-green-600" />
         </div>
 

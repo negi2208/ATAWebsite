@@ -27,51 +27,43 @@ export default function CheckoutPage() {
   // Razorpay Payment
 const payNow = async () => {
   try {
+    // 1️⃣ Call create payment API
     const res = await axios.post(
       `${import.meta.env.VITE_API_URL}/api/payment/create`,
       {
         user: {
           full_name: address.name,
-          email: address.email 
-          ? address.email 
-          : `guest_${Date.now()}@ata.com`,
           phone: address.phone,
           address: `${address.address}, ${address.city} - ${address.pincode}`,
         },
-        amount: totalAmount, 
+        amount: totalAmount,
+        guest_token: localStorage.getItem("guest_token"),
       }
     );
 
-    const { key, order } = res.data;
+    const { key, order, user_id } = res.data;
 
-    // For mock orders, simulate payment success directly
-    if (order.id.startsWith("order_mock")) {
-      const mockResponse = {
-        razorpay_order_id: order.id,
-        razorpay_payment_id: `pay_mock_${Date.now()}`,
-        razorpay_signature: "mock_signature"
-      };
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/payment/verify`,
-        mockResponse
-      );
-      window.location.href = "/order-success";
-      return;
-    }
-
+    // 2️⃣ Open Razorpay Checkout
     const options = {
-      key,                      
-      amount: order.amount,     
-      currency: order.currency,
+      key,
       order_id: order.id,
+      amount: order.amount,
+      currency: order.currency,
 
       name: "ATA Tires & Wheels",
       description: "Order Payment",
 
       handler: async function (response) {
+        // 3️⃣ Verify payment + create order
         await axios.post(
           `${import.meta.env.VITE_API_URL}/api/payment/verify`,
-          response
+          {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            user_id, 
+            guest_token: localStorage.getItem("guest_token"),
+          }
         );
 
         window.location.href = "/order-success";
@@ -79,7 +71,8 @@ const payNow = async () => {
 
       prefill: {
         name: address.name,
-        contact: address.phone,      },
+        contact: address.phone,
+      },
 
       theme: { color: "#e11d48" },
     };
@@ -91,6 +84,7 @@ const payNow = async () => {
     alert("Payment failed. Please try again.");
   }
 };
+
 
   return (
     <>
