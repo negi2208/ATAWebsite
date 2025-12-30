@@ -36,9 +36,9 @@ import ResetPassword from './pages/AdminAuth/ResetPassword.jsx';
 import AdminDashboard from './components/AdminPanel/AdminDashboard.jsx';
 import AdminUsers from "./components/AdminPanel/UserManagement.jsx";
 import AdminProduct from "./components/AdminPanel/AdminProduct.jsx";
+import AdminProductDetails from "./components/AdminPanel/AdminProductDetails.jsx"
 import AdminOrder from "./components/AdminPanel/AdminOrder.jsx";
 import AdminPayments from "./components/AdminPanel/Payments.jsx";
-import Review from "./components/AdminPanel/Review.jsx";
 import Profilesetting from "./components/AdminPanel/ProfileSettings.jsx";
 
 // IMPORT THE PROTECTED ROUTES
@@ -69,11 +69,10 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/products" element={<AdminProduct />} />
-          <Route path="/admin/products/:productId" element={<AdminProduct />} />
+          <Route path="/admin/products/:productId" element={<AdminProductDetails />} />
           <Route path="/admin/orders" element={<AdminOrder />} />
           <Route path="/admin/orders/:orderId" element={<AdminOrder />} />
           <Route path="/admin/payments" element={<AdminPayments />} />
-          <Route path="/admin/reviews" element={<Review />} />
           <Route path="/admin/profile-settings" element={<Profilesetting />} />
         </Route>
       {/* </Route> */}

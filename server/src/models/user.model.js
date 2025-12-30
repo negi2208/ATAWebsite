@@ -10,7 +10,10 @@ export const User = sequelize.define(
       primaryKey: true,
     },
     full_name: DataTypes.STRING(255),
-    phone: DataTypes.STRING(20),
+    phone: {
+      type: DataTypes.STRING(20),
+      unique: true,
+    },
     address: DataTypes.TEXT,
     status: {
       type: DataTypes.TINYINT,

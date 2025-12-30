@@ -2,8 +2,10 @@ import express from "express";
 import cors from "cors";
 
 // import productRoutes from "./modules/product/product.route.js";
+import adminRoutes from "./modules/auth/admin.routes.js";
 import paymentRoutes from "./modules/payment/payment.route.js";
 import categoryRoutes from "./modules/category/category.routes.js";
+import adminManagementRoutes from "./modules/management/adminManagement.routes.js"
 import productRoutes from "./modules/product/product.route.js";
 import wishlistRoutes from "./modules/wishlist/wishlist.route.js";
 import cartRoutes from "./modules/cart/cart.route.js";
@@ -24,8 +26,10 @@ app.use(
 
 // routes
 // app.use("/api/products", productRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/management", adminManagementRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/cart", cartRoutes);

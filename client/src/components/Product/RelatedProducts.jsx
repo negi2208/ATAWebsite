@@ -8,7 +8,7 @@ import { getGuestToken } from "../../utils/guest";
 
 
 const getProductImage = (product) => {
-  const variant = product.ProductVariants?.[0];
+  const variant = product.variants?.[0];
   const img = variant?.ProductImage;
 
   return (
@@ -68,8 +68,8 @@ export default function RelatedProducts() {
       ...(user_id ? { user_id } : { guest_token }),
     };
 
-    if (product.ProductVariants?.[0]?.id) {
-      payload.variant_id = product.ProductVariants[0].id;
+    if (product.variants?.[0]?.id) {
+      payload.variant_id = product.variants[0].id;
     }
 
     await axios.post(

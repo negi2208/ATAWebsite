@@ -24,12 +24,14 @@ export const ProductService = {
         },
         {
           model: ProductVariant,
+          as: "variants",
           attributes: ["id", "variant_name", "color"],
           where: { is_active: 1 },
           required: false, // product without variant should still show
           include: [
             {
               model: ProductImage,
+              as: "ProductImage",
               attributes: ["front_img", "left_img", "right_img"],
               required: false,
             },
@@ -53,11 +55,13 @@ export const ProductService = {
         {
           model: ProductVariant,
           attributes: ["id", "variant_name", "color", "part_no"],
+          as: "variants",
           where: { is_active: 1 },
           required: false,
           include: [
             {
               model: ProductImage,
+              as: "ProductImage",
               attributes: ["front_img", "left_img", "right_img"],
               required: false,
             },
@@ -118,9 +122,9 @@ export const ProductService = {
         where(fn("LOWER", col("category.slug")), { [Op.like]: like }),
 
         // VARIANTS
-        where(fn("LOWER", col("ProductVariants.variant_name")), { [Op.like]: like }),
-        where(fn("LOWER", col("ProductVariants.color")), { [Op.like]: like }),
-        where(fn("LOWER", col("ProductVariants.part_no")), { [Op.like]: like }),
+        where(fn("LOWER", col("variants.variant_name")), { [Op.like]: like }),
+        where(fn("LOWER", col("variants.color")), { [Op.like]: like }),
+        where(fn("LOWER", col("variants.part_no")), { [Op.like]: like }),
 
         // PRICE (numeric but searchable)
         where(col("Product.price"), { [Op.like]: like }),
@@ -142,12 +146,14 @@ export const ProductService = {
       },
       {
         model: ProductVariant,
+        as: "variants", 
         required: false,
         attributes: ["id", "variant_name", "color", "part_no"],
         where: { is_active: 1 },
         include: [
           {
             model: ProductImage,
+            as: "ProductImage",
             attributes: ["front_img", "left_img", "right_img"],
             required: false,
           },
@@ -182,9 +188,11 @@ export const ProductService = {
       {
         model: ProductVariant,
         attributes: ["id"],
+        as: "variants", 
         include: [
           {
             model: ProductImage,
+            as: "ProductImage",
             attributes: ["front_img", "left_img", "right_img"],
           },
         ],

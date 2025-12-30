@@ -54,11 +54,13 @@ export const CartService = {
               include: [
                 {
                   model: ProductVariant,
+                  as: "variants",
                   attributes: ["id", "variant_name", "color"],
                   required: false,
                   include: [
                     {
                       model: ProductImage,
+                      as: "ProductImage",
                       attributes: ["front_img", "left_img", "right_img"],
                       required: false,
                     },

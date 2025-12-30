@@ -15,5 +15,5 @@ export const ProductImage = sequelize.define(
 );
 
 // relations
-ProductVariant.hasOne(ProductImage, { foreignKey: "variant_id" });
-ProductImage.belongsTo(ProductVariant, { foreignKey: "variant_id" });
+ProductVariant.hasOne(ProductImage, { foreignKey: "variant_id", as: "ProductImage" });
+ProductImage.belongsTo(ProductVariant, { foreignKey: "variant_id", as: "variant" });

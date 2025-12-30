@@ -72,8 +72,8 @@ export default function ProductDetailPage() {
   // Collect all images from variants
     const allImages = [];
 
-    if (product.ProductVariants?.length > 0) {
-      const img = product.ProductVariants[0].ProductImage;
+    if (product.variants?.length > 0) {
+      const img = product.variants[0].ProductImage;
 
       if (img?.front_img) allImages.push(img.front_img);
       if (img?.left_img) allImages.push(img.left_img);
@@ -111,8 +111,8 @@ const handleAddToCart = async () => {
       ...(user_id ? { user_id } : { guest_token }),
     };
 
-    if (product.ProductVariants?.[0]?.id) {
-      payload.variant_id = product.ProductVariants[0].id;
+    if (product.variants?.[0]?.id) {
+      payload.variant_id = product.variants[0].id;
     }
 
     const res = await axios.post(

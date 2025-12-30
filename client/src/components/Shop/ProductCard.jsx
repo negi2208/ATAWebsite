@@ -13,11 +13,11 @@ export default function ProductCard({ product }) {
   const [adding, setAdding] = useState(false);
 
 
-  const images = product?.ProductVariants?.[0]?.ProductImage
+  const images = product?.variants?.[0]?.ProductImage
     ? [
-        product.ProductVariants[0].ProductImage.front_img,
-        product.ProductVariants[0].ProductImage.left_img,
-        product.ProductVariants[0].ProductImage.right_img,
+        product.variants[0].ProductImage.front_img,
+        product.variants[0].ProductImage.left_img,
+        product.variants[0].ProductImage.right_img,
       ].filter(Boolean)
     : [];
 
@@ -46,7 +46,7 @@ export default function ProductCard({ product }) {
         `${import.meta.env.VITE_API_URL}/api/cart/add`,
         {
           product_id: product.id,
-          variant_id: product.ProductVariants?.[0]?.id, // first variant
+          variant_id: product.variants?.[0]?.id, // first variant
           quantity: 1,
           ...(user_id ? { user_id } : { guest_token }),
         }

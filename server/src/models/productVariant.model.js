@@ -16,5 +16,5 @@ export const ProductVariant = sequelize.define(
 );
 
 // relations
-Product.hasMany(ProductVariant, { foreignKey: "product_id" });
-ProductVariant.belongsTo(Product, { foreignKey: "product_id" });
+Product.hasMany(ProductVariant, { foreignKey: "product_id", as: "variants" });
+ProductVariant.belongsTo(Product, { foreignKey: "product_id",  as: "product" });

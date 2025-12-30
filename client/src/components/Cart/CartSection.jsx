@@ -109,11 +109,11 @@ export default function CartSection() {
                 <CartImageSlider
                   alt={item.product?.name}
                   images={
-                    item.product?.ProductVariants?.[0]?.ProductImage
+                    item.product?.variants?.[0]?.ProductImage
                       ? [
-                        item.product.ProductVariants[0].ProductImage.front_img,
-                        item.product.ProductVariants[0].ProductImage.left_img,
-                        item.product.ProductVariants[0].ProductImage.right_img,
+                        item.product.variants[0].ProductImage.front_img,
+                        item.product.variants[0].ProductImage.left_img,
+                        item.product.variants[0].ProductImage.right_img,
                       ].filter(Boolean)
                       : []
                   }
