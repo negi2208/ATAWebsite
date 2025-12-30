@@ -20,7 +20,7 @@ const ProductDetails = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/admin/management/product/${productId}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/management/product/${productId}`,
         { withCredentials: true }
       );
       const { success, data, message } = res.data;

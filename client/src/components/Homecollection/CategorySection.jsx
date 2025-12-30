@@ -74,7 +74,7 @@ export default function CategorySection() {
             {[...categories, ...categories].map((cat, index) => (
               <a
                 key={`${cat.id}-${index}`}
-                href={`/category/${cat.slug}`}
+                href="/shop"
                 className="flex-shrink-0 w-64 snap-center group/item"
               >
                 {/* Main Card */}

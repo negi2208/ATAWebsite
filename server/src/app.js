@@ -5,6 +5,7 @@ import cors from "cors";
 import paymentRoutes from "./modules/payment/payment.route.js";
 import categoryRoutes from "./modules/category/category.routes.js";
 import adminManagementRoutes from "./modules/management/adminManagement.routes.js"
+import productRoutes from "./modules/product/product.route.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(
 app.use("/api/payment", paymentRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/management", adminManagementRoutes);
+app.use("/api/product", productRoutes);
 
 // health check
 app.get("/health", (req, res) => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Eye, Download } from "lucide-react";
 import axios from "axios";
 import * as XLSX from "xlsx";
-// import toast from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
@@ -21,7 +21,7 @@ const Payments = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/admin/management/payment`,
+        `${import.meta.env.VITE_API_URL}/api/admin/management/payment`,
         {
           params: {
             transaction_id: transactionId, // ✅ backend expects this name

@@ -17,7 +17,7 @@ const ReviewsManagement = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/user/review`,
+        `${import.meta.env.VITE_API_URL}/api/user/review`,
         {
           params: {
             search: search.trim(),
@@ -60,7 +60,7 @@ const ReviewsManagement = () => {
 
     try {
       const res = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/user/review/${reviewId}`,
+        `${import.meta.env.VITE_API_URL}/api/user/review/${reviewId}`,
         { withCredentials: true }
       );
 

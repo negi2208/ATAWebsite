@@ -30,7 +30,7 @@ const AdminDashboard = () => {
   const fetchAdminDashboard = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/management/dashboard`, { withCredentials: true });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/management/dashboard`, { withCredentials: true });
 
       const { success, data, message } = res?.data;
       // console.log(data)

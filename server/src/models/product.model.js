@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
+import { Category } from "./category.model.js";
 
 export const Product = sequelize.define(
   "Product",
@@ -12,5 +13,7 @@ export const Product = sequelize.define(
     model_year: { type: DataTypes.STRING(20) },
     is_active: { type: DataTypes.TINYINT, defaultValue: 1 },
   },
-  { tableName: "products", timestamps: true }
+   { timestamps: true, createdAt: "created_at", updatedAt: false }
 );
+
+Product.belongsTo(Category, { foreignKey: 'category_id', as: 'category' });

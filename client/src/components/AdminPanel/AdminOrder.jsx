@@ -21,7 +21,7 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/management/order`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/management/order`, {
         params: {
           order_id:search,
           status: statusFilter,

@@ -69,14 +69,18 @@ export default function BestSeller() {
           {/* Slider */}
           <div
             ref={scrollRef}
-            className="overflow-x-auto scrollbar-hide scroll-smooth"
-          >
-            <div className="flex gap-6 md:gap-12 justify-start md:justify-center py-8 md:py-12 min-w-max">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
+           className="overflow-x-auto scroll-smooth 
+             scrollbar-hide 
+             [-ms-overflow-style:none] 
+             [scrollbar-width:none] 
+             [&::-webkit-scrollbar]:hidden"
+>
+          <div className="flex gap-6 md:gap-12 justify-start md:justify-center py-8 md:py-12 min-w-max">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  </div>
 
         </div>
       </div>
@@ -132,10 +136,10 @@ function ProductCard({ product }) {
       <div className="flex justify-center items-center gap-3 sm:gap-4 mt-4 sm:mt-6 
                       opacity-0 group-hover:opacity-100 transition-all duration-500">
 
-        <button className="bg-primary-700 text-white px-5 sm:px-8 py-2 sm:py-3 rounded-full font-semibold text-xs sm:text-sm 
+        {/* <button className="bg-primary-700 text-white px-5 sm:px-8 py-2 sm:py-3 rounded-full font-semibold text-xs sm:text-sm 
                            hover:bg-primary-800 transition shadow">
           Add to Cart
-        </button>
+        </button> */}
 
         <button className="text-primary-700 font-semibold text-xs sm:text-sm ">
           QUICK VIEW

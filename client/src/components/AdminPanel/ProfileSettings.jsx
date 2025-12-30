@@ -23,7 +23,7 @@ const ProfileSettings = () => {
     const fetchAdmin = async () => {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/admin/profile`,
+          `${import.meta.env.VITE_API_URL}/api/admin/profile`,
           { withCredentials: true }
         );
 
@@ -68,7 +68,7 @@ const ProfileSettings = () => {
 
     try {
       const { data } = await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/admin/profile`,
+        `${import.meta.env.VITE_API_URL}/api/admin/profile`,
         updates,
         { withCredentials: true }
       );

@@ -1,63 +1,98 @@
-import crypto from "crypto";
 import razorpay from "../../config/razorpay.js";
 import { Payment } from "../../models/payment.model.js";
+import crypto from "crypto";
 
-export const createRazorpayOrder = async ({ orderId, amount }) => {
-  const order = await razorpay.orders.create({
-    amount: amount * 100, // paisa
+/**
+ * ================================
+ * CREATE PAYMENT ORDER
+ * ================================
+ * amount → rupees
+ */
+export const createPaymentOrder = async (userId, amount) => {
+  if (!amount || amount <= 0) {
+    throw new Error("Invalid amount");
+  }
+
+  // Create Razorpay order (REAL)
+  const razorpayOrder = await razorpay.orders.create({
+    amount: Math.round(amount * 100), // ₹ → paisa (MANDATORY)
     currency: "INR",
-    receipt: `order_${orderId}`,
+    receipt: `receipt_${Date.now()}`,
+    payment_capture: 1,
   });
 
+  // Store in DB
   await Payment.create({
-    order_id: orderId,
-    razorpay_order_id: order.id,
-    amount: order.amount,
-    currency: "INR",
+    order_id: userId,
+    razorpay_order_id: razorpayOrder.id,
+    amount, // store in rupees
     status: "CREATED",
   });
 
-  return order;
+  return razorpayOrder;
 };
 
-export const verifyPayment = async (payload) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = payload;
-
-  const body = `${razorpay_order_id}|${razorpay_payment_id}`;
-  const expectedSignature = crypto
+/**
+ * ================================
+ * VERIFY PAYMENT SIGNATURE
+ * ================================
+ */
+export const verifyPayment = ({
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature,
+}) => {
+  const generatedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-    .update(body)
+    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
     .digest("hex");
 
-  if (expectedSignature !== razorpay_signature) {
-    await Payment.update(
-      { status: "FAILED" },
-      { where: { razorpay_order_id } }
-    );
-    throw new Error("Invalid payment signature");
-  }
-
-  await Payment.update(
-    {
-      razorpay_payment_id,
-      razorpay_signature,
-      status: "SUCCESS",
-    },
-    { where: { razorpay_order_id } }
-  );
-
-  return true;
+  return generatedSignature === razorpay_signature;
 };
 
-export const refundPayment = async ({ razorpay_payment_id, amount }) => {
+/**
+ * ================================
+ * UPDATE PAYMENT STATUS
+ * ================================
+ */
+export const updatePaymentStatus = async (
+  razorpay_order_id,
+  status,
+  payment_id = null,
+  signature = null
+) => {
+  const payment = await Payment.findOne({
+    where: { razorpay_order_id },
+  });
+
+  if (!payment) {
+    throw new Error("Payment not found");
+  }
+
+  payment.status = status;
+
+  if (payment_id) payment.razorpay_payment_id = payment_id;
+  if (signature) payment.razorpay_signature = signature;
+
+  await payment.save();
+  return payment;
+};
+
+/**
+ * ================================
+ * REFUND PAYMENT
+ * ================================
+ */
+export const refundPayment = async (razorpay_payment_id, amount) => {
+  if (!razorpay_payment_id) {
+    throw new Error("razorpay_payment_id is required for refund");
+  }
+
   const refund = await razorpay.payments.refund(
     razorpay_payment_id,
-    { amount: amount * 100 }
-  );
-
-  await Payment.update(
-    { status: "REFUNDED" },
-    { where: { razorpay_payment_id } }
+    amount
+      ? { amount: Math.round(amount * 100) }
+      : undefined // full refund if amount not provided
   );
 
   return refund;

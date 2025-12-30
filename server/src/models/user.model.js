@@ -17,7 +17,7 @@ export const User = sequelize.define(
     address: DataTypes.TEXT,
     status: {
       type: DataTypes.TINYINT,
-      defaultValue: 1, // ✅ active by default
+      defaultValue: 1,
     },
   },
   {

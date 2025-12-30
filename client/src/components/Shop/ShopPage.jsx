@@ -1,53 +1,73 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 import CategoryFilter from "./CategoryFilter";
 import ProductCard from "./ProductCard";
 import Pagination from "./Pagination";
-import { X, SlidersHorizontal } from "lucide-react"; // filter + close icons
+import { X, SlidersHorizontal } from "lucide-react";
 
 export default function ShopPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All Products");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("default");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Dummy Products
-  const allProducts = [
-    { id: 1, name: "Michelin Pilot Sport 4 225/45 R18", price: 12999, category: "Tires", images: [] },
-    { id: 2, name: "Bridgestone Turanza T005", price: 11999, category: "Tires", images: [] },
-    { id: 3, name: "OZ Racing Alloy Wheel 18\"", price: 45999, category: "Wheels", images: [] },
-    { id: 4, name: "Brembo Brake Pads Set", price: 8999, category: "Brake Pads", images: [] },
-    { id: 5, name: "Philips LED Headlight H11", price: 5499, category: "Headlights", images: [] },
-    { id: 6, name: "Castrol EDGE 5W-30 4L", price: 3299, category: "Engine Oil", images: [] },
-    { id: 7, name: "K&N Air Filter Honda City", price: 4499, category: "Air Filters", images: [] },
-    { id: 8, name: "Bilstein Shock Absorber", price: 18999, category: "Suspension", images: [] },
-    { id: 9, name: "MagnaFlow Exhaust System", price: 38999, category: "Exhaust", images: [] },
-    { id: 10, name: "3D Car Floor Mats", price: 2499, category: "Accessories", images: [] },
-    { id: 11, name: "Dash Cam 4K", price: 7999, category: "Accessories", images: [] },
-    { id: 12, name: "Car Cover Waterproof", price: 1799, category: "Accessories", images: [] },
-  ];
+  /* ================= FETCH PRODUCTS ================= */
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
 
-  // Filtering + Sorting
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/product`,
+          {
+            params: { category: selectedCategory },
+          }
+        );
+
+        if (res.data?.success) {
+          setProducts(res.data.data);
+        } else {
+          setProducts([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedCategory]);
+
+  /* ================= SORTING ================= */
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered =
-      selectedCategory === "All Products"
-        ? allProducts
-        : allProducts.filter((p) => p.category === selectedCategory);
+    let list = [...products];
 
-    if (sortBy === "price-low") filtered = [...filtered].sort((a, b) => a.price - b.price);
-    if (sortBy === "price-high") filtered = [...filtered].sort((a, b) => b.price - a.price);
+    if (sortBy === "price-low") {
+      list.sort((a, b) => a.price - b.price);
+    }
 
-    return filtered;
-  }, [selectedCategory, sortBy]);
+    if (sortBy === "price-high") {
+      list.sort((a, b) => b.price - a.price);
+    }
 
+    return list;
+  }, [products, sortBy]);
+
+  /* ================= PAGINATION ================= */
   const productsPerPage = 9;
   const totalProducts = filteredAndSortedProducts.length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
+
   const currentProducts = filteredAndSortedProducts.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
 
-  React.useEffect(() => setCurrentPage(1), [selectedCategory, sortBy]);
+  useEffect(() => setCurrentPage(1), [selectedCategory, sortBy]);
 
   return (
     <>
@@ -64,8 +84,6 @@ export default function ShopPage() {
 
           {/* MOBILE TOP BAR */}
           <div className="flex justify-between items-center mb-6 lg:hidden">
-
-            {/* FILTER ICON */}
             <button
               onClick={() => setIsFilterOpen(true)}
               className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-md"
@@ -73,7 +91,6 @@ export default function ShopPage() {
               <SlidersHorizontal className="w-6 h-6 text-gray-700" />
             </button>
 
-            {/* SORT DROPDOWN */}
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -89,7 +106,10 @@ export default function ShopPage() {
 
             {/* DESKTOP SIDEBAR */}
             <div className="lg:col-span-1 hidden lg:block">
-              <CategoryFilter selected={selectedCategory} onSelect={setSelectedCategory} />
+              <CategoryFilter
+                selected={selectedCategory}
+                onSelect={setSelectedCategory}
+              />
             </div>
 
             {/* PRODUCTS AREA */}
@@ -98,14 +118,7 @@ export default function ShopPage() {
               {/* MOBILE SLIDE-IN FILTER */}
               {isFilterOpen && (
                 <div className="fixed inset-0 z-50 flex">
-                  {/* LEFT PANEL */}
-                  <div
-                    className="
-                    bg-white w-64 p-6 overflow-y-auto animate-slide-left
-                    rounded-none shadow-none
-                    lg:rounded-xl lg:shadow-xl
-                  "
-                  >
+                  <div className="bg-white w-64 p-6 overflow-y-auto animate-slide-left">
                     <div className="flex justify-end mb-4">
                       <button onClick={() => setIsFilterOpen(false)}>
                         <X className="w-6 h-6 text-gray-700" />
@@ -121,7 +134,6 @@ export default function ShopPage() {
                     />
                   </div>
 
-                  {/* BACKDROP */}
                   <div
                     className="flex-1 bg-black/50"
                     onClick={() => setIsFilterOpen(false)}
@@ -129,12 +141,20 @@ export default function ShopPage() {
                 </div>
               )}
 
-              {/* PRODUCT GRID + PAGINATION */}
-              {totalProducts === 0 ? (
+              {/* PRODUCT GRID */}
+              {loading ? (
+                <p className="text-center py-20 text-gray-500">
+                  Loading products...
+                </p>
+              ) : totalProducts === 0 ? (
                 <div className="text-center py-20">
                   <div className="bg-gray-200 border-2 border-dashed rounded-xl w-32 h-32 mx-auto mb-6" />
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">No products found</h3>
-                  <p className="text-gray-600">Try selecting a different category</p>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                    No products found
+                  </h3>
+                  <p className="text-gray-600">
+                    Try selecting a different category
+                  </p>
                 </div>
               ) : (
                 <>
