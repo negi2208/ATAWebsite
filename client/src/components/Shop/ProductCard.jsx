@@ -88,17 +88,17 @@ const handleWishlist = async () => {
       </div>
 
       {/* CONTENT */}
-     <div className="p-4">
-      <Link
-        to={`/product/${product.id}`}
-        className="block font-semibold text-gray-800 text-sm sm:text-base line-clamp-2 min-h-[40px] hover:text-primary-700 transition"
-      >
-        {product.name}
-      </Link>
+      <div className="p-4">
+        <Link
+          to={`/product/${product.id}`}
+          className="block font-semibold text-gray-800 text-sm sm:text-base line-clamp-2 min-h-[40px] hover:text-primary-700 transition"
+        >
+          {product.name}
+        </Link>
 
-        <p className="text-lg sm:text-xl font-bold text-primary-600 mt-2">
-          ₹{Number(product.price).toLocaleString("en-IN")}
-        </p>
+          <p className="text-lg sm:text-xl font-bold text-primary-600 mt-2">
+            ₹{Number(product.price).toLocaleString("en-IN")}
+          </p>
 
         {/* ADD TO CART */}
         <button

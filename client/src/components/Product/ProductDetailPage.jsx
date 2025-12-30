@@ -1,6 +1,6 @@
 // src/components/Product/ProductDetailPage.jsx
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ImageGallery from "./ImageGallery";
 import QuantitySelector from "./QuantitySelector";
 import RelatedProducts from "./RelatedProducts";
@@ -8,6 +8,8 @@ import ReviewSection from "./ReviewSection"; // YE IMPORT KIYA
 import { Heart, Truck, Shield, Loader2 } from "lucide-react";
 import { addToWishlist } from "../../utils/Addwishlist";
 import { toast } from "react-hot-toast";
+import axios from "axios";
+import { getGuestToken } from "../../utils/guest";
 
 
 export default function ProductDetailPage() {
@@ -17,6 +19,9 @@ export default function ProductDetailPage() {
   const [error, setError] = useState(null);
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
+  const [adding, setAdding] = useState(false);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -65,35 +70,75 @@ export default function ProductDetailPage() {
   }
 
   // Collect all images from variants
-  const allImages = [];
-  if (product.ProductVariants) {
-    product.ProductVariants.forEach(variant => {
-      if (variant.ProductImages) {
-        variant.ProductImages.forEach(img => {
-          if (img.front_img) allImages.push(img.front_img);
-          if (img.left_img) allImages.push(img.left_img);
-          if (img.right_img) allImages.push(img.right_img);
-        });
-      }
-    });
-  }
+    const allImages = [];
+
+    if (product.ProductVariants?.length > 0) {
+      const img = product.ProductVariants[0].ProductImage;
+
+      if (img?.front_img) allImages.push(img.front_img);
+      if (img?.left_img) allImages.push(img.left_img);
+      if (img?.right_img) allImages.push(img.right_img);
+    }
 
   const productData = {
     name: product.name,
     sku: product.id, // or some sku
-    rating: 4.3, // hardcoded for now
-    reviews: 124, // hardcoded
+    // rating: 4.3, // hardcoded for now
+    // reviews: 124, // hardcoded
     price: product.price,
     oldPrice: null, // hardcoded
     discount: null, // hardcoded
     images: allImages.length > 0 ? allImages : ["/images/placeholder.webp"], // fallback
   };
-const handleWishlist = async () => {
+  const handleWishlist = async () => {
+    try {
+      await addToWishlist(product.id);
+      toast.success("Added to wishlist ❤️");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to add to wishlist");
+    }
+  };
+const handleAddToCart = async () => {
   try {
-    await addToWishlist(product.id);
-    toast.success("Added to wishlist ❤️");
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to add to wishlist");
+    setAdding(true);
+
+    const guest_token = getGuestToken();
+    const user_id = localStorage.getItem("user_id");
+
+    const payload = {
+      product_id: product.id,
+      quantity: qty,
+      ...(user_id ? { user_id } : { guest_token }),
+    };
+
+    if (product.ProductVariants?.[0]?.id) {
+      payload.variant_id = product.ProductVariants[0].id;
+    }
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/cart/add`,
+      payload
+    );
+
+    // ✅ HANDLE BOTH CASES AS SUCCESS
+    if (res.data?.success) {
+      toast.success("Added to cart 🛒");
+      navigate("/cart");
+    } else {
+      // already exists / quantity updated
+      toast.success(res.data?.message || "Cart updated 🛒");
+    }
+
+  } catch (error) {
+    console.error("Add to cart failed", error);
+
+    const msg =
+      error.response?.data?.message ||
+      "Unable to add product to cart";
+
+    toast.error(msg);
+  } finally {
+    setAdding(false);
   }
 };
 
@@ -102,8 +147,8 @@ const handleWishlist = async () => {
       {/* Breadcrumb */}
       <section className="bg-gray-100 py-4 border-b">
         <div className="container mx-auto px-4 text-sm text-gray-600">
-          <a href="/" className="hover:text-primary-600">Home</a> / 
-          <a href="/shop" className="hover:text-primary-600 ml-1">{product.category?.name || 'Shop'}</a> / 
+          <a href="/" className="hover:text-primary-600">Home</a> /
+          <a href="/shop" className="hover:text-primary-600 ml-1">{product.category?.name || 'Shop'}</a> /
           <span className="ml-1 text-gray-900 font-medium">{productData.name}</span>
         </div>
       </section>
@@ -112,7 +157,7 @@ const handleWishlist = async () => {
         <div className="container mx-auto px-4 max-w-7xl">
           {/* MAIN GRID */}
           <div className="grid lg:grid-cols-2 gap-10 xl:gap-16">
-            
+
             {/* LEFT: Image Gallery */}
             <div className="order-2 lg:order-1">
               <ImageGallery images={productData.images} discount={productData.discount} />
@@ -128,15 +173,15 @@ const handleWishlist = async () => {
               <div className="flex flex-wrap items-center justify-between gap-4 mb-6 text-sm">
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <div className="flex text-yellow-400">
+                    {/* <div className="flex text-yellow-400">
                       {[...Array(5)].map((_, i) => (
                         <span key={i} className={i < Math.floor(productData.rating) ? "fill-yellow-400" : ""}>★</span>
                       ))}
-                    </div>
-                    <span className="font-medium text-gray-700">{productData.rating}</span>
-                    <span className="text-gray-500">({productData.reviews} reviews)</span>
+                    </div> */}
+                    {/* <span className="font-medium text-gray-700">{productData.rating}</span>
+                    <span className="text-gray-500">({productData.reviews} reviews)</span> */}
                   </div>
-                  <span className="text-gray-500">SKU: {productData.sku}</span>
+                  {/* <span className="text-gray-500">SKU: {productData.sku}</span> */}
                 </div>
 
                 {/* <button onClick={handleWishlist} className="flex items-center gap-2 text-gray-600 hover:text-red-600 transition whitespace-nowrap">
@@ -145,29 +190,39 @@ const handleWishlist = async () => {
                 </button> */}
               </div>
 
-              {/* Price */}
-              <div className="flex items-baseline gap-4 mb-6">
-                <span className="text-4xl font-bold text-green-600">{productData.price.toLocaleString()} kr.</span>
-                {productData.oldPrice && (
-                  <span className="text-2xl text-gray-500 line-through">{productData.oldPrice.toLocaleString()} kr.</span>
-                )}
-              </div>
-
-              {/* Quantity + Add to Cart */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <QuantitySelector qty={qty} setQty={setQty} />
-                <button className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all hover:scale-105">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  Add to Cart
-                </button>
-              </div>
+             {/* Price */}
+            <div className="flex items-baseline gap-4 mb-6">
+              <span className="text-4xl font-bold text-green-600">
+                ₹{productData.price.toLocaleString('en-IN')}
+              </span>
+              
+              {/* Agar old price/discount ho to */}
+              {productData.oldPrice && (
+                <span className="text-2xl text-gray-500 line-through">
+                  ₹{productData.oldPrice.toLocaleString('en-IN')}
+                </span>
+              )}
+            </div>
 
               {/* Category & Brand */}
               <div className="mt-8 text-sm text-gray-600 space-y-1 border-t pt-6">
                 <p><strong>Category:</strong> {product.category?.name || 'N/A'}</p>
                 <p><strong>Brand:</strong> {product.brand || 'N/A'}</p>
+              </div>
+              {/* Quantity + Add to Cart (MOVED HERE) */}
+              <div className="mt-6 flex flex-col sm:flex-row gap-4">
+                <QuantitySelector qty={qty} setQty={setQty} />
+
+                <button onClick={handleAddToCart} 
+                  className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-8 rounded-xl
+                            flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5" />
+                  </svg>
+                  Add to Cart
+                </button>
               </div>
             </div>
           </div>
@@ -195,24 +250,22 @@ const handleWishlist = async () => {
               <div className="flex">
                 <button
                   onClick={() => setActiveTab("description")}
-                  className={`px-8 py-5 font-bold text-lg transition-colors ${
-                    activeTab === "description"
+                  className={`px-8 py-5 font-bold text-lg transition-colors ${activeTab === "description"
                       ? "text-primary-600 border-b-4 border-primary-600"
                       : "text-gray-600 hover:text-gray-900"
-                  }`}
+                    }`}
                 >
                   Description
                 </button>
-                <button
+                {/* <button
                   onClick={() => setActiveTab("reviews")}
-                  className={`px-8 py-5 font-bold text-lg transition-colors ${
-                    activeTab === "reviews"
+                  className={`px-8 py-5 font-bold text-lg transition-colors ${activeTab === "reviews"
                       ? "text-primary-600 border-b-4 border-primary-600"
                       : "text-gray-600 hover:text-gray-900"
-                  }`}
+                    }`}
                 >
                   Reviews ({product.reviews})
-                </button>
+                </button> */}
               </div>
             </div>
 
@@ -224,18 +277,18 @@ const handleWishlist = async () => {
                     <strong>1.4X superior sludge protection</strong> compared to tough industry standards, as measured in the Sequence VH Sludge test vs. API SP test limits.
                   </p>
                   <p>
-                    Quisque varius diam vel metus mattis, id aliquam diam rhoncus. Proin vitae magna in dui finibus malesuada et at nulla. 
+                    Quisque varius diam vel metus mattis, id aliquam diam rhoncus. Proin vitae magna in dui finibus malesuada et at nulla.
                     Morbi elit ex, viverra vitae ante vel, blandit feugiat ligula. Fusce fermentum iaculis nibh, at sodales leo maximus a.
                   </p>
                   <p>
-                    Morbi ut sapien vitae odio accumsan gravida. Morbi vitae erat auctor, eleifend nunc a, lobortis neque. 
+                    Morbi ut sapien vitae odio accumsan gravida. Morbi vitae erat auctor, eleifend nunc a, lobortis neque.
                     Praesent aliquam dignissim viverra. Maecenas lacinia purus in venenatis mollis.
                   </p>
                 </div>
               )}
 
               {/* REVIEWS TAB – ALAG COMPONENT SE */}
-              {activeTab === "reviews" && <ReviewSection />}
+              {/* {activeTab === "reviews" && <ReviewSection />} */}
             </div>
           </div>
 

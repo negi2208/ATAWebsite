@@ -179,8 +179,8 @@ function ProductCard({ product }) {
 
       {/* PRICE */}
       <p className="text-2xl sm:text-3xl font-bold text-primary-700 text-center mt-3">
-        {product.price.toLocaleString()} kr.
-      </p>
+       ₹{Number(product.price).toLocaleString("en-IN")}
+          </p>
 
       {/* BUTTONS (hover only) */}
       <div className="flex justify-center items-center gap-3 sm:gap-4 mt-4 sm:mt-6 

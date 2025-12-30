@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import toast, { Toaster } from 'react-hot-toast';
 import { Mail, Phone, MapPin, Globe, DollarSign, Package, Loader2 } from 'lucide-react';
+import axios from "axios";
 
 // Validation Schema
 const schema = z.object({
@@ -22,21 +23,30 @@ export default function ContactPage() {
     resolver: zodResolver(schema)
   });
 
-  const onSubmit = async (data) => {
-    setIsLoading(true);
-    try {
-     
-      // await axios.post('/api/contact', data);
-      console.log('Form submitted:', data);
+const onSubmit = async (data) => {
+  setIsLoading(true);
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/contact`,
+      data
+    );
 
-      toast.success('Thank you! Your message has been sent successfully.');
+    if (res.data?.success) {
+      toast.success("Thank you! Your message has been sent successfully.");
       reset();
-    } catch (error) {
-      toast.error('Failed to send message. Please try again.');
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error(res.data?.message || "Failed to send message.");
     }
-  };
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to send message. Please try again."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <>

@@ -7,7 +7,14 @@ export default function AddressForm({ onNext }) {
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'phone') {
+      const digitsOnly = value.replace(/\D/g, '');
+      const limited = digitsOnly.slice(0, 10);
+      setForm({ ...form, [name]: limited });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -40,6 +47,8 @@ export default function AddressForm({ onNext }) {
           placeholder="Mobile Number *"
           value={form.phone}
           onChange={handleChange}
+          pattern="[0-9]{10}"
+          title="Please enter a 10-digit mobile number"
           className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-600"
         />
       </div>

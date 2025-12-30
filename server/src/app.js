@@ -7,6 +7,7 @@ import categoryRoutes from "./modules/category/category.routes.js";
 import productRoutes from "./modules/product/product.route.js";
 import wishlistRoutes from "./modules/wishlist/wishlist.route.js";
 import cartRoutes from "./modules/cart/cart.route.js";
+import contactRoutes from "./modules/contactUs/contactRoutes.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/contact", contactRoutes);
 
 // health check
 app.get("/health", (req, res) => {

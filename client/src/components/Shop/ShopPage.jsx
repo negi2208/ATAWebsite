@@ -4,6 +4,8 @@ import CategoryFilter from "./CategoryFilter";
 import ProductCard from "./ProductCard";
 import Pagination from "./Pagination";
 import { X, SlidersHorizontal } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+
 
 export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -12,35 +14,42 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState("default");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryFromURL = searchParams.get("category") || "all";
+
+useEffect(() => {
+  setSelectedCategory(categoryFromURL);
+}, [categoryFromURL]);
 
   /* ================= FETCH PRODUCTS ================= */
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
+ useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
 
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/product`,
-          {
-            params: { category: selectedCategory },
-          }
-        );
-
-        if (res.data?.success) {
-          setProducts(res.data.data);
-        } else {
-          setProducts([]);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/product`,
+        {
+          params: { category: selectedCategory },
         }
-      } catch (error) {
-        console.error("Failed to fetch products", error);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+      );
 
-    fetchProducts();
-  }, [selectedCategory]);
+      if (res.data?.success) {
+        setProducts(res.data.data);
+      } else {
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch products", error);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, [selectedCategory]);
+
 
   /* ================= SORTING ================= */
   const filteredAndSortedProducts = useMemo(() => {
@@ -106,10 +115,13 @@ export default function ShopPage() {
 
             {/* DESKTOP SIDEBAR */}
             <div className="lg:col-span-1 hidden lg:block">
-              <CategoryFilter
-                selected={selectedCategory}
-                onSelect={setSelectedCategory}
-              />
+             <CategoryFilter
+              selected={selectedCategory}
+              onSelect={(cat) => {
+                setSearchParams(cat === "all" ? {} : { category: cat });
+                setIsFilterOpen(false);
+              }}
+            />
             </div>
 
             {/* PRODUCTS AREA */}

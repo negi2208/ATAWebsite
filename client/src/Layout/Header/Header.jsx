@@ -1,20 +1,41 @@
 // src/components/Layout/Header.jsx → FINAL (Pehle jaisa hamburger + dropdown me cross)
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import CategoriesDropdown from "./CategoriesDropdown";
-import { 
-  Menu, Search, User, Heart, ShoppingCart, 
-  HelpCircle, LogOut, Package, HeartHandshake, X 
+import {
+  Menu, Search, User, Heart, ShoppingCart,
+  HelpCircle, LogOut, Package, HeartHandshake, X
 } from "lucide-react";
+import axios from "axios";
+
+const getSearchImage = (product) => {
+  const variant = product.ProductVariants?.[0];
+  const img = variant?.ProductImage;
+
+  if (!img) return "/images/placeholder.webp";
+
+  return (
+    img.front_img ||
+    img.left_img ||
+    img.right_img ||
+    "/images/placeholder.webp"
+  );
+};
+
 
 export default function Header() {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
+  const searchInputRef = useRef(null);
   const { user, isLoggedIn, logout } = useAuthStore();
 
   const wishlistCount = 1;
@@ -24,6 +45,31 @@ export default function Header() {
     if (isLoggedIn) navigate("/dashboard");
     else navigate("/my-account");
   };
+
+  useEffect(() => {
+    if (!isSearchOpen) return;
+    if (!searchQuery || !searchQuery.trim()) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        setSearchLoading(true);
+
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/product/search`,
+          { params: { q: searchQuery.trim() } }
+        );
+
+        setSearchResults(res.data?.data || []);
+      } catch (err) {
+        console.error("Search error", err);
+        setSearchResults([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, isSearchOpen]);
 
   const handleLogout = () => {
     logout();
@@ -36,7 +82,7 @@ export default function Header() {
     { name: "Home", path: "/" },
     { name: "Shop", path: "/shop" },
     // { name: "Tires & Wheels", path: "/tires-wheels" },
-    { name: "Blogs", path: "/blogs" },
+    // { name: "Blogs", path: "/blogs" },
     { name: "Contact", path: "/contact" },
   ];
 
@@ -56,9 +102,16 @@ export default function Header() {
                   <input
                     type="text"
                     placeholder="Search popular products..."
-                    className="w-full rounded-full border border-gray-300 bg-white py-3 pl-6 pr-14 text-sm placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    readOnly
+                    onClick={() => setIsSearchOpen(true)}
+                    className="w-full rounded-full border border-gray-300 bg-white py-3 pl-6 pr-14
+                              text-sm placeholder-neutral-500 cursor-pointer
+                              focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
-                  <button className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary-600 p-2.5 hover:bg-primary-700">
+                  <button
+                    onClick={() => setIsSearchOpen(true)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary-600 p-2.5 hover:bg-primary-700"
+                  >
                     <Search className="w-5 h-5 text-white" />
                   </button>
                 </div>
@@ -114,11 +167,11 @@ export default function Header() {
                   {cartCount > 0 && <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">{cartCount}</span>}
                 </button>
               </div> */}
-                <button className="hidden md:flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-full text-sm font-medium shadow-md hover:shadow-xl transition-all hover:scale-105">
-              <HelpCircle className="w-5 h-5" />
-              <span>Any Query?</span>
-            </button>
-            
+              <button className="hidden md:flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-full text-sm font-medium shadow-md hover:shadow-xl transition-all hover:scale-105">
+                <HelpCircle className="w-5 h-5" />
+                <span>Any Query?</span>
+              </button>
+
             </div>
           </div>
         </div>
@@ -156,7 +209,7 @@ export default function Header() {
       {isMobileMenuOpen && (
         <>
           {/* Backdrop */}
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={() => setIsMobileMenuOpen(false)}
           />
@@ -179,9 +232,21 @@ export default function Header() {
                 <input
                   type="text"
                   placeholder="Search products..."
-                  className="w-full rounded-full border border-gray-300 bg-gray-50 py-4 pl-6 pr-16 text-base focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  readOnly
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsSearchOpen(true);
+                  }}
+                  className="w-full rounded-full border border-gray-300 bg-gray-50 py-4 pl-6 pr-16
+                          text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
-                <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary-600 p-3 rounded-full hover:bg-primary-700">
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsSearchOpen(true);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary-600 p-3 rounded-full hover:bg-primary-700"
+                >
                   <Search className="w-6 h-6 text-white" />
                 </button>
               </div>
@@ -195,9 +260,8 @@ export default function Header() {
                     key={link.path}
                     href={link.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`block py-5 text-xl font-medium transition border-b border-gray-100 last:border-0 ${
-                      isActive(link.path) ? "text-primary-600" : "text-neutral-800 hover:text-primary-600"
-                    }`}
+                    className={`block py-5 text-xl font-medium transition border-b border-gray-100 last:border-0 ${isActive(link.path) ? "text-primary-600" : "text-neutral-800 hover:text-primary-600"
+                      }`}
                   >
                     {link.name}
                   </a>
@@ -209,6 +273,78 @@ export default function Header() {
       )}
 
       <CategoriesDropdown isOpen={isCategoriesOpen} onClose={() => setIsCategoriesOpen(false)} />
+      {isSearchOpen && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-md z-[9999] flex justify-center items-start pt-12 px-4"
+          onClick={() => setIsSearchOpen(false)}
+        >
+          <div
+            className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b">
+              <h2 className="text-lg font-bold">Search Products</h2>
+              <button onClick={() => setIsSearchOpen(false)}>
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
+
+            {/* Input */}
+            <div className="p-5">
+              <div className="flex items-center gap-3 border-2 border-gray-300 rounded-2xl px-4 py-4 focus-within:border-primary-500">
+                <Search className="w-5 h-5 text-gray-500" />
+                <input
+                  ref={searchInputRef}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="flex-1 outline-none text-base"
+                />
+                {searchLoading && (
+                  <div className="w-5 h-5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                )}
+              </div>
+            </div>
+
+            {/* Results */}
+            <div className="max-h-[65vh] overflow-y-auto border-t">
+              {searchResults.length > 0 ? (
+                searchResults.map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => {
+                      navigate(`/product/${p.id}`);
+                      setIsSearchOpen(false);
+                    }}
+                    className="flex items-center gap-4 p-4 hover:bg-primary-50 cursor-pointer border-b"
+                  >
+                    <img
+                      src={getSearchImage(p)}
+                      alt={p.name}
+                      className="w-14 h-14 object-contain rounded bg-white"
+                      onError={(e) => {
+                        e.currentTarget.src = "/images/placeholder.webp";
+                      }}
+                    />
+                    <div>
+                      <p className="font-semibold">{p.name}</p>
+                      <p className="text-sm text-gray-600">
+                        ₹{Number(p.price).toLocaleString("en-IN")}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-16 text-center text-gray-500">
+                  <Package className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                  {searchLoading ? "Searching..." : "No products found"}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

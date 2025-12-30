@@ -40,6 +40,32 @@ export const ProductController = {
     }
   },
 
+  async searchProducts(req, res) {
+  try {
+    const { q } = req.query;
+
+    if (!q || !q.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Search query is required",
+      });
+    }
+
+    const products = await ProductService.searchProducts(q);
+
+    res.json({
+      success: true,
+      data: products,
+    });
+  } catch (error) {
+    console.error("SEARCH ERROR:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to search products",
+    });
+  }
+},
+
   async getProductById(req, res) {
     try {
       const { id } = req.params;
@@ -62,6 +88,29 @@ export const ProductController = {
       res.status(500).json({
         success: false,
         message: "Failed to fetch product",
+      });
+    }
+  },
+
+  async getRelatedProducts(req, res) {
+    try {
+      const { productId } = req.params;
+      const { limit } = req.query;
+
+      const products = await ProductService.getRelatedProducts({
+        productId,
+        limit: Number(limit) || 10,
+      });
+
+      res.json({
+        success: true,
+        message: "Related products fetched successfully",
+        data: products,
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
       });
     }
   },

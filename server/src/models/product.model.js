@@ -13,7 +13,13 @@ export const Product = sequelize.define(
     model_year: { type: DataTypes.STRING(20) },
     is_active: { type: DataTypes.TINYINT, defaultValue: 1 },
   },
-   { timestamps: true, createdAt: "created_at", updatedAt: false }
+  {
+    tableName: "products",          
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: false,
+  }
 );
+
 
 Product.belongsTo(Category, { foreignKey: 'category_id', as: 'category' });

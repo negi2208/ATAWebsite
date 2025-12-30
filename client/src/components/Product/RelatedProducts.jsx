@@ -1,49 +1,142 @@
-// src/components/Product/RelatedProducts.jsx
-import React from "react";
-import { Heart } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Heart, ShoppingCart } from "lucide-react";
+import axios from "axios";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { addToWishlist } from "../../utils/Addwishlist";
 import { toast } from "react-hot-toast";
+import { getGuestToken } from "../../utils/guest";
+
+
+const getProductImage = (product) => {
+  const variant = product.ProductVariants?.[0];
+  const img = variant?.ProductImage;
+
+  return (
+    img?.front_img ||
+    img?.left_img ||
+    img?.right_img ||
+    "/images/placeholder.webp"
+  );
+};
 
 export default function RelatedProducts() {
-  const related = [
-    { name: "Zerex G05 Antifreeze", price: 3343, old: 4855, off: "32%" },
-    { name: "Rislone Stop Whine", price: 988, old: 1599, off: "39%" },
-    { name: "Pennzoil Platinum 0W-20", price: 2696, old: 4711, off: "43%" },
-    { name: "Catalytic Cleaner", price: 2118, old: 3845, off: "45%" },
-     { name: "Catalytic Cleaner", price: 2118, old: 3845, off: "45%" },
-  ];
-const handleWishlist = async () => {
+  const { id } = useParams();
+
+  const [products, setProducts] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+    const navigate = useNavigate();
+  
+
+  useEffect(() => {
+    const fetchRelated = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/product/${id}/related?limit=10`
+        );
+        setProducts(res.data?.data || []);
+      } catch {
+        toast.error("Failed to load related products");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchRelated();
+  }, [id]);
+
+  const handleWishlist = async (productId) => {
+    try {
+      await addToWishlist(productId);
+      toast.success("Added to wishlist ❤️");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to add to wishlist");
+    }
+  };
+
+  if (loading || products.length === 0) return null;
+  const handleAddToCart = async (product) => {
   try {
-    await addToWishlist(product.id);
-    toast.success("Added to wishlist ❤️");
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to add to wishlist");
+    setAdding(true);
+
+    const guest_token = getGuestToken();
+    const user_id = localStorage.getItem("user_id");
+
+    const payload = {
+      product_id: product.id,   // ✅ now defined
+      quantity: 1,
+      ...(user_id ? { user_id } : { guest_token }),
+    };
+
+    if (product.ProductVariants?.[0]?.id) {
+      payload.variant_id = product.ProductVariants[0].id;
+    }
+
+    await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/cart/add`,
+      payload
+    );
+
+    toast.success("Added to cart 🛒");
+  } catch (error) {
+    console.error("Add to cart failed", error);
+    toast.error(error.response?.data?.message || "Failed to add product to cart");
+    navigate("/cart");
+  } finally {
+    setAdding(false);
   }
 };
 
   return (
-    <div className="mt-16">
+    <div className="mt-20">
       <h2 className="text-2xl font-bold mb-6">Related Products</h2>
+
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {related.map((p, i) => (
-          <div key={i} className="bg-white rounded-xl shadow-md hover:shadow-xl transition">
+        {products.map((p) => (
+          <div
+            key={p.id}
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition"
+          >
+            {/* IMAGE */}
             <div className="relative">
-              <img src="/images/bestseller/bestseller-demo.webp" alt={p.name} className="w-full h-48 object-cover rounded-t-xl" />
-              <span className="absolute top-2 left-2 bg-primary-600 text-white text-xs px-2 py-1 rounded">
-                {p.off} OFF
-              </span>
-              {/* <button onClick={handleWishlist} className="absolute top-2 right-2 p-2 bg-white rounded-full shadow">
-                <Heart className="w-5 h-5" />
+              <Link to={`/product/${p.id}`}>
+                <img
+                  src={getProductImage(p)}
+                  alt={p.name}
+                  className="w-full h-44 object-contain bg-white rounded-t-xl cursor-pointer"
+                />
+              </Link>
+
+              {/* WISHLIST
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleWishlist(p.id);
+                }}
+                className="absolute top-2 right-2 p-2 bg-white rounded-full shadow"
+              >
+                <Heart className="w-5 h-5 text-gray-600 hover:text-red-600 hover:fill-red-600" />
               </button> */}
             </div>
+
+            {/* DETAILS */}
             <div className="p-3">
-              <p className="text-sm line-clamp-2 mb-2">{p.name}</p>
-              <div className="text-yellow-400 text-sm">★★★★☆ 4.33 (3)</div>
-              <div className="mt-2">
-                <span className="text-xl font-bold text-green-600">₹{p.price}</span>
-                <span className="text-sm text-gray-500 line-through ml-2">₹{p.old}</span>
-              </div>
-              <button className="w-full mt-3 bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg text-sm">
+              <Link
+                to={`/product/${p.id}`}
+                className="block text-sm line-clamp-2 mb-2 font-medium text-gray-800 hover:text-primary-700 transition"
+              >
+                {p.name}
+              </Link>
+
+              <p className="text-lg font-bold text-green-600">
+                ₹{Number(p.price).toLocaleString("en-IN")}
+              </p>
+
+              <button onClick={() => handleAddToCart(p)}
+                className="w-full mt-3 bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg text-sm flex items-center justify-center gap-2"
+              >
+                <ShoppingCart className="w-4 h-4" />
                 Add to cart
               </button>
             </div>
