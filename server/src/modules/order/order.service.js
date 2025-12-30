@@ -5,7 +5,7 @@ import { Order } from "../../models/order.model.js";
 import { OrderItem } from "../../models/orderItem.model.js";
 
 export const OrderService = {
-  async createFromCart({ user_id, guest_token }) {
+  async createFromCart({ user_id, guest_token, payment_status = "PAID" }) {
     return await sequelize.transaction(async (t) => {
 
       const cart = await Cart.findOne({
@@ -33,7 +33,7 @@ export const OrderService = {
           user_id: user_id || null,
           cart_id: cart.id,
           total_amount: totalAmount,
-          payment_status: "PAID",
+          payment_status,
           order_status: "PLACED",
         },
         { transaction: t }

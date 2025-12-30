@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 
 const getSearchImage = (product) => {
-  const variant = product.ProductVariants?.[0];
+  const variant = product.variants?.[0];
   const img = variant?.ProductImage;
 
   if (!img) return "/images/placeholder.webp";

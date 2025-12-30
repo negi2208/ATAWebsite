@@ -124,3 +124,56 @@ export const refundOrder = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const placeCODOrder = async (req, res) => {
+  try {
+    const { user, amount, guest_token } = req.body;
+
+    let finalUser;
+
+    if (!user?.id) {
+      finalUser = await User.create({
+        full_name: user.full_name,
+        phone: user.phone,
+        address: user.address,
+        status: 1,
+      });
+
+      await Cart.update(
+        { user_id: finalUser.id },
+        {
+          where: {
+            guest_token,
+            status: "ACTIVE",
+          },
+        }
+      );
+    } else {
+      finalUser = await User.findByPk(user.id);
+    }
+
+    // Create order FROM CART
+    const order = await OrderService.createFromCart({
+      user_id: finalUser.id,
+      guest_token,
+      payment_status: "PENDING",
+    });
+
+    // Create payment record with COD status
+    await Payment.create({
+      order_id: order.id,
+      razorpay_order_id: `COD_${Date.now()}`, 
+      amount,
+      status: "COD",
+    });
+
+    return res.json({
+      success: true,
+      order_id: order.id,
+      message: "Order placed successfully with COD",
+    });
+  } catch (err) {
+    console.error("Error in placeCODOrder:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

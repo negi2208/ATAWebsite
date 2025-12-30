@@ -9,6 +9,7 @@ import axios from "axios";
 export default function CheckoutPage() {
   const [step, setStep] = useState(1);
   const [address, setAddress] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("online"); // "online" or "cod"
 
   // Dummy Cart
   const cartItems = [
@@ -22,6 +23,29 @@ export default function CheckoutPage() {
   const handleAddressSubmit = (addr) => {
     setAddress(addr);
     setStep(2);
+  };
+
+  // COD Order
+  const placeCODOrder = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/payment/cod`,
+        {
+          user: {
+            full_name: address.name,
+            phone: address.phone,
+            address: `${address.address}, ${address.city} - ${address.pincode}`,
+          },
+          amount: totalAmount,
+          guest_token: localStorage.getItem("guest_token"),
+        }
+      );
+
+      window.location.href = "/order-success";
+    } catch (error) {
+      console.error(error);
+      alert("Order failed. Please try again.");
+    }
   };
 
   // Razorpay Payment
@@ -124,29 +148,85 @@ const payNow = async () => {
                 {/* Step 2 – Payment */}
                 {step === 2 && (
                   <div className="text-center py-16 px-4">
-                    <img
-                      src="https://razorpay.com/assets/razorpay-glyph.svg"
-                      alt="Razorpay"
-                      className="h-12 sm:h-16 mx-auto mb-6"
-                    />
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-6">Choose Payment Method</h2>
 
-                    <h2 className="text-2xl sm:text-3xl font-bold mb-4">Complete Your Payment</h2>
+                    {/* Payment Method Selection */}
+                    <div className="mb-8">
+                      <div className="flex justify-center gap-6 mb-4">
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="online"
+                            checked={paymentMethod === "online"}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            className="mr-2"
+                          />
+                          <span className="text-lg font-medium">Online Payment</span>
+                        </label>
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="cod"
+                            checked={paymentMethod === "cod"}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            className="mr-2"
+                          />
+                          <span className="text-lg font-medium">Cash on Delivery</span>
+                        </label>
+                      </div>
+                    </div>
 
-                    <p className="text-2xl font-bold text-primary-600 mb-6">
-                      ₹{totalAmount.toLocaleString("en-IN")}
-                    </p>
+                    {paymentMethod === "online" && (
+                      <>
+                        <img
+                          src="https://razorpay.com/assets/razorpay-glyph.svg"
+                          alt="Razorpay"
+                          className="h-12 sm:h-16 mx-auto mb-6"
+                        />
 
-                    {/* Pay Button */}
-                    <button
-                      onClick={payNow}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 sm:py-5 px-10 sm:px-20 rounded-full text-xl shadow-xl hover:shadow-green-500/40 transition-transform transform hover:-translate-y-1 flex items-center gap-3 mx-auto"
-                    >
-                      Pay Now <ArrowRight className="w-6 h-6" />
-                    </button>
+                        <h3 className="text-xl font-bold mb-4">Complete Your Payment</h3>
 
-                    <p className="text-sm text-gray-500 mt-6">
-                      UPI • Cards • Netbanking • Wallet • EMI Available
-                    </p>
+                        <p className="text-2xl font-bold text-primary-600 mb-6">
+                          ₹{totalAmount.toLocaleString("en-IN")}
+                        </p>
+
+                        {/* Pay Button */}
+                        <button
+                          onClick={payNow}
+                          className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 sm:py-5 px-10 sm:px-20 rounded-full text-xl shadow-xl hover:shadow-green-500/40 transition-transform transform hover:-translate-y-1 flex items-center gap-3 mx-auto"
+                        >
+                          Pay Now <ArrowRight className="w-6 h-6" />
+                        </button>
+
+                        <p className="text-sm text-gray-500 mt-6">
+                          UPI • Cards • Netbanking • Wallet • EMI Available
+                        </p>
+                      </>
+                    )}
+
+                    {paymentMethod === "cod" && (
+                      <>
+                        <h3 className="text-xl font-bold mb-4">Cash on Delivery</h3>
+
+                        <p className="text-2xl font-bold text-primary-600 mb-6">
+                          ₹{totalAmount.toLocaleString("en-IN")}
+                        </p>
+
+                        <p className="text-gray-600 mb-6">
+                          Pay when your order is delivered to your doorstep.
+                        </p>
+
+                        {/* COD Button */}
+                        <button
+                          onClick={placeCODOrder}
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 sm:py-5 px-10 sm:px-20 rounded-full text-xl shadow-xl hover:shadow-blue-500/40 transition-transform transform hover:-translate-y-1 flex items-center gap-3 mx-auto"
+                        >
+                          Place Order <ArrowRight className="w-6 h-6" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
 

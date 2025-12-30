@@ -12,7 +12,7 @@ export const Payment = sequelize.define(
     amount: { type: DataTypes.INTEGER, allowNull: false },
     currency: { type: DataTypes.STRING, defaultValue: "INR" },
     status: {
-      type: DataTypes.ENUM("CREATED", "SUCCESS", "FAILED", "REFUNDED"),
+      type: DataTypes.ENUM("CREATED", "SUCCESS", "FAILED", "REFUNDED", "COD"),
       defaultValue: "CREATED",
     },
   },
