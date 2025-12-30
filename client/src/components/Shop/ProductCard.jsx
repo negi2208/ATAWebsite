@@ -15,10 +15,10 @@ export default function ProductCard({ product }) {
 
   const images = product?.variants?.[0]?.ProductImage
     ? [
-        product.variants[0].ProductImage.front_img,
-        product.variants[0].ProductImage.left_img,
-        product.variants[0].ProductImage.right_img,
-      ].filter(Boolean)
+      product.variants[0].ProductImage.front_img,
+      product.variants[0].ProductImage.left_img,
+      product.variants[0].ProductImage.right_img,
+    ].filter(Boolean)
     : [];
 
   const finalImages =
@@ -62,25 +62,26 @@ export default function ProductCard({ product }) {
     }
   };
 
-const handleWishlist = async () => {
-  try {
-    await addToWishlist(product.id);
-    toast.success("Added to wishlist ❤️");
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to add to wishlist");
-  }
-};
+  const handleWishlist = async () => {
+    try {
+      await addToWishlist(product.id);
+      toast.success("Added to wishlist ❤️");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to add to wishlist");
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group">
       {/* IMAGE */}
       <div className="relative overflow-hidden">
-        <img
-          src={finalImages[currentImageIndex]}
-          alt={product.name}
-          className="w-full h-48 sm:h-56 md:h-64 object-cover transition-opacity duration-700"
-        />
-
+        <Link to={`/product/${product.id}`} >
+          <img
+            src={finalImages[currentImageIndex]}
+            alt={product.name}
+            className="w-full h-48 sm:h-56 md:h-64 object-cover transition-opacity duration-700"
+          />
+        </Link>
         {/* Wishlist (future) */}
         {/* <button onClick={handleWishlist} className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition">
           <Heart className="w-5 h-5 text-gray-600 hover:text-red-600 hover:fill-red-600" />
@@ -96,19 +97,18 @@ const handleWishlist = async () => {
           {product.name}
         </Link>
 
-          <p className="text-lg sm:text-xl font-bold text-primary-600 mt-2">
-            ₹{Number(product.price).toLocaleString("en-IN")}
-          </p>
+        <p className="text-lg sm:text-xl font-bold text-primary-600 mt-2">
+          ₹{Number(product.price).toLocaleString("en-IN")}
+        </p>
 
         {/* ADD TO CART */}
         <button
           onClick={handleAddToCart}
           disabled={adding}
           className={`w-full mt-3 font-bold py-3 rounded-lg transition flex items-center justify-center gap-2
-            ${
-              adding
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-primary-600 hover:bg-primary-700 text-white"
+            ${adding
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-primary-600 hover:bg-primary-700 text-white"
             }
           `}
         >

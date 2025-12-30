@@ -169,7 +169,9 @@ export default function Header() {
               </div> */}
               <button className="hidden md:flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-full text-sm font-medium shadow-md hover:shadow-xl transition-all hover:scale-105">
                 <HelpCircle className="w-5 h-5" />
-                <span>Any Query?</span>
+                <a href="/contact">
+                  <span>Any Query?</span>
+                </a>
               </button>
 
             </div>
