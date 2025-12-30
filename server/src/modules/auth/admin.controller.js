@@ -1,48 +1,57 @@
-import bcrypt from "bcrypt";
-import { signToken } from "../../utils/helper.js";
 import {
-  registerSchema,
-  loginSchema,
-} from "./admin.validation.js";
-import {
-  createAdmin,
-  findAdminByEmail,
+  registerAdminService,
+  loginAdminService,
+  logoutAdminService,
+  getProfileService,
+  updateProfileService,
 } from "./admin.service.js";
+import { loginSchema } from "./admin.validation.js";
+import { successResponse, errorResponse } from "../../utils/helper.js";
 
-export const registerAdmin = async (req, res) => {
+export const registerAdminController = async (req, res) => {
   try {
-    const { error, value } = registerSchema.validate(req.body);
-    if (error) return res.status(400).json({ message: error.message });
-
-    const exists = await findAdminByEmail(value.email);
-    if (exists) return res.status(409).json({ message: "Email already exists" });
-
-    const admin = await createAdmin(value);
-
-    res.status(201).json({
-      message: "Admin created",
-      id: admin.id,
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Something went wrong" });
+    await adminRegisterSchema.validateAsync(req.body);
+    const data = await registerAdminService(req.body);
+    return successResponse(res, 201, "Admin registered successfully", data);
+  } catch (error) {
+    return errorResponse(res, 400, error.message);
   }
 };
 
-export const loginAdmin = async (req, res) => {
+export const loginAdminController = async (req, res) => {
   try {
-    const { error, value } = loginSchema.validate(req.body);
-    if (error) return res.status(400).json({ message: error.message });
+    await loginSchema.validateAsync(req.body);
+    const data = await loginAdminService(req.body);
+    return successResponse(res, 200, "Login successful", data);
+  } catch (error) {
+    return errorResponse(res, 400, error.message);
+  }
+};
 
-    const admin = await findAdminByEmail(value.email);
-    if (!admin) return res.status(401).json({ message: "Invalid credentials" });
+export const logoutAdminController = async (req, res) => {
+  try {
+    await logoutAdminService();
+    return successResponse(res, 200, "Logout successful");
+  } catch (error) {
+    return errorResponse(res, 400, error.message);
+  }
+};
 
-    const valid = await bcrypt.compare(value.password, admin.password);
-    if (!valid) return res.status(401).json({ message: "Invalid credentials" });
+export const getProfileController = async (req, res) => {
+  try {
+    const data = await getProfileService(req.admin.id);
+    return successResponse(res, 200, "Profile fetched", data);
+  } catch (error) {
+    return errorResponse(res, 400, error.message);
+  }
+};
 
-    const token = signToken({ id: admin.id, role: "admin" });
-
-    res.json({ message: "Login successful", token });
-  } catch (err) {
-    res.status(500).json({ message: "Something went wrong" });
+export const updateProfileController = async (req, res) => {
+  try {
+    await adminUpdateSchema.validateAsync(req.body);
+    const data = await updateProfileService(req.admin.id, req.body);
+    return successResponse(res, 200, "Profile updated", data);
+  } catch (error) {
+    return errorResponse(res, 400, error.message);
   }
 };

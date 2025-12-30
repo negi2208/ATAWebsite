@@ -3,61 +3,66 @@ import { User } from "../../models/user.model.js";
 import { Product } from "../../models/product.model.js";
 import { ProductVariant } from "../../models/productVariant.model.js";
 import { ProductImage } from "../../models/productImage.model.js";
-// import { Vendor } from "../../models/vendorModel.js";
-// import { Product } from "../../models/productModel.js"
-// import { Order } from "../../models/orderModel.js"
-// import { Payment } from "../../models/paymentModel.js"
 // import { Op, fn, col, literal } from "sequelize";
-// import { sequelize } from "../../config/db.js";
+import { Order } from "../../models/order.model.js";
+import { OrderItem } from "../../models/orderItem.model.js";
+import { Payment } from "../../models/payment.model.js"
+import { sequelize } from "../../config/database.js";
 
 
-// // admin dashboard Management
-// export const getAdminDashboardService = async () => {
-//   try {
-//     const totalUsers = await User.count();
-//     const totalVendors = await Vendor.count();
-//     const totalProducts = await Product.count();
-//     const totalOrders = await Order.count();
+// admin dashboard Management
+export const getAdminDashboardService = async () => {
+  try {
+    const totalUsers = await User.count();
+    const totalProducts = await Product.count();
+    const totalOrders = await Order.count();
+    const totalVariants = await ProductVariant.count();   // ⭐ NEW
 
-//     const [results] = await sequelize.query(`
-//       SELECT 
-//         o.product_id,
-//         p.brand,
-//         p.product_type,
-//         p.front_photo,
-//         p.selling_price,
-//         p.additional_info,
-//         p.status,
-//         SUM(o.quantity) AS totalSales
-//       FROM orders o
-//       JOIN products p ON o.product_id = p.id
-//       WHERE p.status = 'approved'
-//       GROUP BY o.product_id
-//       ORDER BY totalSales DESC
-//       LIMIT 5;
-//     `);
+    const [results] = await sequelize.query(`
+      SELECT 
+        p.id AS product_id,
+        p.name,
+        p.brand,
+        p.price,
+        p.is_active,
 
-//     const topProducts = results.map(item => ({
-//       id: item.product_id,
-//       name: `${item.product_type || ""}`.trim(),
-//       img: item.front_photo || null,
-//       sales: Number(item.totalSales),
-//       price: item.selling_price || null,
-//       info: item.additional_info || null,
-//       status: item.status || null,
-//     }));
+        COUNT(DISTINCT oi.order_id) AS totalOrders,
+        SUM(oi.quantity) AS totalQuantity,
+        COUNT(DISTINCT pv.id) AS totalVariants
 
-//     return {
-//       total_users: totalUsers || 0,
-//       total_vendors: totalVendors || 0,
-//       total_products: totalProducts || 0,
-//       total_orders: totalOrders || 0,
-//       top_products: topProducts,
-//     };
-//   } catch (error) {
-//     throw new Error(error.message);
-//   }
-// };
+      FROM order_items oi
+      JOIN product_variants pv ON oi.variant_id = pv.id
+      JOIN products p ON pv.product_id = p.id
+      
+      GROUP BY p.id
+      ORDER BY totalOrders DESC
+      LIMIT 5;
+    `);
+
+    const topProducts = results.map(item => ({
+      id: item.product_id,
+      name: item.name,
+      brand: item.brand,
+      price: Number(item.price) || 0,
+      sales: Number(item.totalOrders) || 0,
+      quantity_sold: Number(item.totalQuantity) || 0,
+      total_variants: Number(item.totalVariants) || 0,
+      status: item.is_active ? "active" : "inactive",
+    }));
+
+    return {
+      total_users: totalUsers,
+      total_products: totalProducts,
+      total_orders: totalOrders,
+      total_variants: totalVariants,     // ⭐ SEND TO FRONTEND
+      top_products: topProducts,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+
 
 // user management Service
 export const getAllUsers = async ({ search, page, limit }) => {
@@ -66,7 +71,7 @@ export const getAllUsers = async ({ search, page, limit }) => {
   const where = search
     ? {
       [Op.or]: [
-        { name: { [Op.like]: `%${search}%` } },
+        { full_name: { [Op.like]: `%${search}%` } },
         { phone: { [Op.like]: `%${search}%` } },
         { address: { [Op.like]: `%${search}%` } },
       ],
@@ -77,7 +82,7 @@ export const getAllUsers = async ({ search, page, limit }) => {
     where,
     offset,
     limit,
-    order: [["created_at", "ASC"]],
+    order: [["created_at", "DESC"]],
   });
 
   return { total: count, users: rows };
@@ -129,7 +134,12 @@ export const getAllProductsService = async ({ search, status, page, limit }) => 
     ],
   });
 
-  return { total: count, products: rows };
+  const totalVariants = rows.reduce(
+    (sum, p) => sum + (p.variants?.length || 0),
+    0
+  );
+
+  return { total: totalVariants, products: rows };
 };
 
 // Get product by ID
@@ -167,371 +177,174 @@ export const getProductByIdService = async (id) => {
   return product;
 };
 
-// // orders management Service
-// export const getAllOrdersService = async ({ order_id, status, start_date, end_date, page = 1, limit = 10 }) => {
-//   const offset = (page - 1) * limit;
+// orders management Service
+export const getAllOrdersService = async ({
+  order_id,
+  status,
+  start_date,
+  end_date,
+  page = 1,
+  limit = 10,
+}) => {
+  try {
+    const offset = (page - 1) * limit;
+    const where = {};
 
-//   // Build WHERE clause dynamically
-//   const where = {};
-//   if (order_id) where.id = order_id;
-//   if (status && status !== "all") where.order_status = status;
+    if (order_id) where.id = order_id;
 
-//   if (start_date && end_date) {
-//     const start = new Date(start_date);
-//     start.setHours(0, 0, 0, 0);
-//     const end = new Date(end_date);
-//     end.setHours(23, 59, 59, 999);
-//     where.order_date = { [Op.between]: [start, end] };
-//   } else if (start_date) {
-//     const start = new Date(start_date);
-//     start.setHours(0, 0, 0, 0);
-//     where.order_date = { [Op.gte]: start };
-//   } else if (end_date) {
-//     const end = new Date(end_date);
-//     end.setHours(23, 59, 59, 999);
-//     where.order_date = { [Op.lte]: end };
-//   }
+    if (status && status !== "all") {
+      where.order_status = status;
+    }
 
-//   // Fetch orders with User & Product
-//   const { count, rows } = await Order.findAndCountAll({
-//     where,
-//     include: [
-//       { model: User, attributes: ["name"] },
-//       { model: Vendor, attributes: ["name"] },
-//       { model: Product, as: "product", attributes: ["id", "product_type", "brand", "selling_price", "front_photo"] },
-//     ],
-//     order: [["created_at", "DESC"]],
-//     offset,
-//     limit,
-//   });
+    if (start_date && end_date) {
+      where.created_at = {
+        [Op.between]: [
+          new Date(`${start_date} 00:00:00`),
+          new Date(`${end_date} 23:59:59`),
+        ],
+      };
+    }
 
-//   // Status counts
-//   const countsRaw = await Order.findAll({
-//     attributes: ["order_status", [sequelize.fn("COUNT", sequelize.col("id")), "count"]],
-//     group: ["order_status"],
-//   });
+    const { count, rows } = await Order.findAndCountAll({
+      where,
+      offset,
+      limit,
+      order: [["created_at", "DESC"]],
+      include: [
+        {
+          model: OrderItem,
+          as: "items",
+          attributes: ["id", "quantity", "price"],
+          include: [
+            {
+              model: ProductVariant,
+              as: "variant",
+              attributes: ["id", "part_no", "variant_name", "color"],
+              include: [
+                {
+                  model: Product,
+                  as: "product",
+                  attributes: ["id", "name", "brand", "price"],
+                },
+                {
+                  model: ProductImage,
+                  as: "ProductImage",
+                  attributes: ["front_img", "left_img", "right_img"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
 
-//   const counts = { total: count };
-//   countsRaw.forEach(c => {
-//     counts[c.order_status] = parseInt(c.get("count"));
-//   });
+    // 👉 DASHBOARD COUNTS
+    const counts = {
+      total: await Order.count(),
+      placed: await Order.count({ where: { order_status: "PLACED" } }),
+      shipped: await Order.count({ where: { order_status: "SHIPPED" } }),
+      delivered: await Order.count({ where: { order_status: "DELIVERED" } }),
+      cancelled: await Order.count({ where: { order_status: "CANCELLED" } }),
+    };
 
-//   const totalPages = Math.ceil(count / limit);
-
-//   return { orders: rows, counts, pagination: { totalPages, currentPage: page } };
-// };
-
-// export const getOrderDetailsService = async (id) => {
-//   try {
-//     const order = await Order.findOne({
-//       where: { id },
-//       include: [
-//         {
-//           model: User,
-//           attributes: [
-//             "id",
-//             "name",
-//             "email",
-//             "phone",
-//             "address_line",
-//             "city",
-//             "state",
-//             "pincode",
-//           ],
-//         },
-//         {
-//           model: Product,
-//           as: "product",
-//           attributes: [
-//             "id",
-//             "brand",
-//             "model_name",
-//             "product_condition",
-//             "size",
-//             "product_color",
-//             "selling_price",
-//             "front_photo",
-//             "product_type",
-//             "product_group",
-//           ],
-//           include: [
-//             {
-//               model: Vendor,
-//               as: "vendor",
-//               attributes: [
-//                 "id",
-//                 "name",
-//                 "business_name",
-//                 "business_type",
-//                 "phone",
-//                 "email",
-//               ],
-//             },
-//           ],
-//         },
-//         {
-//           model: Vendor,
-//           attributes: [
-//             "id",
-//             "name",
-//             "business_name",
-//             "business_type",
-//             "phone",
-//             "email",
-//           ],
-//         },
-//       ],
-//     });
-
-//     if (!order) return null;
-
-//     const user = order.User || {};
-//     const product = order.product || {};
-//     const vendor = product.vendor || order.Vendor || {};
-
-//     return {
-//       order_id: order.id,
-//       order_date: order.order_date,
-//       order_status: order.order_status,
-//       payment_status: order.payment_status,
-//       payment_method: order.payment_method,
-//       transaction_id: order.transaction_id,
-//       total_amount: Number(order.total_amount) || 0,
-//       quantity: order.quantity,
-//       shipping_address: order.shipping_address,
-
-//       customer: {
-//         id: user.id,
-//         name: user.name,
-//         email: user.email,
-//         phone: user.phone,
-//         address: [
-//           user.address_line,
-//           user.city,
-//           user.state,
-//           user.pincode ? `- ${user.pincode}` : "",
-//         ]
-//           .filter(Boolean)
-//           .join(", "),
-//       },
-
-//       product: {
-//         id: product.id,
-//         brand: product.brand,
-//         model_name: product.model_name,
-//         condition: product.product_condition,
-//         size: product.size,
-//         color: product.product_color,
-//         selling_price: Number(product.selling_price) || 0,
-//         image: product.front_photo,
-//         group: product.product_group,
-//         type: product.product_type,
-//       },
-
-//       vendor: {
-//         id: vendor.id,
-//         name: vendor.name,
-//         business_name: vendor.business_name,
-//         business_type: vendor.business_type,
-//         phone: vendor.phone,
-//         email: vendor.email,
-//       },
-//     };
-//   } catch (error) {
-//     console.error("Error in getOrderDetailsService:", error);
-//     throw error;
-//   }
-// };
-
-// // payment management
-// export const getPaymentsWithFiltersService = async ({ transaction_id, status, start_date, end_date, page = 1, limit = 10 }) => {
-//   try {
-//     const where = {};
-
-//     // Filter by transaction_id
-//     if (transaction_id) {
-//       where.transaction_id = { [Op.like]: `%${transaction_id}%` };
-//     }
-
-//     // Filter by status
-//     if (status && status.toLowerCase() !== "all") {
-//       where.payment_status = status.toLowerCase();
-//     }
-
-//     // Filter by payment_date
-//     if (start_date && end_date) {
-//       const start = new Date(start_date);
-//       start.setHours(0, 0, 0, 0);
-
-//       const end = new Date(end_date);
-//       end.setHours(23, 59, 59, 999);
-
-//       where.payment_date = { [Op.between]: [start, end] };
-//     } else if (start_date) {
-//       const start = new Date(start_date);
-//       start.setHours(0, 0, 0, 0);
-//       where.payment_date = { [Op.gte]: start };
-//     } else if (end_date) {
-//       const end = new Date(end_date);
-//       end.setHours(23, 59, 59, 999);
-//       where.payment_date = { [Op.lte]: end };
-//     }
-
-//     const offset = (page - 1) * limit;
-
-//     // Fetch paginated payments
-//     const { count, rows } = await Payment.findAndCountAll({
-//       where,
-//       limit,
-//       offset,
-//       order: [["payment_date", "DESC"]],
-//       attributes: [
-//         "id",
-//         "order_id",
-//         "user_id",
-//         "vendor_id",
-//         "amount",
-//         "vendor_earning",
-//         "platform_fee",
-//         "currency",
-//         "payment_status",
-//         "payment_method",
-//         "transaction_id",
-//         "payment_date",
-//       ],
-//     });
-
-//     const totalPages = Math.ceil(count / limit);
-
-//     return {
-//       payments: rows,
-//       total: count,
-//       totalPages,
-//     };
-//   } catch (err) {
-//     throw new Error(err.message || "Error fetching payments");
-//   }
-// };
+    return {
+      orders: rows,
+      counts,
+      pagination: {
+        total: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+      },
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 
-// export const getPaymentCommissionService = async (vendorId) => {
-//   const where =
-//     vendorId === "all" ? {} : { vendor_id: vendorId };
+export const getOrderDetailsService = async (id) => {
+  const order = await Order.findOne({
+    where: { id },
+    include: [
+      {
+        model: OrderItem,
+        as: "items",
+        attributes: ["id", "quantity", "price"],
+        include: [
+          {
+            model: ProductVariant,
+            as: "variant",
+            attributes: ["id", "part_no", "variant_name", "color"],
+            include: [
+              {
+                model: Product,
+                as: "product",
+                attributes: ["id", "name", "brand", "price"],
+              },
+              {
+                model: ProductImage,
+                as: "ProductImage",
+                attributes: ["front_img", "left_img", "right_img"],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
 
-//   // 1️⃣ STATS (UPDATED BUSINESS LOGIC)
-//   const stats = await Payment.findOne({
-//     where,
-//     attributes: [
-//       // ✅ All orders
-//       [fn("COUNT", fn("DISTINCT", col("order_id"))), "totalOrders"],
+  return order || null;
+};
 
-//       // ✅ Total amount (ALL statuses)
-//       [fn("SUM", col("amount")), "totalAmount"],
 
-//       // ✅ Admin commission (ONLY success)
-//       [
-//         fn(
-//           "SUM",
-//           literal(
-//             `CASE
-//               WHEN payment_status = 'success'
-//               THEN admin_commission
-//               ELSE 0
-//             END`
-//           )
-//         ),
-//         "adminCommission",
-//       ],
+// payment management
+export const getPaymentsWithFiltersService = async ({
+  transaction_id,
+  status,
+  start_date,
+  end_date,
+  page = 1,
+  limit = 10,
+}) => {
+  const where = {};
 
-//       // ✅ Vendor payout (ONLY success)
-//       [
-//         fn(
-//           "SUM",
-//           literal(
-//             `CASE
-//               WHEN payment_status = 'success'
-//               THEN vendor_earning
-//               ELSE 0
-//             END`
-//           )
-//         ),
-//         "vendorPayout",
-//       ],
+  if (transaction_id) {
+    where.razorpay_payment_id = { [Op.like]: `%${transaction_id}%` };
+  }
 
-//       // ✅ Vendor earnings (ONLY success)
-//       [
-//         fn(
-//           "SUM",
-//           literal(
-//             `CASE
-//               WHEN payment_status = 'success'
-//               THEN vendor_earning
-//               ELSE 0
-//             END`
-//           )
-//         ),
-//         "totalVendorEarning",
-//       ],
+  if (status && status !== "all") {
+    where.status = status;
+  }
 
-//       // 🟡 Pending amount
-//       [
-//         fn(
-//           "SUM",
-//           literal(
-//             `CASE
-//               WHEN payment_status = 'pending'
-//               THEN amount
-//               ELSE 0
-//             END`
-//           )
-//         ),
-//         "totalPendingAmount",
-//       ],
+  // ---- FIXED DATE FILTER ----
+  if (start_date || end_date) {
+    const start = start_date
+      ? new Date(start_date)
+      : new Date("1970-01-01");
 
-//       // 🔴 Failed amount
-//       [
-//         fn(
-//           "SUM",
-//           literal(
-//             `CASE
-//               WHEN payment_status = 'failed'
-//               THEN amount
-//               ELSE 0
-//             END`
-//           )
-//         ),
-//         "totalFailedAmount",
-//       ],
-//     ],
-//     raw: true,
-//   });
+    start.setHours(0, 0, 0, 0);
 
-//   // 2️⃣ PAYMENTS LIST (NO CHANGE)
-//   const payments = await Payment.findAll({
-//     where,
-//     attributes: [
-//       "id",
-//       "order_id",
-//       "amount",
-//       "admin_commission",
-//       "vendor_earning",
-//       "payment_status",
-//       "transaction_id",
-//       [fn("DATE", col("payment_date")), "payment_date"],
-//     ],
-//     order: [["created_at", "DESC"]],
-//     raw: true,
-//   });
+    const end = end_date ? new Date(end_date) : new Date();
+    end.setHours(23, 59, 59, 999);
 
-//   // 3️⃣ VENDORS (NO CHANGE)
-//   const vendors = await Vendor.findAll({
-//     attributes: ["id", "name"],
-//     raw: true,
-//   });
+    // IMPORTANT — use the SAME column everywhere
+    where.created_at = {
+      [Op.between]: [start, end],
+    };
+  }
 
-//   return {
-//     stats,
-//     payments,
-//     vendors,
-//   };
-// };
+  const offset = (page - 1) * limit;
+
+  const { count, rows } = await Payment.findAndCountAll({
+    where,
+    offset,
+    limit,
+    order: [["created_at", "DESC"]], // same field
+  });
+
+  return {
+    payments: rows,
+    total: count,
+    totalPages: Math.ceil(count / limit),
+  };
+};

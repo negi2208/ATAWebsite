@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 // import productRoutes from "./modules/product/product.route.js";
+import adminRoutes from "./modules/auth/admin.routes.js";
 import paymentRoutes from "./modules/payment/payment.route.js";
 import categoryRoutes from "./modules/category/category.routes.js";
 import adminManagementRoutes from "./modules/management/adminManagement.routes.js"
@@ -15,13 +16,14 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
 
 // routes
 // app.use("/api/products", productRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/management", adminManagementRoutes);

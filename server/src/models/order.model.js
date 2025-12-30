@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
+import { OrderItem } from "./orderItem.model.js";
 
 export const Order = sequelize.define("orders", {
   id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
@@ -8,6 +9,15 @@ export const Order = sequelize.define("orders", {
   total_amount: { type: DataTypes.DECIMAL(10, 2) },
   payment_status: { type: DataTypes.ENUM("PENDING", "PAID", "FAILED") },
   order_status: {
-    type: DataTypes.ENUM("PLACED","CONFIRMED","SHIPPED","DELIVERED","CANCELLED")
+    type: DataTypes.ENUM("PLACED", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED")
   }
-});
+},
+  {
+    timestamps: true,                  // enable timestamps
+    createdAt: "created_at",           // map db column
+    updatedAt: false,           // map db column
+    underscored: true,
+  }
+);
+
+Order.hasMany(OrderItem, { foreignKey: "order_id", as: "items" });

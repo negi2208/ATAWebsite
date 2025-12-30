@@ -1,29 +1,30 @@
 // import { getAdminDashboardService, getAllUsers, getPaymentsWithFiltersService, getAllProductsService, getProductByIdService, updateProductStatusService, getVendorByIdService, updateVendorStatusService, getAllVendorsService, getAllOrdersService, getOrderDetailsService, getPaymentCommissionService } from "../../services/admin/adminManagementService.js";
 import { successResponse, errorResponse } from "../../utils/helper.js";
 import logger from "../../config/logger.js";
-import { getAllUsers, getAllProductsService, getProductByIdService } from "./adminManagement.service.js"
-// // admin dashboard Management
-// export const getAdminDashboardController = async (req, res) => {
-//   try {
-//     const data = await getAdminDashboardService();
-//     return successResponse(res, 200, "Dashboard data fetched successfully", data);
-//   } catch (error) {
-//     logger.error(`Dashboard fetch failed: ${error.message}`);
-//     return errorResponse(res, 500, error);
-//   }
-// };
+import { getAdminDashboardService, getAllUsers, getAllProductsService, getProductByIdService, getAllOrdersService, getOrderDetailsService, getPaymentsWithFiltersService } from "./adminManagement.service.js"
 
-// // user management Controller
+// admin dashboard Management
+export const getAdminDashboardController = async (req, res) => {
+  try {
+    const data = await getAdminDashboardService();
+    return successResponse(res, 200, "Dashboard data fetched successfully", data);
+  } catch (error) {
+    logger.error(`Dashboard fetch failed: ${error.message}`);
+    return errorResponse(res, 500, error);
+  }
+};
+
+// user management Controller
 export const getAllUsersController = async (req, res) => {
     try {
-        const search = req.query.search || req.query.name || req.query.phone || req.query.address || "";
+        const search = req.query.search || req.query.full_name || req.query.phone || req.query.address || "";
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const result = await getAllUsers({ search, page, limit });
 
         const filteredUsers = result?.users?.map(user => ({
             id: user.id,
-            name: user.name,
+            name: user.full_name,
             phone: user.phone,
             city: user.address,
             created_at: user.created_at
@@ -78,93 +79,77 @@ export const getProductByIdController = async (req, res) => {
   }
 };
 
-// // orders management Controller
-// export const getAllOrders = async (req, res) => {
-//   try {
-//     const filters = {
-//       order_id: req.query.order_id || null,
-//       status: req.query.status || "all",
-//       start_date: req.query.start_date || null,
-//       end_date: req.query.end_date || null,
-//       page: parseInt(req.query.page) || 1,
-//       limit: parseInt(req.query.limit) || 10,
-//     };
+// orders management Controller
+export const getAllOrders = async (req, res) => {
+  try {
+    const filters = {
+      order_id: req.query.order_id || null,
+      status: req.query.status || "all",
+      start_date: req.query.start_date || null,
+      end_date: req.query.end_date || null,
+      page: parseInt(req.query.page) || 1,
+      limit: parseInt(req.query.limit) || 10,
+    };
 
-//     const { orders, counts, pagination  } = await getAllOrdersService(filters);
+    const result = await getAllOrdersService(filters);
 
-//     logger.info("Fetched all orders successfully");
-//     return successResponse(res, 200, "Orders fetched successfully", { counts, orders, pagination  });
-//   } catch (error) {
-//     logger.error(`Error fetching orders: ${error.message}`);
-//     return errorResponse(res, 500, error);
-//   }
-// };
+    return successResponse(res, 200, "Orders fetched", result);
 
-// export const getOrderDetails = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const order = await getOrderDetailsService(id);
+  } catch (error) {
+    console.error("GET ORDERS ERROR:", error);
 
-//     if (!order) {
-//       return errorResponse(res, 404, "Order not found");
-//     }
+    // 👉 POSTMAN ME CLEAR ERROR DIKHEGA
+    return errorResponse(
+      res,
+      500,
+      error?.message || "Failed to fetch orders"
+    );
+  }
+};
 
-//     logger.info(`Fetched details for order ID: ${id}`);
-//     return successResponse(res, 200, "Order details fetched successfully", order);
-//   } catch (error) {
-//     logger.error(`Error fetching order details: ${error.message}`);
-//     return errorResponse(res, 500, error);
-//   }
-// };
 
-// // payment Managemnet Controller
-// export const getPaymentsController = async (req, res) => {
-//   try {
-//     const filters = {
-//       status: req.query.status || "all",
-//       start_date: req.query.start_date || null,
-//       end_date: req.query.end_date || null,
-//       transaction_id: req.query.transaction_id || null,
-//       page: parseInt(req.query.page) || 1,
-//       limit: parseInt(req.query.limit) || 10,
-//     };
-//     const result = await getPaymentsWithFiltersService(filters);
-//     logger.info("Fetched filtered payments");
-//     return successResponse(res, 200, "Payments fetched successfully", {
-//       data: result.payments,
-//       pagination: {
-//         totalItems: result.total,
-//         totalPages: result.totalPages,
-//         currentPage: filters.page,
-//         limit: filters.limit,
-//       },
-//     });
-//   } catch (err) {
-//     logger.error("Error fetching payments:", err.message);
-//     return errorResponse(res, 500, err);
-//   }
-// };
+export const getOrderDetails = async (req, res) => {
+  try {
+    const order = await getOrderDetailsService(req.params.id);
 
-// export const getPaymentCommission = async (req, res) => {
-//   try {
-//     const vendorId = req.query.vendorId || "all";
+    if (!order) {
+      return errorResponse(res, 404, "Order not found");
+    }
 
-//     const result = await getPaymentCommissionService(vendorId);
+    return successResponse(res, 200, "Order details fetched", order);
+  } catch (error) {
+    return errorResponse(res, 500, error.message);
+  }
+};
 
-//     logger.info("Fetched payment commission data");
 
-//     return successResponse(
-//       res,
-//       200,
-//       "Payment commission fetched successfully",
-//       result
-//     );
-//   } catch (error) {
-//     logger.error(
-//       "Error fetching payment commission:",
-//       error.message
-//     );
+// payment Managemnet Controller
+export const getPaymentsController = async (req, res) => {
+  try {
+    const filters = {
+      status: req.query.status || "all",
+      start_date: req.query.start_date || null,
+      end_date: req.query.end_date || null,
+      transaction_id: req.query.transaction_id || null,
+      page: parseInt(req.query.page) || 1,
+      limit: parseInt(req.query.limit) || 10,
+    };
 
-//     return errorResponse(res, 500, error);
-//   }
-// };
+    const result = await getPaymentsWithFiltersService(filters);
+
+    logger.info("Fetched filtered payments");
+
+    return successResponse(res, 200, "Payments fetched successfully", {
+      data: result.payments,
+      pagination: {
+        totalItems: result.total,
+        totalPages: result.totalPages,
+        currentPage: filters.page,
+        limit: filters.limit,
+      },
+    });
+  } catch (err) {
+    logger.error("Error fetching payments:", err.message);
+    return errorResponse(res, 500, err);
+  }
+};

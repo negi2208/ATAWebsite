@@ -3,6 +3,7 @@ import axios from "axios";
 // import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
 import { Download } from "lucide-react";
+import toast from "react-hot-toast";
 
 const UsersManagement = () => {
   const [users, setUsers] = useState([]);
@@ -17,11 +18,11 @@ const UsersManagement = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/admin/management/user`,
+        `${import.meta.env.VITE_API_URL}/api/management/user`,
         {
           params: {
-            search:search,
-            page:currentPage,
+            search: search,
+            page: currentPage,
             limit: itemsPerPage,
           },
           withCredentials: true,
@@ -29,9 +30,19 @@ const UsersManagement = () => {
       );
 
       const { success, data, message } = res.data;
+      console.log(data)
 
       if (success) {
-        setUsers(data.users || []);
+        const normalized = (data.users || []).map(u => ({
+          id: u.id,
+          name: u.name,
+          phone: u.phone,
+          address: u.city
+        }));
+
+        setUsers(normalized);
+        setTotalUsers(data.total || 0);
+
         setTotalUsers(data.total || 0);
         // Only show toast if search is used
         toast.success(message);
@@ -57,8 +68,8 @@ const UsersManagement = () => {
 
   // Handle search
   const handleSearch = () => {
-    setCurrentPage(1);     
-    fetchUsers();    
+    setCurrentPage(1);
+    fetchUsers();
   };
 
   // Export Excel
@@ -72,8 +83,8 @@ const UsersManagement = () => {
       users.map((u, index) => ({
         SR_No: (currentPage - 1) * itemsPerPage + index + 1,
         Name: u.name,
-        Email: u.email,
         Phone: u.phone,
+        Address: u.city,
       }))
     );
     const wb = XLSX.utils.book_new();
@@ -93,7 +104,7 @@ const UsersManagement = () => {
           onClick={exportExcel}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-700"
         >
-          <Download size={16}/> Export Report
+          <Download size={16} /> Export Report
         </button>
       </div>
 
@@ -101,7 +112,7 @@ const UsersManagement = () => {
       <div className="mb-4 flex gap-2 flex-wrap bg-white shadow-sm p-4 rounded-lg">
         <input
           type="text"
-          placeholder="Search by name, email or phone"
+          placeholder="Search by name, phone or address"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="px-4 py-2 border rounded-lg flex-1 focus:ring focus:ring-blue-200"
@@ -121,8 +132,8 @@ const UsersManagement = () => {
             <tr>
               <th className="px-4 py-3 border">SR.</th>
               <th className="px-4 py-3 border">Name</th>
-              <th className="px-4 py-3 border">Email</th>
               <th className="px-4 py-3 border">Phone</th>
+              <th className="px-4 py-3 border">Address</th>
             </tr>
           </thead>
           <tbody>
@@ -143,8 +154,8 @@ const UsersManagement = () => {
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 border">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                   <td className="px-4 py-3 border font-medium">{user.name}</td>
-                  <td className="px-4 py-3 border">{user.email}</td>
                   <td className="px-4 py-3 border">{user.phone}</td>
+                  <td className="px-4 py-3 border">{user.address}</td>
                 </tr>
               ))
             )}
@@ -167,9 +178,8 @@ const UsersManagement = () => {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 border rounded ${
-                currentPage === i + 1 ? "bg-blue-600 text-white" : ""
-              }`}
+              className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-600 text-white" : ""
+                }`}
             >
               {i + 1}
             </button>

@@ -1,9 +1,20 @@
-import { Router } from "express";
-import { registerAdmin, loginAdmin } from "./admin.controller.js";
+import express from "express";
+import {
+  registerAdminController,
+  loginAdminController,
+  logoutAdminController,
+  getProfileController,
+  updateProfileController,
+} from "./admin.controller.js";
+import { adminAuth } from "../../middlewares/auth.middleware.js";
 
-const router = Router();
+const router = express.Router();
 
-router.post("/register", registerAdmin);
-router.post("/login", loginAdmin);
+router.post("/register", registerAdminController);
+router.post("/login", loginAdminController);
+router.post("/logout", adminAuth, logoutAdminController);
+
+router.get("/profile", adminAuth, getProfileController);
+router.put("/profile", adminAuth, updateProfileController);
 
 export default router;
