@@ -102,25 +102,22 @@ const onSubmit = async (data) => {
 
             <div className="space-y-8">
               <div className="bg-white p-8 rounded-xl shadow-sm border">
-                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3 mb-4">
-                  <MapPin className="w-6 h-6 text-red-600" />
-                  United States
-                </h3>
-                <p className="text-gray-700 font-medium">ATA Genuine Parts - New York</p>
-                <p className="text-gray-600 mb-4">205 Middle Road, 2nd Floor, NY 10001</p>
-                <div className="space-y-3">
+               
+                <p className="text-gray-700 font-medium">Khewat 478 & 63, VPO Bhangu, Dabwali road, Sirsa, Haryana, 125077</p>
+              
+                <div className="space-y-3 py-4">
                   <div className="flex items-center gap-3 text-gray-700">
                     <Phone className="w-5 h-5 text-red-600" />
-                    <span>+1 (555) 123-4567</span>
+                    <span>9175900003</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-700">
                     <Mail className="w-5 h-5 text-red-600" />
-                    <a href="mailto:usa@atagenuineparts.com" className="hover:text-red-600">usa@atagenuineparts.com</a>
+                    <a href="mailto:usa@atagenuineparts.com" className="hover:text-red-600">genuinefiberpartsata@gmail.com</a>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white p-8 rounded-xl shadow-sm border">
+              {/* <div className="bg-white p-8 rounded-xl shadow-sm border">
                 <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3 mb-4">
                   <MapPin className="w-6 h-6 text-red-600" />
                   Netherlands
@@ -137,7 +134,7 @@ const onSubmit = async (data) => {
                     <a href="mailto:eu@atagenuineparts.com" className="hover:text-red-600">eu@atagenuineparts.com</a>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
