@@ -29,7 +29,7 @@ export default function AboutCompanyOverview() {
           {/* RIGHT: Text Content */}
           <div className="space-y-6 sm:space-y-8 w-full max-w-full">
             <p className="text-xs sm:text-sm text-neutral-500 font-bold uppercase tracking-widest">
-              ABOUT SAI GROUP GLOBAL
+              ABOUT ATA Genuine Parts
             </p>
 
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-snug sm:leading-tight md:leading-tight max-w-full">
@@ -39,11 +39,7 @@ export default function AboutCompanyOverview() {
             </h2>
 
             <p className="text-gray-600 leading-relaxed text-sm sm:text-base md:text-base max-w-full">
-              Sai Group Global is a trusted OEM manufacturer and development partner in the
-              automotive industry. With expertise in ABS Parts, Safety Helmets, and Die-Casting,
-              we deliver cutting-edge, high-quality solutions that prioritize safety, durability,
-              and performance. Our commitment to excellence and sustainability fuels progress
-              in every product we create.
+              At ATA Genuine Parts, every component is engineered to deliver strength, perfect fitment, and long-lasting performance. Our plastic body parts are designed to match OEM specifications, ensuring reliability on Indian roads and confidence for mechanics and riders alike. Built using advanced injection moulding technology, ATA products offer superior finish, durability, and impact resistance — making them the preferred choice across workshops and dealerships.
             </p>
 
             {/* VISION & STRENGTH */}

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { addToWishlist } from "../../utils/Addwishlist";
 import { toast } from "react-hot-toast";
 
+
 export default function BestSeller() {
   const scrollRef = useRef(null);
   const [products, setProducts] = useState([]);

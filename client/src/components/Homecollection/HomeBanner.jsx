@@ -8,8 +8,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const images = [
   "/images/Home/banner2.jpeg",
-  "/images/Home/banner1.jpeg",
-  "/images/Home/banner3.jpeg",
+  "/images/Home/Website banner1-13.jpg",
+  "/images/Home/Website banner1-14 (1).jpg",
+  "/images/Home/Website banner1-14.jpg",
   
 ];
 

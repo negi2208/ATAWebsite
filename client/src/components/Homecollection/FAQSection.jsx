@@ -1,30 +1,30 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-
+import { Link } from "react-router-dom";
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState(0);
 
   const faqs = [
     {
-      question: "How Do I Know If a Part Fits My Vehicle?",
+      question: "Are ATA Genuine Parts as reliable as OEM parts?",
       answer:
-        "This is the third item’s accordion body. It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the .accordion-body, though the transition does limit overflow.",
+        "ATA Genuine Parts are engineered to match OEM specifications in fit, durability, and performance. Each part is tested for strength, heat resistance, and long-term use — so mechanics and riders can trust it on daily Indian roads.",
     },
     {
-      question: "Can I Save Multiple Vehicles in My Garage?",
-      answer: "Yes, you can save multiple vehicles in your garage for quick part lookup.",
+      question: "Will ATA plastic body parts fit my bike without modification?",
+      answer: "In most cases — yes, they are direct-fit. ATA parts are designed with accurate mounting points and dimensions, so mechanics don’t need cutting, drilling, or adjustments. If a model requires any special fitment note, it is clearly mentioned on the product.",
     },
     {
-      question: 'What Does "Ignavo" Mean in Auto Parts?',
-      answer: "Ignavo is a premium brand known for high-quality aftermarket parts.",
+      question: 'What makes ATA plastic body parts more durable?',
+      answer: "ATA uses advanced injection-molding technology that ensures consistent thickness, strong structural integrity, and superior impact resistance. This process also delivers a refined surface finish with better color retention, helping prevent cracking, fading, and warping over time.",
     },
     {
-      question: "Are Aftermarket Parts Reliable?",
-      answer: "Yes, most aftermarket parts meet or exceed OEM standards when from trusted brands.",
+      question: "Do ATA parts come with any quality assurance?",
+      answer: "Yes — every ATA product goes through multiple quality checks before packing. If a part is found defective due to manufacturing issues, it is eligible for replacement as per our policy (damage from accidents or mishandling is not covered).",
     },
     {
-      question: "Can I Return a Part If It Doesn't Fit?",
-      answer: "Yes, we offer a 30-day return policy for unused parts in original packaging.",
+      question: "Where can I buy ATA Genuine Parts and ensure I’m getting original products?",
+      answer: "ATA Genuine Parts are available through certified distributors, authorized workshops and dealers, and select verified retail stores. To ensure authenticity, always check the ATA branding, the packaging seal, and the invoice. If you’re unsure, you can also ask the seller to confirm the product source.",
     },
   ];
 
@@ -47,7 +47,7 @@ export default function FAQSection() {
                 be curious about.
               </h2>
 
-              <div className="mt-3 sm:mt-4 space-y-2 text-gray-700 text-sm sm:text-base md:text-base">
+              <div className="mt-3 mb-8 sm:mt-4 space-y-2 text-gray-700 text-sm sm:text-base md:text-base">
                 <p>
                   <strong>Item currently in stock.</strong> Items with this status
                   are shipped within <strong>4–5 days</strong> of payment.
@@ -55,9 +55,10 @@ export default function FAQSection() {
                 <p>Do you need more information?</p>
               </div>
 
-              <button className="mt-4 sm:mt-5 bg-primary-500 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-sm sm:text-base font-medium hover:bg-primary-600 transition-colors shadow-md">
+            <Link
+  to="/contact" className="mt-6 sm:mt-8 bg-primary-500 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-sm sm:text-base font-medium hover:bg-primary-600 transition-colors shadow-md">
                 More Information
-              </button>
+              </Link>
             </div>
           </div>
 

@@ -4,23 +4,23 @@ export default function WhyChooseUs() {
   const reasons = [
     {
       icon: Lightbulb,
-      title: "Innovative Solution",
-      desc: "Our customized services align with your unique business needs—whether for small batches or large-scale production, we deliver with precision and efficiency.",
+      title: "Engineered for Perfect Fit",
+      desc: "Every ATA part is designed to match OEM dimensions, ensuring precise fitment, zero vibration, and hassle-free installation — trusted by mechanics across workshops.",
     },
     {
       icon: Settings,
-      title: "End-to-End Services",
-      desc: "From initial design to mass production, we provide comprehensive support at every stage of product development, ensuring a seamless process.",
+      title: "Built Strong for Indian Roads",
+      desc: "ATA parts are manufactured to handle daily wear, rough terrain, and changing weather conditions, providing long-lasting durability and dependable performance.",
     },
     {
       icon: Globe,
-      title: "Global Reach, Local Expertise",
-      desc: "With a strong presence in multiple regions, we offer flexible solutions tailored to meet your global supply chain needs efficiently.",
+      title: "Advanced Manufacturing Technology",
+      desc: "Using modern injection-moulding processes, our products achieve superior finish, consistent thickness, and enhanced impact resistance — reducing cracks and replacements.",
     },
     {
       icon: ShieldCheck,
-      title: "Commitment To Excellence",
-      desc: "We uphold the highest quality standards and adhere to global compliance and safety regulations, ensuring your products meet industry benchmarks.",
+      title: "Quality You Can Trust",
+      desc: "Each part undergoes strict quality checks and complies with safety standards, ensuring reliability for both riders and service professionals.",
     },
   ];
 
@@ -43,7 +43,7 @@ export default function WhyChooseUs() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Subtitle */}
         <p className="text-primary-300 text-xs sm:text-sm font-bold uppercase tracking-widest mb-3 font-heading">
-          WHY CHOOSE US?
+          WHY CHOOSE ATA GENUINE PARTS
         </p>
 
         {/* Heading */}

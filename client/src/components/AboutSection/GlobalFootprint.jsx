@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function GlobalFootprint() {
   return (
-    <section className="bg-gray-50 py-12 sm:py-16 md:py-2">
+    <section className="bg-gray-50 py-12 sm:py-16 md:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
@@ -27,7 +27,7 @@ export default function GlobalFootprint() {
 
             {/* READ MORE Button */}
             <a
-              href="/about-us"
+              href="/about"
               className="inline-flex items-center gap-2 sm:gap-3 bg-primary-500 hover:bg-primary-600 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
             >
               READ MORE
@@ -38,7 +38,7 @@ export default function GlobalFootprint() {
           {/* RIGHT: World Map Image */}
           <div className="flex justify-center mt-6 lg:mt-0">
             <img
-              src="/images/About/footprint.png"
+              src="/images/About/Bunch1.png"
               alt="Sai Group Global Reach"
               className="w-full max-w-md sm:max-w-lg md:max-w-2xl drop-shadow-2xl"
             />

@@ -7,7 +7,7 @@ import banner3 from '/ProductSection/banner-12.jpg';
 
 const ProductSection = () => {
   return (
-    <section className="py-8 sm:py-12 md:py-16">
+    <section className="py-8 sm:py-12 md:py-8">
       <div className="container mx-auto px-4 md:px-8">
         {/* Three Full Background Image Cards */}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -84,8 +84,10 @@ const ProductSection = () => {
           {/* Phone */}
           <div className="text-left md:text-right">
             <div className="flex justify-center">
-            <button className="px-6 sm:px-8 py-2 sm:py-3 bg-white text-primary-500 font-medium rounded-full hover:bg-gray-100 transition-colors whitespace-nowrap">
-            +(800) 1234 5678 90
+            <button 
+             onClick={() => (window.location.href = 'tel:+919175900003')}
+             className="px-6 sm:px-8 py-2 sm:py-3 bg-white text-primary-500 font-medium rounded-full hover:bg-gray-100 transition-colors whitespace-nowrap">
+            +91 9175900003
             </button>
           </div>
           </div>

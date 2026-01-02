@@ -65,7 +65,7 @@ export default function Footer() {
                 { name: "Contact", path: "/contact" },
                 { name: "Privacy Policy", path: "/privacy-policy" },
                 { name: "Terms & Conditions", path: "/terms-conditions" },
-                { name: "Blogs", path: "/blogs" }
+                
               ].map((link) => (
                 <li key={link.name}>
                   <a
@@ -82,10 +82,9 @@ export default function Footer() {
           {/* Social Icons */}
           <div className="flex justify-center gap-5 mb-8">
             {[
-              { Icon: Facebook, href: "https://facebook.com" },
-              { Icon: Twitter, href: "https://twitter.com" },
-              { Icon: Instagram, href: "https://instagram.com" },
-              { Icon: Youtube, href: "https://youtube.com" },
+              { Icon: Facebook, href: " https://www.facebook.com/RIfiberparts/reels/" },
+              { Icon: Instagram, href: "https://www.instagram.com/atagenuineparts" },
+              { Icon: Youtube, href: "https://www.youtube.com/@AtaGenuineParts" },
             ].map(({ Icon, href }, i) => (
               <a
                 key={i}
@@ -104,7 +103,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="py-6 text-center text-xs text-gray-500 font-medium">
-          <p>© 2025 ATA Genuine Parts. All rights reserved.</p>
+          <p>© 2026 ATA Genuine Parts. All rights reserved.</p>
           <p className="mt-1">Powered by <span className="text-red-500 font-bold">Hashtag Media and Entertainment India</span></p>
         </div>
       </div>

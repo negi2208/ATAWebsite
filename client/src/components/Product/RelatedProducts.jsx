@@ -78,10 +78,11 @@ export default function RelatedProducts() {
     );
 
     toast.success("Added to cart 🛒");
+     navigate("/cart");
   } catch (error) {
     console.error("Add to cart failed", error);
     toast.error(error.response?.data?.message || "Failed to add product to cart");
-    navigate("/cart");
+   
   } finally {
     setAdding(false);
   }

@@ -167,12 +167,14 @@ export default function Header() {
                   {cartCount > 0 && <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">{cartCount}</span>}
                 </button>
               </div> */}
-              <button className="hidden md:flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-full text-sm font-medium shadow-md hover:shadow-xl transition-all hover:scale-105">
-                <HelpCircle className="w-5 h-5" />
-                <a href="/contact">
-                  <span>Any Query?</span>
-                </a>
-              </button>
+              <button
+  onClick={() => (window.location.href = 'tel:+919175900003')}
+  className="hidden md:flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-full text-sm font-medium shadow-md hover:shadow-xl transition-all hover:scale-105"
+>
+  <HelpCircle className="w-5 h-5" />
+  <span>Any Query?</span>
+</button>
+
 
             </div>
           </div>
