@@ -5,7 +5,7 @@ export const Payment = sequelize.define(
   "payments",
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    order_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: false },
+    order_id: { type: DataTypes.BIGINT.UNSIGNED, allowNull: true  },
     razorpay_order_id: { type: DataTypes.STRING, allowNull: false },
     razorpay_payment_id: { type: DataTypes.STRING },
     razorpay_signature: { type: DataTypes.STRING },
