@@ -153,3 +153,4 @@ export const getPaymentsController = async (req, res) => {
     return errorResponse(res, 500, err);
   }
 };
+

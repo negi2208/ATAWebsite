@@ -46,8 +46,12 @@ import AdminProtectedRoute from './pages/AdminAuth/AdminProtectedRoute.jsx';
 import UserProtectedRoute from './components/UserAuth/UserProtectedRoute.jsx';
 import UserPublicRoute from './components/UserAuth/UserPublicRoute.jsx'; 
 
+import ScrollToTop from "./ScrollToTop";
+
 function App() {
   return (
+    <>
+     <ScrollToTop />
     <Routes>  []
       {/* Public Routes */}
       <Route element={<Layout />}>
@@ -100,6 +104,7 @@ function App() {
       <Route path="/admin/forgot-password" element={<ForgotPassword />} />
       <Route path="/admin/reset-password" element={<ResetPassword />} />
     </Routes>
+    </>
   );
 }
 

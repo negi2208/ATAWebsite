@@ -36,6 +36,7 @@ export default function ProductDetailPage() {
         } else {
           throw new Error(data.message || 'Failed to fetch product');
         }
+         
       } catch (err) {
         setError(err.message);
       } finally {
@@ -46,6 +47,8 @@ export default function ProductDetailPage() {
     if (id) {
       fetchProduct();
     }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
   }, [id]);
 
   if (loading) {
@@ -231,7 +234,7 @@ const handleAddToCart = async () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 py-12 border-t bg-white rounded-2xl shadow-sm divide-x divide-gray-300">
             {[
               { icon: Truck, title: "Fast Shipping", desc: "Free shipping on orders over ₹999" },
-              { icon: Shield, title: "Easy Return", desc: "30 days hassle-free return policy" },
+              { icon: Shield, title: "Easy Return", desc: "10 days hassle-free return policy" },
               { icon: Shield, title: "Warranty Policy", desc: "Official brand warranty included" }
             ].map((item, i) => (
               <div key={i} className="text-center px-8 first:pl-0 last:pr-0">

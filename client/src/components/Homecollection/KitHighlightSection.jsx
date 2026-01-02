@@ -42,7 +42,7 @@ Built using advanced injection moulding technology, ATA products offer superior 
             </p>
 
             <a
-              href="/shop/kits"
+              href="/shop"
               className="inline-flex items-center gap-2 text-primary-600 font-semibold hover:text-primary-700 transition text-sm"
             >
               Shop Now

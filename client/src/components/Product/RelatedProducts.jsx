@@ -96,7 +96,7 @@ export default function RelatedProducts() {
         {products.map((p) => (
           <div
             key={p.id}
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition"
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition flex flex-col"
           >
             {/* IMAGE */}
             <div className="relative">
@@ -122,25 +122,27 @@ export default function RelatedProducts() {
             </div>
 
             {/* DETAILS */}
-            <div className="p-3">
-              <Link
-                to={`/product/${p.id}`}
-                className="block text-sm line-clamp-2 mb-2 font-medium text-gray-800 hover:text-primary-700 transition"
-              >
-                {p.name}
-              </Link>
+            <div className="p-3 flex flex-col flex-1">
+  <Link
+    to={`/product/${p.id}`}
+    className="block text-sm line-clamp-2 mb-2 font-medium text-gray-800 hover:text-primary-700 transition min-h-[40px]"
+  >
+    {p.name}
+  </Link>
 
-              <p className="text-lg font-bold text-green-600">
-                ₹{Number(p.price).toLocaleString("en-IN")}
-              </p>
+  <p className="text-lg font-bold text-green-600">
+    ₹{Number(p.price).toLocaleString("en-IN")}
+  </p>
 
-              <button onClick={() => handleAddToCart(p)}
-                className="w-full mt-3 bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg text-sm flex items-center justify-center gap-2"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                Add to cart
-              </button>
-            </div>
+  <button
+    onClick={() => handleAddToCart(p)}
+    className="w-full mt-auto bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg text-sm flex items-center justify-center gap-2"
+  >
+    <ShoppingCart className="w-4 h-4" />
+    Add to cart
+  </button>
+</div>
+
           </div>
         ))}
       </div>

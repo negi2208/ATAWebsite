@@ -59,6 +59,7 @@ export const ContactController = {
       return res.json({
         success: true,
         data: contact,
+        
       });
     } catch (err) {
       console.error(err);

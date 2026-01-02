@@ -152,7 +152,7 @@ const onSubmit = async (data) => {
                     {...register('name')}
                     type="text"
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition"
-                    placeholder="John Doe"
+                    placeholder="Enter your name"
                   />
                   {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
                 </div>
@@ -165,7 +165,7 @@ const onSubmit = async (data) => {
                     {...register('email')}
                     type="email"
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition"
-                    placeholder="john@example.com"
+                    placeholder="Enter your email"
                   />
                   {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                 </div>
@@ -208,7 +208,7 @@ const onSubmit = async (data) => {
                     Sending...
                   </>
                 ) : (
-                  'Send Message'
+                  'Submit'
                 )}
               </button>
             </form>

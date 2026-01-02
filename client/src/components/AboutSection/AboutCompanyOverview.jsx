@@ -6,7 +6,7 @@ export default function AboutCompanyOverview() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
 
-          {/* LEFT: ONE IMAGE + 23+ Years Badge */}
+          {/* LEFT IMAGE */}
           <div className="relative w-full">
             <div className="max-w-lg mx-auto">
               <img
@@ -16,9 +16,8 @@ export default function AboutCompanyOverview() {
               />
             </div>
 
-            {/* 23+ Years Badge */}
             <div className="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 bg-gradient-to-r from-primary-700 to-pink-600 text-white px-6 sm:px-8 py-3 sm:py-5 rounded-xl shadow-2xl flex items-center gap-3 sm:gap-4">
-              <span className="text-3xl sm:text-5xl font-black">23+</span>
+              <span className="text-3xl sm:text-5xl font-black">2+</span>
               <div className="text-sm sm:text-base">
                 <span className="block font-bold uppercase tracking-wider">Years</span>
                 <span className="block opacity-90">Experience</span>
@@ -42,34 +41,38 @@ export default function AboutCompanyOverview() {
               At ATA Genuine Parts, every component is engineered to deliver strength, perfect fitment, and long-lasting performance. Our plastic body parts are designed to match OEM specifications, ensuring reliability on Indian roads and confidence for mechanics and riders alike. Built using advanced injection moulding technology, ATA products offer superior finish, durability, and impact resistance — making them the preferred choice across workshops and dealerships.
             </p>
 
-            {/* VISION & STRENGTH */}
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-6 justify-start">
-              {/* Our Vision */}
-              <div className="flex items-center gap-4 border-2 border-primary-700 rounded-3xl px-6 sm:px-8 py-4 sm:py-5 w-full sm:w-auto">
-                <Eye className="w-8 h-8 sm:w-10 sm:h-10 text-primary-700 flex-shrink-0" strokeWidth={1.5} />
-                <div>
-                  <h3 className="text-lg sm:text-xl font-black text-gray-900">Our Vision</h3>
-                  <p className="text-gray-600 text-xs sm:text-sm leading-tight">
-                    Shaping the Future of Automotive Excellence
-                  </p>
-                </div>
-              </div>
+           {/* VISION & STRENGTH */}
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-6">
 
-              {/* Our Strength */}
-              <div className="flex items-center gap-4 border-2 border-primary-700 rounded-3xl px-6 sm:px-8 py-4 sm:py-5 w-full sm:w-auto">
-                <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-primary-700 flex-shrink-0" strokeWidth={1.5} />
-                <div>
-                  <h3 className="text-lg sm:text-xl font-black text-gray-900">Our Strength</h3>
-                  <p className="text-gray-600 text-xs sm:text-sm leading-tight">
-                    Built on Quality & Trust
-                  </p>
-                </div>
-              </div>
-            </div>
+  {/* Our Vision */}
+  <div className="flex items-center gap-4 border-2 border-primary-700 rounded-3xl px-6 sm:px-8 py-5 h-full">
+    <Eye className="w-8 h-8 sm:w-10 sm:h-10 text-primary-700 flex-shrink-0" strokeWidth={1.5} />
 
+    <div className="flex-1">
+      <h3 className="text-lg sm:text-xl font-black text-gray-900">Our Vision</h3>
+      <p className="text-gray-600 text-xs sm:text-sm leading-tight">
+        Shaping the Future of Automotive Excellence
+      </p>
+    </div>
+  </div>
+
+  {/* Our Strength */}
+  <div className="flex items-center gap-4 border-2 border-primary-700 rounded-3xl px-6 sm:px-8 py-5 h-full">
+    <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-primary-700 flex-shrink-0" strokeWidth={1.5} />
+
+    <div className="flex-1">
+      <h3 className="text-lg sm:text-xl font-black text-gray-900">Our Strength</h3>
+      <p className="text-gray-600 text-xs sm:text-sm leading-tight">
+        Built on Quality & Trust
+      </p>
+    </div>
+  </div>
+</div>
           </div>
         </div>
       </div>
     </section>
   );
 }
+
+

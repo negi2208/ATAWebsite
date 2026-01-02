@@ -48,10 +48,7 @@ export default function FAQSection() {
               </h2>
 
               <div className="mt-3 mb-8 sm:mt-4 space-y-2 text-gray-700 text-sm sm:text-base md:text-base">
-                <p>
-                  <strong>Item currently in stock.</strong> Items with this status
-                  are shipped within <strong>4–5 days</strong> of payment.
-                </p>
+        
                 <p>Do you need more information?</p>
               </div>
 
