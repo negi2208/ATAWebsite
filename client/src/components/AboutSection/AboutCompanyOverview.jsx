@@ -1,4 +1,4 @@
-import { Eye, Zap } from "lucide-react"; // Zap = perfect minimal fist icon
+import { Eye, Zap } from "lucide-react"; 
 
 export default function AboutCompanyOverview() {
   return (
@@ -76,3 +76,4 @@ export default function AboutCompanyOverview() {
 }
 
 
+ 
