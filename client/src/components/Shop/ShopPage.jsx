@@ -1,55 +1,60 @@
 import React, { useState, useMemo, useEffect } from "react";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
+import { X, SlidersHorizontal } from "lucide-react";
+
 import CategoryFilter from "./CategoryFilter";
 import ProductCard from "./ProductCard";
 import Pagination from "./Pagination";
-import { X, SlidersHorizontal } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
-
 
 export default function ShopPage() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortBy, setSortBy] = useState("default");
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  /* ================= URL BASED CATEGORY ================= */
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFromURL = searchParams.get("category") || "all";
 
-useEffect(() => {
-  setSelectedCategory(categoryFromURL);
-}, [categoryFromURL]);
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromURL);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState("default");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  /* ================= SYNC STATE WITH URL ================= */
+  useEffect(() => {
+    setSelectedCategory(categoryFromURL);
+  }, [categoryFromURL]);
 
   /* ================= FETCH PRODUCTS ================= */
- useEffect(() => {
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
 
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/product`,
-        {
-          params: { category: selectedCategory },
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/product`,
+          {
+            params: {
+              category: selectedCategory,
+            },
+          }
+        );
+
+        if (res.data?.success) {
+          setProducts(res.data.data || []);
+        } else {
+          setProducts([]);
         }
-      );
-
-      if (res.data?.success) {
-        setProducts(res.data.data);
-      } else {
+      } catch (error) {
+        console.error("Failed to fetch products", error);
         setProducts([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch products", error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchProducts();
-}, [selectedCategory]);
-
+    fetchProducts();
+  }, [selectedCategory]);
 
   /* ================= SORTING ================= */
   const filteredAndSortedProducts = useMemo(() => {
@@ -76,21 +81,27 @@ useEffect(() => {
     currentPage * productsPerPage
   );
 
-  useEffect(() => setCurrentPage(1), [selectedCategory, sortBy]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, sortBy]);
 
   return (
     <>
-      {/* HERO */}
+      {/* ================= HERO ================= */}
       <section className="bg-gradient-to-r from-primary-600 to-rose-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">Shop</h1>
-          <p className="text-xl">Premium Tires, Wheels & Accessories</p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            Shop
+          </h1>
+          <p className="text-xl">
+            Premium Tires, Wheels & Accessories
+          </p>
         </div>
       </section>
 
+      {/* ================= MAIN ================= */}
       <section className="py-12 bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4">
-
           {/* MOBILE TOP BAR */}
           <div className="flex justify-between items-center mb-6 lg:hidden">
             <button
@@ -99,36 +110,22 @@ useEffect(() => {
             >
               <SlidersHorizontal className="w-6 h-6 text-gray-700" />
             </button>
-
-      <div className="flex items-center gap-2 w-full">
-  
-  <button className="p-2 border rounded-xl">
-    {/* filter icon */}
-  </button>
-
-  q 
-</div>
-
-
           </div>
 
           <div className="grid lg:grid-cols-4 gap-8">
-
-            {/* DESKTOP SIDEBAR */}
+            {/* ================= DESKTOP SIDEBAR ================= */}
             <div className="lg:col-span-1 hidden lg:block">
-             <CategoryFilter
-              selected={selectedCategory}
-              onSelect={(cat) => {
-                setSearchParams(cat === "all" ? {} : { category: cat });
-                setIsFilterOpen(false);
-              }}
-            />
+              <CategoryFilter
+                selected={selectedCategory}
+                onSelect={(cat) => {
+                  setSearchParams(cat === "all" ? {} : { category: cat });
+                }}
+              />
             </div>
 
-            {/* PRODUCTS AREA */}
+            {/* ================= PRODUCTS AREA ================= */}
             <div className="lg:col-span-3 relative">
-
-              {/* MOBILE SLIDE-IN FILTER */}
+              {/* MOBILE FILTER */}
               {isFilterOpen && (
                 <div className="fixed inset-0 z-50 flex">
                   <div className="bg-white w-64 p-6 overflow-y-auto animate-slide-left">
@@ -141,9 +138,9 @@ useEffect(() => {
                     <CategoryFilter
                       selected={selectedCategory}
                       onSelect={(cat) => {
-                        setSelectedCategory(cat);
+                        setSearchParams(cat === "all" ? {} : { category: cat });
                         setIsFilterOpen(false);
-                        }}
+                      }}
                     />
                   </div>
 
@@ -154,7 +151,7 @@ useEffect(() => {
                 </div>
               )}
 
-              {/* PRODUCT GRID */}
+              {/* ================= PRODUCT GRID ================= */}
               {loading ? (
                 <p className="text-center py-20 text-gray-500">
                   Loading products...
@@ -173,7 +170,10 @@ useEffect(() => {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentProducts.map((product) => (
-                      <ProductCard key={product.id} product={product} />
+                      <ProductCard
+                        key={product.id || product._id}
+                        product={product}
+                      />
                     ))}
                   </div>
 
@@ -191,7 +191,7 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* SLIDE ANIMATION */}
+      {/* ================= SLIDE ANIMATION ================= */}
       <style>{`
         @keyframes slide-left {
           from { transform: translateX(-100%); }

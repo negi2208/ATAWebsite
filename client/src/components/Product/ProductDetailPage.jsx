@@ -233,9 +233,9 @@ const handleAddToCart = async () => {
           {/* Trust Badges WITH DIVIDER */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 py-12 border-t bg-white rounded-2xl shadow-sm divide-x divide-gray-300">
             {[
-              { icon: Truck, title: "Fast Shipping", desc: "Free shipping on orders over ₹999" },
-              { icon: Shield, title: "Easy Return", desc: "10 days hassle-free return policy" },
-              { icon: Shield, title: "Warranty Policy", desc: "Official brand warranty included" }
+              { icon: Truck, title: "Fast Shipping", desc: "Free shipping on orders over ₹1999" },
+              { icon: Shield, title: "Easy Return", desc: "2 days hassle-free return policy" },
+              { icon: Shield, title: "Warranty Policy", desc: "3-Year Paint Warranty" }
             ].map((item, i) => (
               <div key={i} className="text-center px-8 first:pl-0 last:pr-0">
                 <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">

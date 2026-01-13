@@ -53,7 +53,7 @@ Built using advanced injection moulding technology, ATA products offer superior 
           {/* CENTER: Car Image – No Shadow, No Border Radius */}
           <div className="flex justify-center">
             <img
-              src="/images/About/Bunch2.png"
+              src="/images/About/kit-highlight.jpeg"
               alt="Car Interior with Kit"
               className="w-full max-w-md object-contain"
             />

@@ -12,6 +12,7 @@ import Checkout from "./pages/Checkout";
 import ShopPage from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import OrderSuccess from "./pages/OrderSuccess";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 // Layouts
 import Layout from './Layout/Layout';
@@ -66,7 +67,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/order-success" element={<OrderSuccess />} />
       </Route>
-
+  
       {/* Admin Protected Routes */}
       {/* <Route element={<AdminProtectedRoute />}> */}
         <Route element={<AdminLayout />}>
@@ -104,6 +105,7 @@ function App() {
       <Route path="/admin/forgot-password" element={<ForgotPassword />} />
       <Route path="/admin/reset-password" element={<ResetPassword />} />
     </Routes>
+    <WhatsAppButton />
     </>
   );
 }

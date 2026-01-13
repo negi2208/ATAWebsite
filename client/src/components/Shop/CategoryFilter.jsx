@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -38,7 +39,7 @@ export default function CategoryFilter({ selected, onSelect }) {
       </h3>
 
       {loading ? (
-        <p className="text-sm text-gray-500">Loading categories...</p>
+        <p className="text-sm text-gray-500">Loading categories.  ..</p>
       ) : (
         <div className="space-y-2">
           {categories.map((cat) => (
@@ -48,7 +49,8 @@ export default function CategoryFilter({ selected, onSelect }) {
             >
               <input
                 type="radio"
-                name="category"
+                name="category" 
+                 
                 value={cat.slug}
                 checked={selected === cat.slug}
                 onChange={() => onSelect(cat.slug)}
@@ -65,8 +67,9 @@ export default function CategoryFilter({ selected, onSelect }) {
               </span>
             </label>
           ))}
-        </div>
+        </div>  
       )}
     </div>
   );
 }
+

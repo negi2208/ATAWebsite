@@ -184,7 +184,7 @@ export default function CheckoutPage() {
                         checked={paymentMethod === "online"}
                         onChange={() => setPaymentMethod("online")}
                       />
-                      Online
+                      Prepaid
                     </label>
 
                     <label className="flex items-center gap-2">

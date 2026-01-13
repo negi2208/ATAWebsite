@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// Icons map (fallback supported)
+/* ---------------- Icons ---------------- */
 import {
   Shield,
   Lightbulb,
@@ -21,6 +21,7 @@ import {
   Layout,
 } from "lucide-react";
 
+/* -------- Category slug → Icon map -------- */
 const ICON_MAP = {
   mudguard: Shield,
   headlight: Lightbulb,
@@ -46,27 +47,31 @@ const CategoriesDropdown = ({ isOpen, onClose }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  /* ------------------ Outside Click ------------------ */
+  /* ================= OUTSIDE CLICK ================= */
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+    const handleOutsideClick = (e) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
         onClose();
       }
     };
+
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("mousedown", handleOutsideClick);
     }
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
   }, [isOpen, onClose]);
 
-  /* ------------------ Fetch Categories ------------------ */
+  /* ================= FETCH CATEGORIES ================= */
   useEffect(() => {
     if (!isOpen) return;
 
     const fetchCategories = async () => {
       try {
         setLoading(true);
+
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/categories`
         );
@@ -84,7 +89,7 @@ const CategoriesDropdown = ({ isOpen, onClose }) => {
     fetchCategories();
   }, [isOpen]);
 
-  /* ------------------ Category Click ------------------ */
+  /* ================= CATEGORY CLICK ================= */
   const handleCategoryClick = (slug) => {
     onClose();
     navigate(`/shop?category=${slug}`);
@@ -96,54 +101,61 @@ const CategoriesDropdown = ({ isOpen, onClose }) => {
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+        className="fixed inset-0 bg-black/50 z-40"
         onClick={onClose}
       />
 
       {/* Sidebar */}
-      <div
+      <aside
         ref={sidebarRef}
-        className={`fixed left-0 top-0 h-full w-80 bg-white shadow-2xl z-50 overflow-y-auto
-        transform transition-transform duration-300
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className="fixed left-0 top-0 h-full w-80 bg-white z-50 shadow-2xl
+        transform transition-transform duration-300 translate-x-0"
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
-          <h2 className="text-lg font-bold text-[#314350]">Categories</h2>
+        <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-800">
+            Categories
+          </h2>
+
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full"
+            className="p-2 rounded-full hover:bg-gray-100"
           >
             <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
 
-        {/* Categories */}
-        <nav className="px-4 py-4 space-y-1">
+        {/* Category List */}
+        <nav className="p-4 space-y-1">
           {loading ? (
             <p className="text-sm text-gray-500 px-2">
               Loading categories...
             </p>
+          ) : categories.length === 0 ? (
+            <p className="text-sm text-gray-500 px-2">
+              No categories found
+            </p>
           ) : (
             categories.map((cat) => {
-              const Icon =
-                ICON_MAP[cat.slug] || Layout;
+              const Icon = ICON_MAP[cat.slug] || Layout;
 
               return (
                 <button
-                  key={cat.id}
+                  key={cat._id || cat.id}
                   onClick={() => handleCategoryClick(cat.slug)}
-                  className="w-full flex items-center gap-3 py-3 px-3 rounded-lg
+                  className="w-full flex items-center gap-3 px-3 py-3 rounded-lg
                   text-left text-gray-700 hover:bg-gray-100 transition"
                 >
-                  <Icon className="w-5 h-5 text-[#314350]" />
-                  <span className="font-medium">{cat.name}</span>
+                  <Icon className="w-5 h-5 text-gray-700" />
+                  <span className="font-medium">
+                    {cat.name}
+                  </span>
                 </button>
               );
             })
           )}
         </nav>
-      </div>
+      </aside>
     </>
   );
 };
