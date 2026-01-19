@@ -10,7 +10,6 @@ import { successResponse, errorResponse } from "../../utils/helper.js";
 
 export const registerAdminController = async (req, res) => {
   try {
-    await adminRegisterSchema.validateAsync(req.body);
     const data = await registerAdminService(req.body);
     return successResponse(res, 201, "Admin registered successfully", data);
   } catch (error) {
