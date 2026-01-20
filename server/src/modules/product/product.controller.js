@@ -41,30 +41,30 @@ export const ProductController = {
   },
 
   async searchProducts(req, res) {
-  try {
-    const { q } = req.query;
+    try {
+      const { q } = req.query;
 
-    if (!q || !q.trim()) {
-      return res.status(400).json({
+      if (!q || !q.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Search query is required",
+        });
+      }
+
+      const products = await ProductService.searchProducts(q);
+
+      res.json({
+        success: true,
+        data: products,
+      });
+    } catch (error) {
+      console.error("SEARCH ERROR:", error);
+      res.status(500).json({
         success: false,
-        message: "Search query is required",
+        message: error.message || "Failed to search products",
       });
     }
-
-    const products = await ProductService.searchProducts(q);
-
-    res.json({
-      success: true,
-      data: products,
-    });
-  } catch (error) {
-    console.error("SEARCH ERROR:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "Failed to search products",
-    });
-  }
-},
+  },
 
   async getProductById(req, res) {
     try {
@@ -115,3 +115,21 @@ export const ProductController = {
     }
   },
 };
+
+export const addProductController = async (req, res) => {
+  try {
+    const productData = req.body;
+    const newProduct = await ProductService.addProductService(productData);
+    return res.status(201).json({
+      success: true,
+      message: "Product added successfully",
+      data: newProduct,
+    });
+  } catch (error) {
+    console.log("ADD PRODUCT ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to add product",
+    });
+  }
+}
