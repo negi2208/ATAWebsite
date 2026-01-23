@@ -1,11 +1,11 @@
-import { ProductService } from "./product.service.js";
+import { ProductService, createProductService } from "./product.service.js";
 
 export const ProductController = {
   async getProducts(req, res) {
     try {
-      const { category } = req.query;
+      const { category, type = "all" } = req.query;
 
-      const products = await ProductService.getAll(category);
+      const products = await ProductService.getAll(category, type);
 
       res.json({
         success: true,
@@ -41,30 +41,30 @@ export const ProductController = {
   },
 
   async searchProducts(req, res) {
-  try {
-    const { q } = req.query;
+    try {
+      const { q } = req.query;
 
-    if (!q || !q.trim()) {
-      return res.status(400).json({
+      if (!q || !q.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Search query is required",
+        });
+      }
+
+      const products = await ProductService.searchProducts(q);
+
+      res.json({
+        success: true,
+        data: products,
+      });
+    } catch (error) {
+      console.error("SEARCH ERROR:", error);
+      res.status(500).json({
         success: false,
-        message: "Search query is required",
+        message: error.message || "Failed to search products",
       });
     }
-
-    const products = await ProductService.searchProducts(q);
-
-    res.json({
-      success: true,
-      data: products,
-    });
-  } catch (error) {
-    console.error("SEARCH ERROR:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "Failed to search products",
-    });
-  }
-},
+  },
 
   async getProductById(req, res) {
     try {
@@ -114,4 +114,22 @@ export const ProductController = {
       });
     }
   },
+};
+
+export const createProductController = async (req, res) => {
+  try {
+    const product = await createProductService(req.body, req.files);
+
+    return res.status(201).json({
+      success: true,
+      message: "Product created successfully",
+      data: product,
+    });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };

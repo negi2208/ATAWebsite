@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/register", registerAdminController);
 router.post("/login", loginAdminController);
-router.post("/logout", adminAuth, logoutAdminController);
+router.post("/logout", logoutAdminController);
 
 router.get("/profile", adminAuth, getProfileController);
 router.put("/profile", adminAuth, updateProfileController);

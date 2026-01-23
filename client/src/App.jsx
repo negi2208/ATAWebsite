@@ -48,6 +48,7 @@ import UserProtectedRoute from './components/UserAuth/UserProtectedRoute.jsx';
 import UserPublicRoute from './components/UserAuth/UserPublicRoute.jsx'; 
 
 import ScrollToTop from "./ScrollToTop";
+import PrivacyPolicy from "./pages/PrivacyPolicy .jsx";
 
 function App() {
   return (
@@ -63,13 +64,14 @@ function App() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/order-success" element={<OrderSuccess />} />
       </Route>
   
       {/* Admin Protected Routes */}
-      {/* <Route element={<AdminProtectedRoute />}> */}
+      <Route element={<AdminProtectedRoute />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
@@ -80,7 +82,7 @@ function App() {
           <Route path="/admin/payments" element={<AdminPayments />} />
           <Route path="/admin/profile-settings" element={<Profilesetting />} />
         </Route>
-      {/* </Route> */}
+      </Route>
 
       {/* User Protected Routes */}
       <Route element={<UserProtectedRoute />}>

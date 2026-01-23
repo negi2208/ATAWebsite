@@ -61,4 +61,3 @@ export const updateProfileService = async (adminId, body) => {
 
   return { id: admin.id, name: admin.name, email: admin.email };
 };
-

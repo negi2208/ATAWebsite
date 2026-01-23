@@ -10,7 +10,7 @@ import { addToWishlist } from "../../utils/Addwishlist";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { getGuestToken } from "../../utils/guest";
-
+import { resolveImageUrl } from "../../utils/ImagesUtils"
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -20,6 +20,7 @@ export default function ProductDetailPage() {
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [adding, setAdding] = useState(false);
+  const [activeVariantIndex, setActiveVariantIndex] = useState(0);
   const navigate = useNavigate();
 
 
@@ -31,12 +32,14 @@ export default function ProductDetailPage() {
           throw new Error('Failed to fetch product');
         }
         const data = await response.json();
+        // console.log(data.data)
         if (data.success) {
           setProduct(data.data);
+          setActiveVariantIndex(0);
         } else {
           throw new Error(data.message || 'Failed to fetch product');
         }
-         
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -47,7 +50,7 @@ export default function ProductDetailPage() {
     if (id) {
       fetchProduct();
     }
-  window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
   }, [id]);
 
@@ -73,15 +76,24 @@ export default function ProductDetailPage() {
   }
 
   // Collect all images from variants
-    const allImages = [];
+  const activeVariant = product.variants?.[activeVariantIndex];
 
-    if (product.variants?.length > 0) {
-      const img = product.variants[0].ProductImage;
+  const allImages = [];
 
-      if (img?.front_img) allImages.push(img.front_img);
-      if (img?.left_img) allImages.push(img.left_img);
-      if (img?.right_img) allImages.push(img.right_img);
+  if (activeVariant?.ProductImage) {
+    const img = activeVariant.ProductImage;
+
+    if (img.front_img) allImages.push(resolveImageUrl(img.front_img));
+    if (img.left_img) allImages.push(resolveImageUrl(img.left_img));
+    if (img.right_img) allImages.push(resolveImageUrl(img.right_img));
+
+    // 🔥 EXTRA IMAGES (ARRAY)
+    if (Array.isArray(img.extra_images)) {
+      img.extra_images.forEach((extra) => {
+        allImages.push(resolveImageUrl(extra));
+      });
     }
+  }
 
   const productData = {
     name: product.name,
@@ -101,49 +113,50 @@ export default function ProductDetailPage() {
       toast.error(err.response?.data?.message || "Failed to add to wishlist");
     }
   };
-const handleAddToCart = async () => {
-  try {
-    setAdding(true);
+  const handleAddToCart = async () => {
+    try {
+      setAdding(true);
 
-    const guest_token = getGuestToken();
-    const user_id = localStorage.getItem("user_id");
+      const guest_token = getGuestToken();
+      const user_id = localStorage.getItem("user_id");
+      const activeVariant = product.variants?.[activeVariantIndex];
 
-    const payload = {
-      product_id: product.id,
-      quantity: qty,
-      ...(user_id ? { user_id } : { guest_token }),
-    };
+      const payload = {
+        product_id: product.id,
+        quantity: qty,
+        ...(user_id ? { user_id } : { guest_token }),
+      };
 
-    if (product.variants?.[0]?.id) {
-      payload.variant_id = product.variants[0].id;
+      if (activeVariant?.id) {
+        payload.variant_id = activeVariant.id;
+      }
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/cart/add`,
+        payload
+      );
+
+      // ✅ HANDLE BOTH CASES AS SUCCESS
+      if (res.data?.success) {
+        toast.success("Added to cart 🛒");
+        navigate("/cart");
+      } else {
+        // already exists / quantity updated
+        toast.success(res.data?.message || "Cart updated 🛒");
+      }
+
+    } catch (error) {
+      console.error("Add to cart failed", error);
+
+      const msg =
+        error.response?.data?.message ||
+        "Unable to add product to cart";
+
+      toast.error(msg);
+    } finally {
+      setAdding(false);
     }
-
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/cart/add`,
-      payload
-    );
-
-    // ✅ HANDLE BOTH CASES AS SUCCESS
-    if (res.data?.success) {
-      toast.success("Added to cart 🛒");
-      navigate("/cart");
-    } else {
-      // already exists / quantity updated
-      toast.success(res.data?.message || "Cart updated 🛒");
-    }
-
-  } catch (error) {
-    console.error("Add to cart failed", error);
-
-    const msg =
-      error.response?.data?.message ||
-      "Unable to add product to cart";
-
-    toast.error(msg);
-  } finally {
-    setAdding(false);
-  }
-};
+  };
 
   return (
     <>
@@ -163,7 +176,7 @@ const handleAddToCart = async () => {
 
             {/* LEFT: Image Gallery */}
             <div className="order-2 lg:order-1">
-              <ImageGallery images={productData.images} discount={productData.discount} />
+              <ImageGallery key={activeVariantIndex} images={productData.images} discount={productData.discount} />
             </div>
 
             {/* RIGHT: Product Details */}
@@ -193,30 +206,57 @@ const handleAddToCart = async () => {
                 </button> */}
               </div>
 
-             {/* Price */}
-            <div className="flex items-baseline gap-4 mb-6">
-              <span className="text-4xl font-bold text-green-600">
-                ₹{productData.price.toLocaleString('en-IN')}
-              </span>
-              
-              {/* Agar old price/discount ho to */}
-              {productData.oldPrice && (
-                <span className="text-2xl text-gray-500 line-through">
-                  ₹{productData.oldPrice.toLocaleString('en-IN')}
+              {/* Price */}
+              <div className="flex items-baseline gap-4 mb-6">
+                <span className="text-4xl font-bold text-green-600">
+                  ₹{productData.price.toLocaleString('en-IN')}
                 </span>
+
+                {/* Agar old price/discount ho to */}
+                {productData.oldPrice && (
+                  <span className="text-2xl text-gray-500 line-through">
+                    ₹{productData.oldPrice.toLocaleString('en-IN')}
+                  </span>
+                )}
+              </div>
+
+              {product.variants?.length > 0 && (
+                <div className="mt-6">
+                  <p className="text-sm font-semibold text-gray-700 mb-2">
+                    Available Colors
+                  </p>
+
+                  <div className="flex flex-wrap gap-3">
+                    {product.variants.map((variant, index) => (
+                      <button
+                        key={variant.id}
+                        onClick={() => setActiveVariantIndex(index)}
+                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition
+            ${index === activeVariantIndex
+                            ? "border-primary-600 bg-primary-50 text-primary-700"
+                            : "border-gray-300 hover:border-gray-400"
+                          }`}
+                      >
+                        {variant.color}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
 
               {/* Category & Brand */}
               <div className="mt-8 text-sm text-gray-600 space-y-1 border-t pt-6">
-                <p><strong>Category:</strong> {product.category?.name || 'N/A'}</p>
-                <p><strong>Brand:</strong> {product.brand || 'N/A'}</p>
+                <p><strong>Category:</strong> {product.category?.name}</p>
+                {product?.brand && <p><strong>Brand:</strong> {product.brand}</p>}
+                {product?.exterior_finish && <p><strong>Exterior Finish:</strong> {product.exterior_finish}</p>}
+                {product?.material && <p><strong>Material:</strong> {product.material}</p>}
+                {product?.item_dimensions && <p><strong>Item Dimensions:</strong> {product.item_dimensions}</p>}
               </div>
               {/* Quantity + Add to Cart (MOVED HERE) */}
               <div className="mt-6 flex flex-col sm:flex-row gap-4">
                 <QuantitySelector qty={qty} setQty={setQty} />
 
-                <button onClick={handleAddToCart} 
+                <button onClick={handleAddToCart}
                   className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-8 rounded-xl
                             flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all"
                 >
@@ -254,8 +294,8 @@ const handleAddToCart = async () => {
                 <button
                   onClick={() => setActiveTab("description")}
                   className={`px-8 py-5 font-bold text-lg transition-colors ${activeTab === "description"
-                      ? "text-primary-600 border-b-4 border-primary-600"
-                      : "text-gray-600 hover:text-gray-900"
+                    ? "text-primary-600 border-b-4 border-primary-600"
+                    : "text-gray-600 hover:text-gray-900"
                     }`}
                 >
                   Description
@@ -274,19 +314,19 @@ const handleAddToCart = async () => {
 
             <div className="p-8">
               {/* DESCRIPTION TAB */}
-              {activeTab === "description" && (
-                <div className="prose max-w-none text-gray-700 leading-relaxed space-y-4">
-                  <p>
-                    <strong>1.4X superior sludge protection</strong> compared to tough industry standards, as measured in the Sequence VH Sludge test vs. API SP test limits.
-                  </p>
-                  <p>
-                    Quisque varius diam vel metus mattis, id aliquam diam rhoncus. Proin vitae magna in dui finibus malesuada et at nulla.
-                    Morbi elit ex, viverra vitae ante vel, blandit feugiat ligula. Fusce fermentum iaculis nibh, at sodales leo maximus a.
-                  </p>
-                  <p>
-                    Morbi ut sapien vitae odio accumsan gravida. Morbi vitae erat auctor, eleifend nunc a, lobortis neque.
-                    Praesent aliquam dignissim viverra. Maecenas lacinia purus in venenatis mollis.
-                  </p>
+              {activeTab === "description" && product.description && (
+                <div className="text-gray-700 leading-relaxed">
+                  <h3 className="text-xl font-bold mb-4">About this item</h3>
+
+                  <ul className="list-disc pl-6 space-y-3">
+                    {product.description
+                      .split(/\n|\./) // newline ya full-stop se split
+                      .map(point => point.trim())
+                      .filter(point => point.length > 0)
+                      .map((point, index) => (
+                        <li key={index}>{point}</li>
+                      ))}
+                  </ul>
                 </div>
               )}
 

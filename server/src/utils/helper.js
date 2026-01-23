@@ -18,7 +18,7 @@ export const successResponse = (res,status, message, data) => {
 export const errorResponse = (res, status = 500, error) => {
     return res.status(status).json({
         success: false,
-        message: error.message || "Something went wrong",
+        message: error.message,
         error: error.errors
     })
 }

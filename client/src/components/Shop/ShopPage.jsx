@@ -11,6 +11,8 @@ export default function ShopPage() {
   /* ================= URL BASED CATEGORY ================= */
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFromURL = searchParams.get("category") || "all";
+  const typeFromURL = searchParams.get("type") || "all";
+  const [selectedType, setSelectedType] = useState(typeFromURL);
 
   const [selectedCategory, setSelectedCategory] = useState(categoryFromURL);
   const [products, setProducts] = useState([]);
@@ -25,6 +27,10 @@ export default function ShopPage() {
     setSelectedCategory(categoryFromURL);
   }, [categoryFromURL]);
 
+  useEffect(() => {
+    setSelectedType(typeFromURL);
+  }, [typeFromURL]);
+
   /* ================= FETCH PRODUCTS ================= */
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,9 +42,13 @@ export default function ShopPage() {
           {
             params: {
               category: selectedCategory,
+              ...(selectedType !== "all" && {
+                type: selectedType === "parts" ? "single" : selectedType,
+              }),
             },
           }
         );
+        console.log(res)
 
         if (res.data?.success) {
           setProducts(res.data.data || []);
@@ -54,7 +64,7 @@ export default function ShopPage() {
     };
 
     fetchProducts();
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedType]);
 
   /* ================= SORTING ================= */
   const filteredAndSortedProducts = useMemo(() => {
@@ -83,7 +93,7 @@ export default function ShopPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, sortBy]);
+  }, [selectedCategory, sortBy, selectedType]);
 
   return (
     <>
@@ -150,6 +160,37 @@ export default function ShopPage() {
                   />
                 </div>
               )}
+
+              {/* ================= TYPE SELECT (DROPDOWN) ================= */}
+              <div className="flex justify-end mb-6">
+                <select
+                  value={selectedType}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSelectedType(value);
+
+                    setSearchParams((prev) => {
+                      const obj = Object.fromEntries(prev.entries());
+
+                      if (value === "all") {
+                        delete obj.type; // backend me type nahi jaayega
+                      } else {
+                        obj.type = value; // parts | kit
+                      }
+
+                      return obj;
+                    });
+                  }}
+                  className="px-5 py-3 border rounded-lg text-sm font-medium
+               focus:outline-none focus:ring-2 focus:ring-red-500
+               bg-white shadow-sm"
+                >
+                  <option value="all">All Products</option>
+                  <option value="parts">Parts</option>
+                  <option value="kit">Kits</option>
+                </select>
+              </div>
+
 
               {/* ================= PRODUCT GRID ================= */}
               {loading ? (

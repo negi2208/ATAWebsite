@@ -5,6 +5,7 @@ import { Trash2, Plus, Minus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { api } from "../../utils/api";
 import { getGuestToken } from "../../utils/guest";
+import { resolveImageUrl } from "../../utils/ImagesUtils";
 
 const CartImageSlider = ({ images, alt }) => {
   const [index, setIndex] = React.useState(0);
@@ -38,7 +39,7 @@ export default function CartSection() {
   const [loading, setLoading] = useState(true);
 
   const guest_token = getGuestToken();
-  const user_id = localStorage.getItem("user_id"); 
+  const user_id = localStorage.getItem("user_id");
 
   const fetchCart = async () => {
     try {
@@ -109,15 +110,12 @@ export default function CartSection() {
                 <CartImageSlider
                   alt={item.product?.name}
                   images={
-                    item.product?.variants?.[0]?.ProductImage
-                      ? [
-                        item.product.variants[0].ProductImage.front_img,
-                        item.product.variants[0].ProductImage.left_img,
-                        item.product.variants[0].ProductImage.right_img,
-                      ].filter(Boolean)
+                    item.variant?.ProductImage?.front_img
+                      ? [resolveImageUrl(item.variant.ProductImage.front_img)]
                       : []
                   }
                 />
+
               </div>
               {/* DETAILS */}
               <div className="flex-1">

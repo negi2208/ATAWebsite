@@ -5,19 +5,20 @@ import axios from "axios";
 import { getGuestToken } from "../../utils/guest";
 import { addToWishlist } from "../../utils/Addwishlist";
 import { toast } from "react-hot-toast";
+import { resolveImageUrl } from "../../utils/ImagesUtils"
 
 export default function ProductCard({ product }) {
   const navigate = useNavigate();
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [adding, setAdding] = useState(false);
-
+  const [showFullName, setShowFullName] = useState(false);
 
   const images = product?.variants?.[0]?.ProductImage
     ? [
-      product.variants[0].ProductImage.front_img,
-      product.variants[0].ProductImage.left_img,
-      product.variants[0].ProductImage.right_img,
+      resolveImageUrl(product.variants[0].ProductImage.front_img),
+      resolveImageUrl(product.variants[0].ProductImage.left_img),
+      resolveImageUrl(product.variants[0].ProductImage.right_img),
     ].filter(Boolean)
     : [];
 
@@ -71,6 +72,15 @@ export default function ProductCard({ product }) {
     }
   };
 
+  const MAX_LENGTH = 60;
+  const isLong = product.name.length > MAX_LENGTH;
+
+  const displayName =
+    showFullName || !isLong
+      ? product.name
+      : product.name.slice(0, MAX_LENGTH) + "...";
+
+
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group">
       {/* IMAGE */}
@@ -90,12 +100,27 @@ export default function ProductCard({ product }) {
 
       {/* CONTENT */}
       <div className="p-4">
-        <Link
-          to={`/product/${product.id}`}
-          className="block font-semibold text-gray-800 text-sm sm:text-base line-clamp-2 min-h-[40px] hover:text-primary-700 transition"
-        >
-          {product.name}
-        </Link>
+        <div className="text-sm sm:text-base font-semibold text-gray-800">
+          <Link
+            to={`/product/${product.id}`}
+            className="hover:text-primary-700 transition"
+          >
+            {displayName}
+          </Link>
+
+          {isLong && (
+            <button
+              onClick={(e) => {
+                e.preventDefault(); // ❗ link navigate se roke
+                setShowFullName(!showFullName);
+              }}
+              className="ml-2 text-primary-600 text-xs font-medium hover:underline"
+            >
+              {showFullName ? "Show less" : "Show more"}
+            </button>
+          )}
+        </div>
+
 
         <p className="text-lg sm:text-xl font-bold text-primary-600 mt-2">
           ₹{Number(product.price).toLocaleString("en-IN")}

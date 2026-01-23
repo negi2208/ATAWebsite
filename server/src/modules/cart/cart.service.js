@@ -30,55 +30,41 @@ export const CartService = {
   },
 
   async get({ guest_token, user_id }) {
-    const where = { status: "ACTIVE" };
+  const where = { status: "ACTIVE" };
 
-    if (user_id) {
-      where.user_id = user_id;
-    } else if (guest_token) {
-      where.guest_token = guest_token;
-    } else {
-      throw new Error("guest_token or user_id is required");
-    }
+  if (user_id) where.user_id = user_id;
+  else if (guest_token) where.guest_token = guest_token;
+  else throw new Error("guest_token or user_id is required");
 
-    return Cart.findOne({
-      where,
-      include: [
-        {
-          model: CartItem,
-          as: "items",
-          include: [
-            {
-              model: Product,
-              as: "product",
-              attributes: ["id", "name", "brand", "price"],
-              include: [
-                {
-                  model: ProductVariant,
-                  as: "variants",
-                  attributes: ["id", "variant_name", "color"],
-                  required: false,
-                  include: [
-                    {
-                      model: ProductImage,
-                      as: "ProductImage",
-                      attributes: ["front_img", "left_img", "right_img"],
-                      required: false,
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              model: ProductVariant,
-              as: "variant",
-              attributes: ["id", "variant_name", "color"],
-            },
-          ],
-        },
-      ],
-    });
-  },
-
+  return Cart.findOne({
+    where,
+    include: [
+      {
+        model: CartItem,
+        as: "items",
+        include: [
+          {
+            model: Product,
+            as: "product",
+            attributes: ["id", "name", "brand", "price"],
+          },
+          {
+            model: ProductVariant,
+            as: "variant",
+            attributes: ["id", "variant_name", "color"],
+            include: [
+              {
+                model: ProductImage,
+                as: "ProductImage",
+                attributes: ["front_img"], // 🔥 सिर्फ front_img
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+},
 
   async update({ itemId, quantity }) {
     await CartItem.update(

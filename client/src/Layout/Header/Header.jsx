@@ -11,20 +11,16 @@ import {
 
 import CategoriesDropdown from "./CategoriesDropdown";
 import { useAuthStore } from "../../store/authStore";
+import { resolveImageUrl } from "../../utils/ImagesUtils";
 
 /* ================= SEARCH IMAGE HELPER ================= */
 const getSearchImage = (product) => {
-  const variant = product.variants?.[0];
-  const img = variant?.ProductImage;
+  const frontImg =
+    product?.variants?.[0]?.ProductImage?.front_img;
 
-  if (!img) return "/images/placeholder.webp";
-
-  return (
-    img.front_img ||
-    img.left_img ||
-    img.right_img ||
-    "/images/placeholder.webp"
-  );
+  return frontImg
+    ? resolveImageUrl(frontImg)
+    : "/images/placeholder.webp";
 };
 
 export default function Header() {
