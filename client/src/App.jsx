@@ -13,6 +13,7 @@ import ShopPage from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
 import OrderSuccess from "./pages/OrderSuccess";
 import WhatsAppButton from "./components/WhatsAppButton";
+import NotFound from "./pages/NotFound.jsx";
 
 // Layouts
 import Layout from './Layout/Layout';
@@ -45,48 +46,50 @@ import Profilesetting from "./components/AdminPanel/ProfileSettings.jsx";
 // IMPORT THE PROTECTED ROUTES
 import AdminProtectedRoute from './pages/AdminAuth/AdminProtectedRoute.jsx';
 import UserProtectedRoute from './components/UserAuth/UserProtectedRoute.jsx';
-import UserPublicRoute from './components/UserAuth/UserPublicRoute.jsx'; 
+import UserPublicRoute from './components/UserAuth/UserPublicRoute.jsx';
 
 import ScrollToTop from "./ScrollToTop";
 import PrivacyPolicy from "./pages/PrivacyPolicy .jsx";
+import AdminPublicRoute from "./pages/AdminAuth/AdminPublicRoute.jsx";
 
 function App() {
   return (
     <>
-     <ScrollToTop />
-    <Routes>  []
-      {/* Public Routes */}
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/my-account" element={<UserAuth />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/shop" element={<ShopPage />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/order-success" element={<OrderSuccess />} />
-      </Route>
-  
-      {/* Admin Protected Routes */}
-      <Route element={<AdminProtectedRoute />}>
-        <Route element={<AdminLayout />}>
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/products" element={<AdminProduct />} />
-          <Route path="/admin/products/:productId" element={<AdminProductDetails />} />
-          <Route path="/admin/orders" element={<AdminOrder />} />
-          <Route path="/admin/orders/:orderId" element={<AdminOrder />} />
-          <Route path="/admin/payments" element={<AdminPayments />} />
-          <Route path="/admin/profile-settings" element={<Profilesetting />} />
+      <ScrollToTop />
+      <Routes>  []
+        {/* Public Routes */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/my-account" element={<UserAuth />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/shop" element={<ShopPage />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
-      </Route>
 
-      {/* User Protected Routes */}
-      <Route element={<UserProtectedRoute />}>
-        <Route element={<UserLayout />}> </Route>
+        {/* Admin Protected Routes */}
+        <Route element={<AdminProtectedRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/products" element={<AdminProduct />} />
+            <Route path="/admin/products/:productId" element={<AdminProductDetails />} />
+            <Route path="/admin/orders" element={<AdminOrder />} />
+            <Route path="/admin/orders/:orderId" element={<AdminOrder />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
+            <Route path="/admin/profile-settings" element={<Profilesetting />} />
+          </Route>
+        </Route>
+
+        {/* User Protected Routes */}
+        <Route element={<UserProtectedRoute />}>
+          <Route element={<UserLayout />}> </Route>
           <Route path="/user/dashboard" element={<Dashboard />} />
           <Route path="/user/orders" element={<OrderHistory />} />
           <Route path="/user/profile" element={<Profile />} />
@@ -94,20 +97,22 @@ function App() {
           <Route path="/user/support" element={<SupportPage />} />
           <Route path="/user/reviews" element={<MyReviewsPage />} />
           <Route path="/user/track" element={<OrderTrackingPage />} />
-       
-      </Route>
 
-      {/* Optional: Prevent logged-in users from seeing login */}
-      <Route element={<UserPublicRoute />}>
-        <Route path="/my-account" element={<UserAuth />} />
-      </Route>
+        </Route>
 
-      {/* Admin Auth Routes (Public) */}
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin/forgot-password" element={<ForgotPassword />} />
-      <Route path="/admin/reset-password" element={<ResetPassword />} />
-    </Routes>
-    <WhatsAppButton />
+        {/* Optional: Prevent logged-in users from seeing login */}
+        <Route element={<UserPublicRoute />}>
+          <Route path="/my-account" element={<UserAuth />} />
+        </Route>
+
+        {/* Admin Auth Routes (Public) */}
+        <Route element={<AdminPublicRoute />}>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/forgot-password" element={<ForgotPassword />} />
+          <Route path="/admin/reset-password" element={<ResetPassword />} />
+        </Route>
+      </Routes>
+      <WhatsAppButton />
     </>
   );
 }

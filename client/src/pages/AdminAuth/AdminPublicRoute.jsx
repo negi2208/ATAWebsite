@@ -1,10 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAdminStore } from "../../stores/useAdminStore";
+import { useAuthStore } from "../../store/authStore";
 
 const AdminPublicRoute = () => {
-  const { isAuthenticated } = useAdminStore();
+  const { isAuthenticated } = useAuthStore();
 
-  // ✅ Agar already login hai to /admin bhej do
   return isAuthenticated ? <Navigate to="/admin" replace /> : <Outlet />;
 };
 

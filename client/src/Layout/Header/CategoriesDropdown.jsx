@@ -109,10 +109,10 @@ const CategoriesDropdown = ({ isOpen, onClose }) => {
       <aside
         ref={sidebarRef}
         className="fixed left-0 top-0 h-full w-80 bg-white z-50 shadow-2xl
-        transform transition-transform duration-300 translate-x-0"
+  flex flex-col"
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between z-10">
           <h2 className="text-lg font-bold text-gray-800">
             Categories
           </h2>
@@ -126,7 +126,7 @@ const CategoriesDropdown = ({ isOpen, onClose }) => {
         </div>
 
         {/* Category List */}
-        <nav className="p-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
           {loading ? (
             <p className="text-sm text-gray-500 px-2">
               Loading categories...

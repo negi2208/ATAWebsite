@@ -1,9 +1,10 @@
 // src/pages/adminauth/AdminLogin.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useAuthStore} from '../../store/authStore'; 
+import { useAuthStore } from '../../store/authStore';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -20,33 +21,30 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      // Real API Call (Uncomment in production)
-      /*
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Login failed");
-      */
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/admin/login`,
+        { email, password },
+        { withCredentials: true }
+      );
 
-      
-      // Mock Admin Login (Remove in production)
-      const mockAdmin = {
-        id: 999,
-        name: "Admin User",
-        email: email,
-        token: `jwt-admin-${Date.now()}`,
-      };
+      const { success, message, data } = res.data
 
-      // Zustand login with role: "admin"
-      login(mockAdmin, "admin");
+      if (success) {
+        console.log(data)
+        login({
+          admin: data
+        });
+        toast.success(message);
+        navigate('/admin', { replace: true });
+      }
 
-      toast.success("Admin login successful!");
-      navigate('/admin', { replace: true });
     } catch (err) {
-      toast.error(err.message || "Invalid email or password");
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Invalid email or password";
+
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -142,8 +140,8 @@ export default function AdminLogin() {
                 type="submit"
                 disabled={loading}
                 className={`w-full py-3.5 rounded-lg font-bold text-white transition-all duration-200 flex items-center justify-center gap-2
-                  ${loading 
-                    ? 'bg-red-400 cursor-not-allowed' 
+                  ${loading
+                    ? 'bg-red-400 cursor-not-allowed'
                     : 'bg-red-600 hover:bg-red-700 shadow-lg hover:shadow-xl'
                   }`}
               >

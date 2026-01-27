@@ -64,7 +64,7 @@ export default function Footer() {
                 { name: "About Us", path: "/about" },
                 { name: "Contact", path: "/contact" },
                 { name: "Privacy Policy", path: "/privacy-policy" },
-                { name: "Terms & Conditions", path: "/terms-conditions" },
+                // { name: "Terms & Conditions", path: "/terms-conditions" },
                 
               ].map((link) => (
                 <li key={link.name}>

@@ -24,10 +24,10 @@ export const loginAdminController = async (req, res) => {
     const data = await loginAdminService(req.body);
 
     res.cookie("admin_token", data.token, {
-      httpOnly: true,        // JS access band
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, 
     });
 
     return successResponse(res, 200, "Login successful", data.admin);

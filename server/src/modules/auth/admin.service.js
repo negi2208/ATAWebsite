@@ -25,7 +25,7 @@ export const loginAdminService = async ({ email, password }) => {
   const token = jwt.sign(
     { id: admin.id },
     process.env.JWT_SECRET,
-    { expiresIn: "1d" }
+    { expiresIn: "7d" }
   );
 
   return {

@@ -27,6 +27,8 @@ const ProfileSettings = () => {
           { withCredentials: true }
         );
 
+        console.log(data)
+
         if (data.success && data.data) {
           setAdmin({
             name: data.data.name || "",

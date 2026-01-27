@@ -1,31 +1,17 @@
 // src/routes/AdminProtectedRoute.jsx
 import { Navigate, Outlet } from "react-router-dom";
-import {useAuthStore} from "../../store/authStore";
-import { useEffect } from "react";
-import toast from "react-hot-toast";
+import { useAuthStore } from "../../store/authStore";
 
 const AdminProtectedRoute = () => {
-  const { isAuthenticated, role } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const isHydrated = useAuthStore.persist.hasHydrated();
 
-  // Loading state while hydration
   if (!isHydrated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600"></div>
-      </div>
-    );
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
-  const isAdmin = isAuthenticated && role === "admin";
-
-  useEffect(() => {
-    if (isHydrated && !isAdmin) {
-      toast.error("Access denied. Admin login required.");
-    }
-  }, [isHydrated, isAdmin]);
-
-  return isAdmin ? <Outlet /> : <Navigate to="/admin/login" replace />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/admin/login" replace />;
 };
+
 
 export default AdminProtectedRoute;
