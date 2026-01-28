@@ -38,6 +38,7 @@ import ResetPassword from './pages/AdminAuth/ResetPassword.jsx';
 import AdminDashboard from './components/AdminPanel/AdminDashboard.jsx';
 import AdminUsers from "./components/AdminPanel/UserManagement.jsx";
 import AdminProduct from "./components/AdminPanel/AdminProduct.jsx";
+import AddProduct from "./pages/AddProduct.jsx"
 import AdminProductDetails from "./components/AdminPanel/AdminProductDetails.jsx"
 import AdminOrder from "./components/AdminPanel/AdminOrder.jsx";
 import AdminPayments from "./components/AdminPanel/Payments.jsx";
@@ -51,6 +52,7 @@ import UserPublicRoute from './components/UserAuth/UserPublicRoute.jsx';
 import ScrollToTop from "./ScrollToTop";
 import PrivacyPolicy from "./pages/PrivacyPolicy .jsx";
 import AdminPublicRoute from "./pages/AdminAuth/AdminPublicRoute.jsx";
+import AdminOrderDetails from "./components/AdminPanel/AdminOrderDetails.jsx";
 
 function App() {
   return (
@@ -79,9 +81,10 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/products" element={<AdminProduct />} />
+            <Route path="/admin/add-product" element={<AddProduct />} />
             <Route path="/admin/products/:productId" element={<AdminProductDetails />} />
             <Route path="/admin/orders" element={<AdminOrder />} />
-            <Route path="/admin/orders/:orderId" element={<AdminOrder />} />
+            <Route path="/admin/orders/:orderId" element={<AdminOrderDetails />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/admin/profile-settings" element={<Profilesetting />} />
           </Route>

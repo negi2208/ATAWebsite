@@ -221,7 +221,7 @@ const Orders = () => {
                   </td>
 
                   <td className="px-4 py-3 border">
-                    {o.User?.name || "-"}
+                    {o.User?.full_name || "-"}
                   </td>
 
                   <td className="px-4 py-3 border">
@@ -229,7 +229,7 @@ const Orders = () => {
                   </td>
 
                   <td className="px-4 py-3 border">
-                    {o.Vendor?.name || "-"}
+                    {o.items?.[0]?.variant?.variant_name || "-"}
                   </td>
 
                   <td className="px-4 py-3 border font-bold">

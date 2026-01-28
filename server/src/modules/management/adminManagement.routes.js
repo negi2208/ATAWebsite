@@ -12,7 +12,7 @@ router.get("/dashboard", getAdminDashboardController);
 router.get("/user", getAllUsersController);
 
 // products management
-router.get("/product/", getAllProductsController);
+router.get("/product", getAllProductsController);
 router.get("/product/:id", getProductByIdController);
 
 // // orders management

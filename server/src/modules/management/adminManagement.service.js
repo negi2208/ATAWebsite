@@ -62,8 +62,6 @@ export const getAdminDashboardService = async () => {
   }
 };
 
-
-
 // user management Service
 export const getAllUsers = async ({ search, page, limit }) => {
   const offset = (page - 1) * limit;
@@ -91,12 +89,17 @@ export const getAllUsers = async ({ search, page, limit }) => {
 
 // product management Service
 // Fetch all products with filters & pagination
-export const getAllProductsService = async ({ search, status, page, limit }) => {
+export const getAllProductsService = async ({
+  search = "",
+  status = "all",
+  page = 1,
+  limit = 10,
+}) => {
   const offset = (page - 1) * limit;
 
   const where = {};
 
-  // Search across name / part_no / variant_name / brand
+  // 🔍 SEARCH (Product + Variant)
   if (search) {
     where[Op.or] = [
       { name: { [Op.like]: `%${search}%` } },
@@ -106,23 +109,30 @@ export const getAllProductsService = async ({ search, status, page, limit }) => 
     ];
   }
 
-  // Status (is_active)
+  // ✅ STATUS FILTER
   if (status && status.toLowerCase() !== "all") {
     where.is_active = status.toLowerCase() === "active" ? 1 : 0;
   }
 
   const { count, rows } = await Product.findAndCountAll({
     where,
+
     offset,
     limit,
+
+    distinct: true,      // 🔥 IMPORTANT
+    subQuery: false,     // 🔥 IMPORTANT
+
     order: [["id", "ASC"]],
-    attributes: ["id", "name", "brand", "price"],
+
+    attributes: ["id", "name", "brand", "price", "is_active"],
 
     include: [
       {
         model: ProductVariant,
         as: "variants",
         attributes: ["id", "part_no", "variant_name", "color"],
+        required: false, // search ke time INNER JOIN avoid
         include: [
           {
             model: ProductImage,
@@ -134,12 +144,13 @@ export const getAllProductsService = async ({ search, status, page, limit }) => 
     ],
   });
 
-  const totalVariants = rows.reduce(
-    (sum, p) => sum + (p.variants?.length || 0),
-    0
-  );
-
-  return { total: totalVariants, products: rows };
+  return {
+    total: count,                       // ✅ correct product count
+    page,
+    limit,
+    totalPages: Math.ceil(count / limit),
+    products: rows,
+  };
 };
 
 // Get product by ID
@@ -212,6 +223,11 @@ export const getAllOrdersService = async ({
       order: [["created_at", "DESC"]],
       include: [
         {
+          model: User,
+          as: "User",
+          attributes: ["id", "full_name", "phone", "address"],
+        },
+        {
           model: OrderItem,
           as: "items",
           attributes: ["id", "quantity", "price"],
@@ -266,6 +282,11 @@ export const getOrderDetailsService = async (id) => {
   const order = await Order.findOne({
     where: { id },
     include: [
+      {
+        model: User,
+        as: "User",
+        attributes: ["id", "full_name", "phone", "address"],
+      },
       {
         model: OrderItem,
         as: "items",
@@ -327,8 +348,8 @@ export const getPaymentsWithFiltersService = async ({
     const end = end_date ? new Date(end_date) : new Date();
     end.setHours(23, 59, 59, 999);
 
-    // IMPORTANT — use the SAME column everywhere
-    where.created_at = {
+    // ✅ Sequelize column name
+    where.createdAt = {
       [Op.between]: [start, end],
     };
   }
@@ -339,7 +360,7 @@ export const getPaymentsWithFiltersService = async ({
     where,
     offset,
     limit,
-    order: [["created_at", "DESC"]], // same field
+    order: [["createdAt", "DESC"]], // same field
   });
 
   return {

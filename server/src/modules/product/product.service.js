@@ -289,3 +289,117 @@ export const createProductService = async (payload, files) => {
     throw new Error(error.message);
   }
 };
+
+export const updateProductService = async (productId, payload, files) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    // 1️⃣ Find product
+    const product = await Product.findByPk(productId, { transaction });
+    if (!product) throw new Error("Product not found");
+
+    // 2️⃣ Update product fields
+    await product.update(
+      {
+        name: payload.name,
+        category_id: payload.category_id,
+        product_type: payload.product_type,
+        brand: payload.brand,
+        price: payload.price,
+        model_year: payload.model_year,
+        exterior_finish: payload.exterior_finish,
+        material: payload.material,
+        item_dimensions: payload.item_dimensions,
+        description: payload.description,
+      },
+      { transaction }
+    );
+
+    logger.info("Product updated", { productId });
+
+    // 3️⃣ Parse variants
+    const variants = JSON.parse(payload.variants);
+
+    for (const variant of variants) {
+      let createdVariant;
+
+      // 4️⃣ Update or create variant
+      if (variant.id) {
+        createdVariant = await ProductVariant.findByPk(variant.id, {
+          transaction,
+        });
+
+        if (!createdVariant) {
+          throw new Error("Variant not found");
+        }
+
+        await createdVariant.update(
+          {
+            part_no: variant.part_no,
+            variant_name: variant.variant_name,
+            color: variant.color,
+          },
+          { transaction }
+        );
+
+        logger.info("Variant updated", { variantId: createdVariant.id });
+      } else {
+        createdVariant = await ProductVariant.create(
+          {
+            product_id: product.id,
+            part_no: variant.part_no,
+            variant_name: variant.variant_name,
+            color: variant.color,
+          },
+          { transaction }
+        );
+
+        logger.info("Variant created", { variantId: createdVariant.id });
+      }
+
+      // 5️⃣ Handle images (if uploaded)
+      const variantImages = files.filter(
+        (file) =>
+          file.fieldname ===
+          `variant_${variant.temp_id || createdVariant.id}`
+      );
+
+      if (variantImages.length > 0) {
+        if (variantImages.length < 3) {
+          throw new Error(
+            `Minimum 3 images required for variant ${variant.variant_name}`
+          );
+        }
+
+        // Delete old images
+        await ProductImage.destroy({
+          where: { variant_id: createdVariant.id },
+          transaction,
+        });
+
+        // Create new images
+        await ProductImage.create(
+          {
+            variant_id: createdVariant.id,
+            front_img: variantImages[0].path,
+            left_img: variantImages[1].path,
+            right_img: variantImages[2].path,
+            extra_images: variantImages.slice(3).map((img) => img.path),
+          },
+          { transaction }
+        );
+
+        logger.info("Variant images updated", {
+          variantId: createdVariant.id,
+        });
+      }
+    }
+
+    await transaction.commit();
+    return product;
+  } catch (error) {
+    await transaction.rollback();
+    logger.error("Update product failed", { error });
+    throw new Error(error.message);
+  }
+};

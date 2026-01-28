@@ -1,128 +1,197 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 
 const AdminOrderDetails = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { orderId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/admin/management/order/${orderId}`,
+          `${import.meta.env.VITE_API_URL}/api/management/order/${orderId}`,
           { withCredentials: true }
         );
+
         const { success, data } = res.data;
-        console.log(data)
+
         if (success && data) {
           setOrder(data);
         } else {
           toast.error("Order not found");
         }
       } catch (error) {
-        toast.error("Failed to fetch order details");
         console.error(error);
+        toast.error("Failed to fetch order details");
       } finally {
         setLoading(false);
       }
     };
+
     fetchOrder();
   }, [orderId]);
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="animate-spin text-4xl text-blue-500" />
+        <Loader2 className="animate-spin text-blue-500" size={40} />
       </div>
     );
+  }
 
-  if (!order)
+  if (!order) {
     return (
       <div className="flex justify-center items-center h-screen text-red-500 font-semibold">
         Order not found
       </div>
     );
+  }
+
+  const orderStatusClass = {
+    PLACED: "bg-yellow-100 text-yellow-700",
+    CONFIRMED: "bg-blue-100 text-blue-700",
+    SHIPPED: "bg-purple-100 text-purple-700",
+    DELIVERED: "bg-green-100 text-green-700",
+    CANCELLED: "bg-red-100 text-red-700",
+  };
+
+  const paymentStatusClass = {
+    PENDING: "bg-yellow-100 text-yellow-700",
+    PAID: "bg-green-100 text-green-700",
+    FAILED: "bg-red-100 text-red-700",
+  };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
-      {/* Order Info */}
-      <div className="bg-white shadow rounded p-6">
+    <div className="max-w-6xl mx-auto p-6 space-y-6 bg-gray-50 min-h-screen">
+
+      {/* 🔙 BACK BUTTON */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-blue-600 hover:underline"
+      >
+        <ArrowLeft size={18} /> Back to Orders
+      </button>
+
+      {/* ================= ORDER INFO ================= */}
+      <div className="bg-white shadow rounded-xl p-6">
         <h2 className="text-xl font-bold mb-4">Order Details</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div><span className="font-semibold">Order ID:</span> {order?.order_id || "-"}</div>
-          <div><span className="font-semibold">Order Date:</span> {order?.order_date ? new Date(order.order_date).toLocaleString() : "-"}</div>
+
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div><b>Order ID:</b> {order.id}</div>
+          <div><b>User ID:</b> {order.user_id}</div>
+          <div><b>Cart ID:</b> {order.cart_id}</div>
+
           <div>
-            <span className="font-semibold">Order Status:</span>{" "}
-            <span className={`font-bold ${order?.order_status === "pending" ? "text-yellow-500" : order?.order_status ? "text-green-500" : ""}`}>
-              {order?.order_status || "-"}
+            <b>Order Status:</b>{" "}
+            <span
+              className={`px-2 py-1 text-xs font-semibold rounded-full ${orderStatusClass[order.order_status]
+                }`}
+            >
+              {order.order_status}
             </span>
           </div>
+
           <div>
-            <span className="font-semibold">Payment Status:</span>{" "}
-            <span className={`font-bold ${order?.payment_status === "unpaid" ? "text-red-500" : order?.payment_status ? "text-green-500" : ""}`}>
-              {order?.payment_status || "-"}
+            <b>Payment Status:</b>{" "}
+            <span
+              className={`px-2 py-1 text-xs font-semibold rounded-full ${paymentStatusClass[order.payment_status]
+                }`}
+            >
+              {order.payment_status}
             </span>
           </div>
-          <div><span className="font-semibold">Payment Method:</span> {order?.payment_method || "-"}</div>
-          <div><span className="font-semibold">Transaction ID:</span> {order?.transaction_id || "-"}</div>
-          <div><span className="font-semibold">Total Amount:</span> ₹{order?.total_amount || "-"}</div>
-          <div><span className="font-semibold">Quantity:</span> {order?.quantity || "-"}</div>
-        </div>
-      </div>
 
-      {/* Customer Info */}
-      <div className="bg-white shadow rounded p-6">
-        <h2 className="text-xl font-bold mb-4">Customer Info</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div><span className="font-semibold">Name:</span> {order?.customer?.name || "-"}</div>
-          <div><span className="font-semibold">Email:</span> {order?.customer?.email || "-"}</div>
-          <div><span className="font-semibold">Phone:</span> {order?.customer?.phone || "-"}</div>
-          <div className="col-span-2"><span className="font-semibold">Address:</span> {order?.customer?.address || "-"}</div>
-        </div>
-      </div>
+          <div><b>Total Amount:</b> ₹{order.total_amount}</div>
 
-      {/* Product Info */}
-      <div className="bg-white shadow rounded p-6">
-        <h2 className="text-xl font-bold mb-4">Product Info</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-          {order?.product?.image ? (
-            <img
-              src={order.product.image}
-              alt={order.product.model_name || "Product Image"}
-              className="w-full h-64 object-cover rounded"
-            />
-          ) : (
-            <div className="w-full h-64 bg-gray-100 flex items-center justify-center rounded text-gray-400">No Image</div>
-          )}
-          <div className="space-y-2">
-            <div><span className="font-semibold">Brand:</span> {order?.product?.brand || "-"}</div>
-            <div><span className="font-semibold">Model:</span> {order?.product?.model_name || "-"}</div>
-            <div><span className="font-semibold">Condition:</span> {order?.product?.condition || "-"}</div>
-            <div><span className="font-semibold">Size:</span> {order?.product?.size || "-"}</div>
-            <div><span className="font-semibold">Color:</span> {order?.product?.color || "-"}</div>
-            <div><span className="font-semibold">Selling Price:</span> ₹{order?.product?.selling_price || "-"}</div>
-            <div><span className="font-semibold">Group:</span> {order?.product?.group || "-"}</div>
-            <div><span className="font-semibold">Type:</span> {order?.product?.type || "-"}</div>
+          <div>
+            <b>Created At:</b>{" "}
+            {new Date(order.created_at).toLocaleString()}
           </div>
         </div>
       </div>
 
-      {/* Vendor Info */}
-      <div className="bg-white shadow rounded p-6">
-        <h2 className="text-xl font-bold mb-4">Vendor Info</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div><span className="font-semibold">Name:</span> {order?.vendor?.name || "-"}</div>
-          <div><span className="font-semibold">Business Name:</span> {order?.vendor?.business_name || "-"}</div>
-          <div><span className="font-semibold">Business Type:</span> {order?.vendor?.business_type || "-"}</div>
-          <div><span className="font-semibold">Phone:</span> {order?.vendor?.phone || "-"}</div>
-          <div className="col-span-2"><span className="font-semibold">Email:</span> {order?.vendor?.email || "-"}</div>
+      {/* ================= CUSTOMER INFO ================= */}
+      {order.User && (
+        <div className="bg-white shadow rounded-xl p-6">
+          <h2 className="text-xl font-bold mb-4">Customer Information</h2>
+
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <b>Name:</b> {order.User.full_name}
+            </div>
+
+            <div>
+              <b>Phone:</b> {order.User.phone}
+            </div>
+
+            <div className="col-span-2">
+              <b>Address:</b> {order.User.address}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ================= ORDER ITEMS ================= */}
+      {order.items?.length > 0 && (
+        <div className="bg-white shadow rounded-xl p-6">
+          <h2 className="text-xl font-bold mb-4">Order Items</h2>
+
+          {order.items.map((item, index) => {
+            const variant = item.variant;
+            const product = variant?.product;
+            const images = variant?.ProductImage;
+
+            return (
+              <div
+                key={index}
+                className="border rounded-lg p-4 mb-6 space-y-4"
+              >
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div><b>Quantity:</b> {item.quantity}</div>
+                  <div><b>Item Price:</b> ₹{item.price}</div>
+                  <div><b>Variant:</b> {variant?.variant_name}</div>
+                  <div><b>Part No:</b> {variant?.part_no}</div>
+                  <div><b>Color:</b> {variant?.color}</div>
+                  <div><b>Product:</b> {product?.name}</div>
+                  <div><b>Brand:</b> {product?.brand}</div>
+                  <div><b>Product Price:</b> ₹{product?.price}</div>
+                </div>
+
+                {/* 🖼️ PRODUCT IMAGES */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {images?.front_img && (
+                    <img
+                      src={images.front_img}
+                      alt="Front"
+                      className="h-40 w-full object-cover rounded"
+                    />
+                  )}
+                  {images?.left_img && (
+                    <img
+                      src={images.left_img}
+                      alt="Left"
+                      className="h-40 w-full object-cover rounded"
+                    />
+                  )}
+                  {images?.right_img && (
+                    <img
+                      src={images.right_img}
+                      alt="Right"
+                      className="h-40 w-full object-cover rounded"
+                    />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

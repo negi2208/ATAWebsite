@@ -53,6 +53,8 @@ export const updateProfileService = async (adminId, body) => {
 
   if (body.name) admin.name = body.name;
 
+  if (body.email) admin.email = body.email;
+  
   if (body.password) {
     admin.password = await bcrypt.hash(body.password, 10);
   }

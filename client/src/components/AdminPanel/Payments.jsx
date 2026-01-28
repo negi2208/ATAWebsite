@@ -4,6 +4,20 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 
+const Detail = ({ label, value, badge }) => (
+  <div className="flex justify-between items-center">
+    <span className="text-gray-500">{label}</span>
+
+    {badge ? (
+      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 capitalize">
+        {value}
+      </span>
+    ) : (
+      <span className="font-medium text-right">{value}</span>
+    )}
+  </div>
+);
+
 const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [transactionId, setTransactionId] = useState("");
@@ -46,7 +60,7 @@ const Payments = () => {
           transaction_id: p.razorpay_payment_id || "-",
 
           // SAME FIELD AS BACKEND FILTER
-          payment_date: p.created_at,
+          payment_date: p.createdAt,
         }));
 
         setPayments(normalized);
@@ -201,17 +215,16 @@ const Payments = () => {
 
                   <td className="p-3 border capitalize">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        p.payment_status === "created"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : p.payment_status === "success"
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${p.payment_status === "created"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : p.payment_status === "success"
                           ? "bg-green-100 text-green-800"
                           : p.payment_status === "failed"
-                          ? "bg-red-100 text-red-800"
-                          : p.payment_status === "refunded"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
+                            ? "bg-red-100 text-red-800"
+                            : p.payment_status === "refunded"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-gray-100 text-gray-800"
+                        }`}
                     >
                       {p.payment_status}
                     </span>
@@ -222,8 +235,8 @@ const Payments = () => {
                   <td className="p-3 border">
                     {p.payment_date
                       ? new Date(p.payment_date)
-                          .toISOString()
-                          .split("T")[0]
+                        .toISOString()
+                        .split("T")[0]
                       : "-"}
                   </td>
 
@@ -255,11 +268,10 @@ const Payments = () => {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 border rounded ${
-                currentPage === i + 1
-                  ? "bg-blue-600 text-white"
-                  : ""
-              }`}
+              className={`px-3 py-1 border rounded ${currentPage === i + 1
+                ? "bg-blue-600 text-white"
+                : ""
+                }`}
             >
               {i + 1}
             </button>
@@ -280,22 +292,38 @@ const Payments = () => {
       {/* Payment Modal */}
       {selectedPayment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96 relative">
+          <div className="bg-white rounded-xl p-6 w-96 relative shadow-lg">
+
+            {/* Close */}
             <button
-              className="absolute top-2 right-2 text-gray-500 text-xl"
+              className="absolute top-3 right-3 text-gray-400 text-xl hover:text-black"
               onClick={() => setSelectedPayment(null)}
             >
               &times;
             </button>
 
-            <h3 className="text-lg font-bold mb-4">Payment Details</h3>
+            <h3 className="text-lg font-bold mb-4 border-b pb-2">
+              Payment Details
+            </h3>
 
-            {Object.entries(selectedPayment).map(([key, value]) => (
-              <p key={key} className="text-sm mb-1">
-                <strong className="capitalize">{key}:</strong>{" "}
-                {value?.toString()}
-              </p>
-            ))}
+            <div className="space-y-3 text-sm">
+              <Detail label="Payment ID" value={selectedPayment.id} />
+              <Detail label="Order ID" value={selectedPayment.order_id} />
+              <Detail label="Amount" value={`₹${selectedPayment.amount}`} />
+              <Detail
+                label="Transaction ID"
+                value={selectedPayment.transaction_id || "-"}
+              />
+              <Detail
+                label="Payment Date"
+                value={
+                  selectedPayment.payment_date
+                    ? new Date(selectedPayment.payment_date)
+                      .toLocaleDateString("en-IN")
+                    : "-"
+                }
+              />
+            </div>
           </div>
         </div>
       )}

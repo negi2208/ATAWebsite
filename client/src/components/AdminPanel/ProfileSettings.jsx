@@ -1,23 +1,25 @@
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import { logoutAdminAPI } from "../../pages/AdminAuth/LogoutAdmin"
-import {useAuthStore} from '../../store/authStore';
+import { logoutAdminAPI } from "../../pages/AdminAuth/LogoutAdmin";
+import { useAuthStore } from "../../store/authStore";
 
 const ProfileSettings = () => {
   const [admin, setAdmin] = useState({
     name: "",
-    phone: "",
+    email: "",
     newPassword: "",
   });
-  const [originalAdmin, setOriginalAdmin] = useState({});
-  const [message, setMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
-  const { logout } = useAuthStore()
+  const [originalAdmin, setOriginalAdmin] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { logout } = useAuthStore();
+
+  /* ---------------- FETCH PROFILE ---------------- */
 
   useEffect(() => {
     const fetchAdmin = async () => {
@@ -27,27 +29,27 @@ const ProfileSettings = () => {
           { withCredentials: true }
         );
 
-        console.log(data)
-
-        if (data.success && data.data) {
+        if (data.success) {
           setAdmin({
             name: data.data.name || "",
-            phone: data.data.phone || "",
+            email: data.data.email || "",
             newPassword: "",
           });
+
           setOriginalAdmin({
             name: data.data.name || "",
-            phone: data.data.phone || "",
+            email: data.data.email || "",
           });
         }
-      } catch (error) {
-        console.error("Error fetching admin:", error);
-        setMessage("Failed to load profile data.");
+      } catch {
+        toast.error("Failed to load profile");
       }
     };
 
     fetchAdmin();
   }, []);
+
+  /* ---------------- HANDLERS ---------------- */
 
   const handleChange = (e) => {
     setAdmin({ ...admin, [e.target.name]: e.target.value });
@@ -57,18 +59,24 @@ const ProfileSettings = () => {
     e.preventDefault();
 
     const updates = {};
+    let passwordChanged = false;
 
-    // Only include changed fields
-    if (admin.name && admin.name !== originalAdmin.name) updates.name = admin.name;
-    if (admin.phone && admin.phone !== originalAdmin.phone) updates.phone = admin.phone;
-    if (admin.newPassword) updates.password = admin.newPassword;
+    if (admin.name !== originalAdmin.name) updates.name = admin.name;
+    if (admin.email !== originalAdmin.email) updates.email = admin.email;
+
+    if (admin.newPassword) {
+      updates.password = admin.newPassword;
+      passwordChanged = true;
+    }
 
     if (Object.keys(updates).length === 0) {
-      setMessage("No changes detected.");
+      toast("No changes detected");
       return;
     }
 
     try {
+      setLoading(true);
+
       const { data } = await axios.put(
         `${import.meta.env.VITE_API_URL}/api/admin/profile`,
         updates,
@@ -76,82 +84,150 @@ const ProfileSettings = () => {
       );
 
       if (data.success) {
-        setMessage("Profile updated successfully!");
-        setOriginalAdmin({ name: admin.name, phone: admin.phone });
-        setAdmin({ ...admin, newPassword: "" });
-        logoutAdminAPI()
-        logout()
-        localStorage.removeItem("admin-store")
-        window.location.replace("/admin-login");
+        toast.success("Profile updated successfully");
+
+        // 🔥 logout ONLY if password changed
+        if (passwordChanged) {
+          toast("Password changed. Please login again.");
+
+          logoutAdminAPI();
+          logout();
+          localStorage.removeItem("admin-store");
+
+          setTimeout(() => {
+            window.location.replace("/admin/login");
+          }, 800);
+        } else {
+          setEditMode(false);
+          setOriginalAdmin({
+            name: admin.name,
+            email: admin.email,
+          });
+          setAdmin({ ...admin, newPassword: "" });
+        }
       } else {
-        setMessage(data.message || "Failed to update profile.");
+        toast.error(data.message || "Update failed");
       }
     } catch (error) {
-      console.error("Update error:", error);
-      setMessage("Error updating profile.");
+      toast.error(error.response?.data?.message || "Server error");
+    } finally {
+      setLoading(false);
     }
   };
 
+  /* ---------------- UI ---------------- */
+
   return (
-    <div className="max-w-lg mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Profile Settings</h2>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-start pt-14">
+      <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6">
 
-      {message && (
-        <div className="mb-4 text-center text-sm text-green-600">{message}</div>
-      )}
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          Profile Settings
+        </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Name</label>
-          <input
-            type="text"
-            name="name"
-            value={admin.name}
-            onChange={handleChange}
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Phone</label>
-          <input
-            type="text"
-            name="phone"
-            value={admin.phone}
-            onChange={handleChange}
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">New Password</label>
-          <div className="relative mb-4">
+          {/* NAME */}
+          <Field label="Name">
             <input
-              type={showPassword ? "text" : "password"}
-              name="newPassword"
-              value={admin.newPassword}
+              type="text"
+              name="name"
+              disabled={!editMode}
+              value={admin.name}
               onChange={handleChange}
-              className="w-full mt-1 border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              placeholder="Leave blank if not changing"
+              className={inputClass(editMode)}
             />
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"
-            >
-              {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
-            </span>
-          </div>
-        </div>
+          </Field>
 
-        <button
-          type="submit"
-          className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition"
-        >
-          Save Changes
-        </button>
-      </form>
+          {/* EMAIL */}
+          <Field label="Email">
+            <input
+              type="email"
+              name="email"
+              disabled={!editMode}
+              value={admin.email}
+              onChange={handleChange}
+              className={inputClass(editMode)}
+            />
+          </Field>
+
+          {/* PASSWORD */}
+          {editMode && (
+            <Field label="New Password">
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="newPassword"
+                  value={admin.newPassword}
+                  onChange={handleChange}
+                  placeholder="Leave blank if not changing"
+                  className={inputClass(true)}
+                />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400"
+                >
+                  {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+                </span>
+              </div>
+            </Field>
+          )}
+
+          {/* ACTION BUTTONS */}
+          <div className="pt-4">
+            {!editMode ? (
+              <button
+                type="button"
+                onClick={() => setEditMode(true)}
+                className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700"
+              >
+                Edit Profile
+              </button>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditMode(false);
+                    setAdmin({ ...admin, newPassword: "" });
+                  }}
+                  className="w-1/2 border rounded-md py-2"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-1/2 bg-red-600 text-white py-2 rounded-md hover:bg-red-700"
+                >
+                  {loading ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            )}
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
+
+/* ---------------- SMALL COMPONENTS ---------------- */
+
+const Field = ({ label, children }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    {children}
+  </div>
+);
+
+const inputClass = (editable) =>
+  `w-full border rounded-md px-3 py-2 transition
+   ${editable
+     ? "bg-white focus:ring-2 focus:ring-blue-500"
+     : "bg-gray-100 text-gray-500 cursor-not-allowed"
+   }`;
 
 export default ProfileSettings;

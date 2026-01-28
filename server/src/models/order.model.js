@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
 import { OrderItem } from "./orderItem.model.js";
+import { User } from "./user.model.js";
 
 export const Order = sequelize.define("orders", {
   id: { type: DataTypes.BIGINT.UNSIGNED, autoIncrement: true, primaryKey: true },
@@ -21,3 +22,7 @@ export const Order = sequelize.define("orders", {
 );
 
 Order.hasMany(OrderItem, { foreignKey: "order_id", as: "items" });
+Order.belongsTo(User, {
+  foreignKey: "user_id",
+  as: "User",
+});

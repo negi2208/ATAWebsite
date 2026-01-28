@@ -8,16 +8,17 @@ import {
   FaShoppingCart,
   FaMoneyCheckAlt,
   FaUserCircle,
-  FaCommentDots 
+  FaCommentDots
 } from "react-icons/fa";
+import { MdAddBox } from "react-icons/md";
 
 const menuItems = [
   { label: "Dashboard", path: "/admin", icon: <FaTachometerAlt /> },
   { label: "Users Management", path: "/admin/users", icon: <FaUsers /> },
   { label: "Products Management", path: "/admin/products", icon: <FaBoxOpen /> },
+  { label: "Add Product", path: "/admin/add-product", icon: <MdAddBox  /> },
   { label: "Orders Management", path: "/admin/orders", icon: <FaShoppingCart /> },
   { label: "Payments", path: "/admin/payments", icon: <FaMoneyCheckAlt /> },
-  // { label: "Reviews", path: "/admin/reviews", icon: <FaCommentDots  /> },
   // { label: "Reports & Analytics", path: "/admin/reports", icon: <FaChartBar /> },
 ];
 

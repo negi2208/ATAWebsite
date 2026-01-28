@@ -4,6 +4,7 @@ import axios from "axios";
 import { Download } from "lucide-react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
+import EditProductModal from "./EditProductModal";
 
 const ProductManagement = () => {
   const [variants, setVariants] = useState([]);
@@ -11,6 +12,9 @@ const ProductManagement = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalVariants, setTotalVariants] = useState(0);
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   const itemsPerPage = 10;
 
@@ -70,6 +74,11 @@ const ProductManagement = () => {
   const handleSearch = () => {
     setCurrentPage(1);
     fetchProducts();
+  };
+
+  const handleEdit = (row) => {
+    setEditData(row);
+    setEditOpen(true);
   };
 
   const exportExcel = () => {
@@ -167,13 +176,33 @@ const ProductManagement = () => {
                   <td className="px-4 py-3 border">{v.price}</td>
 
                   <td className="px-4 py-3 border">
-                    <Link
-                      to={`/admin/products/${v.product_id}`}
-                      className="text-blue-600"
-                    >
-                      View
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      {/* VIEW */}
+                      <Link
+                        to={`/admin/products/${v.product_id}`}
+                        className="inline-flex items-center gap-1 px-3 py-1.5
+                 rounded-full text-sm font-medium
+                 text-blue-600 bg-blue-50
+                 hover:bg-blue-100 hover:text-blue-700
+                 transition"
+                      >
+                        👁 View
+                      </Link>
+
+                      {/* EDIT */}
+                      <button
+                        onClick={() => handleEdit(v)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5
+                 rounded-full text-sm font-medium
+                 text-green-600 bg-green-50
+                 hover:bg-green-100 hover:text-green-700
+                 transition"
+                      >
+                        ✏️ Edit
+                      </button>
+                    </div>
                   </td>
+
                 </tr>
               ))
             )}
@@ -195,9 +224,8 @@ const ProductManagement = () => {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 border rounded ${
-                currentPage === i + 1 ? "bg-blue-600 text-white" : ""
-              }`}
+              className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-600 text-white" : ""
+                }`}
             >
               {i + 1}
             </button>
@@ -214,6 +242,13 @@ const ProductManagement = () => {
           </button>
         </div>
       )}
+      {/* EDIT MODAL */}
+      <EditProductModal
+        open={editOpen}
+        data={editData}
+        onClose={() => setEditOpen(false)}
+        onUpdated={fetchProducts}
+      />
     </div>
   );
 };
