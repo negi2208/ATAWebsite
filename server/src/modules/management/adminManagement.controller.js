@@ -47,18 +47,17 @@ export const getAllUsersController = async (req, res) => {
 export const getAllProductsController = async (req, res) => {
   try {
     // Accept both search or model_name param
-    const search = req.query.search || req.query.model_name || req.query.sku || "";
-    const status = req.query.status || "all";
+    const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 
-    const result = await getAllProductsService({ search, status, page, limit });
+    const result = await getAllProductsService({ search, page, limit });
 
     return successResponse(res, 200, "Fetched products successfully", {
       total: result.total,
       page,
       limit,
-      products: result.products,
+      variants: result.variants,
     });
   } catch (error) {
     logger.error("Error fetching products:", error);

@@ -11,6 +11,6 @@ router.get("/bestsellers", ProductController.getBestsellers);
 router.get("/search", ProductController.searchProducts);
 router.get("/:id", ProductController.getProductById);
 router.get("/:productId/related", ProductController.getRelatedProducts);
-router.put("/", adminAuth, upload.any(), updateProductController)
+router.put("/:id", adminAuth, upload.any(), updateProductController)
 
 export default router;

@@ -28,6 +28,7 @@ export default function CategorySection() {
     { id: 2, img: "/images/kitfeature/Blue-Kit.png", title: "Blue Kit", link: "/shop?category=kit2" },
     { id: 3, img: "/images/kitfeature/Purple-kit.png", title: "Purple Kit", link: "/shop?category=kit3" },
     { id: 4, img: "/images/kitfeature/Red-kit.png", title: "Red Kit", link: "/shop?category=kit4" },
+    // { id: 1, img: "/images/categories/Chain-Cover-PVCMetal.png", title: "Full Body Kit", link: "/shop?category=chain-cover-pvc" },
   ];
 
   // -------- AUTO SCROLL (PARTS ONLY) --------

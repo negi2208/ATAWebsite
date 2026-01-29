@@ -51,7 +51,7 @@ export const ProductService = {
   async getById(productId) {
     return await Product.findOne({
       where: { id: productId, is_active: 1 },
-      attributes: ["id", "name", "price", "brand", "model_year", "exterior_finish", "material", "item_dimensions", "description"],
+      attributes: ["id", "name", "price", "brand", "product_type", "model_year", "exterior_finish", "material", "item_dimensions", "description"],
       include: [
         {
           model: Category,
@@ -290,12 +290,12 @@ export const createProductService = async (payload, files) => {
   }
 };
 
-export const updateProductService = async (productId, payload, files) => {
+export const updateProductService = async (id, payload, files) => {
   const transaction = await sequelize.transaction();
 
   try {
     // 1️⃣ Find product
-    const product = await Product.findByPk(productId, { transaction });
+    const product = await Product.findByPk(id, { transaction });
     if (!product) throw new Error("Product not found");
 
     // 2️⃣ Update product fields
@@ -315,7 +315,7 @@ export const updateProductService = async (productId, payload, files) => {
       { transaction }
     );
 
-    logger.info("Product updated", { productId });
+    logger.info("Product updated", { id });
 
     // 3️⃣ Parse variants
     const variants = JSON.parse(payload.variants);

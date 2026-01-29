@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { ArrowLeft } from "lucide-react";
+import { resolveImageUrl } from "../../utils/ImagesUtils";
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -24,7 +25,9 @@ const ProductDetails = () => {
         { withCredentials: true }
       );
 
-      const { success, data, message } = res?.data || {};
+      const { success, data, message } = res?.data;
+
+      console.log(data)
 
       if (success) setProduct(data);
       else toast.error(message || "Failed to fetch product details");
@@ -60,12 +63,23 @@ const ProductDetails = () => {
   const variant = product?.variants?.[0];
   const images = variant?.ProductImage;
 
-  // build image list with only available ones
-  const imgList = [
-    images?.front_img,
-    images?.left_img,
-    images?.right_img,
-  ].filter(Boolean);
+  const imgList = [];
+
+  if (images?.front_img)
+    imgList.push(resolveImageUrl(images.front_img));
+
+  if (images?.left_img)
+    imgList.push(resolveImageUrl(images.left_img));
+
+  if (images?.right_img)
+    imgList.push(resolveImageUrl(images.right_img));
+
+  // 🔥 extra images array
+  if (Array.isArray(images?.extra_images)) {
+    images.extra_images.forEach((img) => {
+      imgList.push(resolveImageUrl(img));
+    });
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -92,7 +106,7 @@ const ProductDetails = () => {
           <h3 className="font-semibold text-gray-800">Images</h3>
 
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-            {imgList.map((img, i) => (
+            {imgList?.map((img, i) => (
               <img
                 key={i}
                 src={img}
@@ -109,7 +123,7 @@ const ProductDetails = () => {
             ))}
           </div>
 
-          {imgList.length === 0 && (
+          {imgList?.length === 0 && (
             <p className="text-sm text-gray-500">No images available</p>
           )}
         </div>
@@ -134,10 +148,12 @@ const ProductDetails = () => {
             {product?.model_year || "-"}
           </p>
 
-          <p>
-            <strong>Brand:</strong>{" "}
-            {product?.brand || "-"}
-          </p>
+          {product?.brand && (
+            <p>
+              <strong>Brand:</strong>{" "}
+              {product?.brand || "-"}
+            </p>
+          )}
 
           <p>
             <strong>Price:</strong> ₹{product?.price || "-"}
@@ -148,14 +164,18 @@ const ProductDetails = () => {
               <hr className="my-2" />
               <h4 className="font-semibold">Variant Details</h4>
 
-              <p>
-                <strong>SKU:</strong> {variant?.part_no || "-"}
-              </p>
+              {variant?.variant_name && (
+                <p>
+                  <strong>SKU:</strong> {variant?.part_no || "-"}
+                </p>
+              )}
 
-              <p>
-                <strong>Variant:</strong>{" "}
-                {variant?.variant_name || "-"}
-              </p>
+              {variant?.variant_name && (
+                <p>
+                  <strong>Variant:</strong>{" "}
+                  {variant?.variant_name || "-"}
+                </p>
+              )}
 
               <p>
                 <strong>Color:</strong> {variant?.color || "-"}

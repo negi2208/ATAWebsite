@@ -1,4 +1,4 @@
-import { ProductService, createProductService } from "./product.service.js";
+import { ProductService, createProductService, updateProductService } from "./product.service.js";
 
 export const ProductController = {
   async getProducts(req, res) {
@@ -136,10 +136,10 @@ export const createProductController = async (req, res) => {
 
 export const updateProductController = async (req, res) => {
   try {
-    const { productId } = req.params;
+    const { id } = req.params;
 
     const product = await updateProductService(
-      productId,
+      id,
       req.body,
       req.files
     );

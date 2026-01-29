@@ -1,15 +1,15 @@
 export const resolveImageUrl = (path) => {
-    if (!path) return "/images/placeholder.jpg";
+  if (!path) return "/images/placeholder.jpg";
 
-    // agar already full URL hai
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-        return path;
-    }
-
-    // agar uploads se start ho raha hai
-    if (path.startsWith("uploads")) {
-        return `${import.meta.env.VITE_API_URL}/${path.replace(/\\/g, "/")}`;
-    }
-
+  if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;
+  }
+
+  // handle /uploads OR uploads
+  if (path.includes("uploads")) {
+    const cleanPath = path.replace(/^\/+/, "").replace(/\\/g, "/");
+    return `${import.meta.env.VITE_API_URL}/${cleanPath}`;
+  }
+
+  return path;
 };

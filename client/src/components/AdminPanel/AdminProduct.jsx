@@ -31,28 +31,22 @@ const ProductManagement = () => {
       );
 
       const { success, data, message } = res.data;
+      console.log(data)
 
       if (success) {
-        const flat = [];
-
-        (data.products || []).forEach((product) => {
-          (product.variants || []).forEach((v) => {
-            flat.push({
-              id: v.id,
-              product_id: product.id,
-              sku: v.part_no,
-              variant_name: v.variant_name,
-              color: v.color,
-              product_name: product.name,
-              brand: product.brand,
-              price: product.price,
-            });
-          });
-        });
+        const flat = data.variants?.map((v) => ({
+          id: v.id,
+          product_id: v.product.id,
+          sku: v.part_no,
+          variant_name: v.variant_name,
+          color: v.color,
+          product_name: v.product.name,
+          brand: v.product.brand,
+          price: v.product.price,
+        }));
 
         setVariants(flat);
-        setTotalVariants(data.total || 0);
-
+        setTotalVariants(data.total);
         if (message) toast.success(message);
       } else {
         setVariants([]);
@@ -142,7 +136,7 @@ const ProductManagement = () => {
               <th className="px-4 py-3 border">Variant Name</th>
               <th className="px-4 py-3 border">Color</th>
               <th className="px-4 py-3 border">Product</th>
-              <th className="px-4 py-3 border">Brand</th>
+              {/* <th className="px-4 py-3 border">Brand</th> */}
               <th className="px-4 py-3 border">Price</th>
               <th className="px-4 py-3 border">Action</th>
             </tr>
@@ -155,14 +149,14 @@ const ProductManagement = () => {
                   Loading...
                 </td>
               </tr>
-            ) : variants.length === 0 ? (
+            ) : variants?.length === 0 ? (
               <tr>
                 <td colSpan={8} className="text-center py-6">
                   No data found
                 </td>
               </tr>
             ) : (
-              variants.map((v, index) => (
+              variants?.map((v, index) => (
                 <tr key={v.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 border">
                     {(currentPage - 1) * itemsPerPage + index + 1}
@@ -172,37 +166,30 @@ const ProductManagement = () => {
                   <td className="px-4 py-3 border">{v.variant_name}</td>
                   <td className="px-4 py-3 border">{v.color}</td>
                   <td className="px-4 py-3 border">{v.product_name}</td>
-                  <td className="px-4 py-3 border">{v.brand}</td>
+                  {/* <td className="px-4 py-3 border">{v.brand}</td> */}
                   <td className="px-4 py-3 border">{v.price}</td>
 
                   <td className="px-4 py-3 border">
                     <div className="flex items-center gap-3">
+
                       {/* VIEW */}
                       <Link
                         to={`/admin/products/${v.product_id}`}
-                        className="inline-flex items-center gap-1 px-3 py-1.5
-                 rounded-full text-sm font-medium
-                 text-blue-600 bg-blue-50
-                 hover:bg-blue-100 hover:text-blue-700
-                 transition"
+                        className="px-4 py-1.5 rounded-full text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 transition"
                       >
-                        👁 View
+                        View
                       </Link>
 
                       {/* EDIT */}
                       <button
                         onClick={() => handleEdit(v)}
-                        className="inline-flex items-center gap-1 px-3 py-1.5
-                 rounded-full text-sm font-medium
-                 text-green-600 bg-green-50
-                 hover:bg-green-100 hover:text-green-700
-                 transition"
+                        className="px-4 py-1.5 rounded-full text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700 transition"
                       >
-                        ✏️ Edit
+                        Edit
                       </button>
+
                     </div>
                   </td>
-
                 </tr>
               ))
             )}

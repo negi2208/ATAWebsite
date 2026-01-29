@@ -12,6 +12,8 @@ export const createPaymentOrder = async (userId, amount) => {
   if (!amount || amount <= 0) {
     throw new Error("Invalid amount");
   }
+  console.log("KEY_ID:", process.env.RAZORPAY_KEY_ID);
+  console.log("KEY_SECRET:", process.env.RAZORPAY_KEY_SECRET);
 
   // Create Razorpay order (REAL)
   const razorpayOrder = await razorpay.orders.create({
@@ -20,6 +22,8 @@ export const createPaymentOrder = async (userId, amount) => {
     receipt: `receipt_${Date.now()}`,
     payment_capture: 1,
   });
+  console.log("KEY_ID:");
+  console.log("KEY_SECRET:");
 
   // Store in DB
   await Payment.create({

@@ -159,7 +159,7 @@ const AdminOrderDetails = () => {
                   <div><b>Part No:</b> {variant?.part_no}</div>
                   <div><b>Color:</b> {variant?.color}</div>
                   <div><b>Product:</b> {product?.name}</div>
-                  <div><b>Brand:</b> {product?.brand}</div>
+                  {product?.brand && (<div><b>Brand:</b> {product?.brand}</div>)}
                   <div><b>Product Price:</b> ₹{product?.price}</div>
                 </div>
 

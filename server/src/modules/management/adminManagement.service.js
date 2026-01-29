@@ -91,7 +91,6 @@ export const getAllUsers = async ({ search, page, limit }) => {
 // Fetch all products with filters & pagination
 export const getAllProductsService = async ({
   search = "",
-  status = "all",
   page = 1,
   limit = 10,
 }) => {
@@ -102,44 +101,25 @@ export const getAllProductsService = async ({
   // 🔍 SEARCH (Product + Variant)
   if (search) {
     where[Op.or] = [
-      { name: { [Op.like]: `%${search}%` } },
-      { brand: { [Op.like]: `%${search}%` } },
-      { "$variants.part_no$": { [Op.like]: `%${search}%` } },
-      { "$variants.variant_name$": { [Op.like]: `%${search}%` } },
+      { part_no: { [Op.like]: `%${search}%` } },
+      { variant_name: { [Op.like]: `%${search}%` } },
+      { "$product.name$": { [Op.like]: `%${search}%` } },
+      { "$product.brand$": { [Op.like]: `%${search}%` } },
     ];
   }
 
-  // ✅ STATUS FILTER
-  if (status && status.toLowerCase() !== "all") {
-    where.is_active = status.toLowerCase() === "active" ? 1 : 0;
-  }
-
-  const { count, rows } = await Product.findAndCountAll({
+  const { count, rows } = await ProductVariant.findAndCountAll({
     where,
-
     offset,
     limit,
 
-    distinct: true,      // 🔥 IMPORTANT
-    subQuery: false,     // 🔥 IMPORTANT
-
     order: [["id", "ASC"]],
-
-    attributes: ["id", "name", "brand", "price", "is_active"],
 
     include: [
       {
-        model: ProductVariant,
-        as: "variants",
-        attributes: ["id", "part_no", "variant_name", "color"],
-        required: false, // search ke time INNER JOIN avoid
-        include: [
-          {
-            model: ProductImage,
-            as: "ProductImage",
-            attributes: ["front_img", "left_img", "right_img"],
-          },
-        ],
+        model: Product,
+        as: "product",
+        attributes: ["id", "name", "brand", "price"],
       },
     ],
   });
@@ -149,7 +129,7 @@ export const getAllProductsService = async ({
     page,
     limit,
     totalPages: Math.ceil(count / limit),
-    products: rows,
+    variants: rows,
   };
 };
 
