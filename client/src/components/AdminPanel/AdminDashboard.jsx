@@ -55,8 +55,8 @@ const AdminDashboard = () => {
             name: p.name,
             img: null,                             // backend image nahi deta
             sales: p.sales,
-            price: p.price,
-            info: `${p.brand || ""} • ₹${p.price}`, // UI ke niche text ke liye
+            color: p.color,
+            price: `₹${p.price}`,
           }))
         );
 
@@ -157,7 +157,11 @@ const AdminDashboard = () => {
                     </p>
 
                     <p className="text-sm font-medium text-gray-800">
-                      {item.info}
+                      {item.color}
+                    </p>
+
+                    <p className="text-sm font-medium text-gray-800">
+                      {item.price}
                     </p>
 
                     <p className="text-xs text-gray-500">

@@ -74,6 +74,7 @@ export default function ProductCard({ product }) {
 
   const MAX_LENGTH = 60;
   const isLong = product.name.length > MAX_LENGTH;
+  const defaultVariantId = product.variants?.[0]?.id;
 
   const displayName =
     showFullName || !isLong
@@ -85,7 +86,7 @@ export default function ProductCard({ product }) {
     <div className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group">
       {/* IMAGE */}
       <div className="relative overflow-hidden">
-        <Link to={`/product/${product.id}`} >
+        <Link to={`/product/${product.id}/${defaultVariantId}`} >
           <img
             src={finalImages[currentImageIndex]}
             alt={product.name}

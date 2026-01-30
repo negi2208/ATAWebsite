@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 export default function CategorySection() {
   const scrollRef = useRef(null);
 
-  const [activeTab, setActiveTab] = useState("parts");
+  const [activeTab, setActiveTab] = useState("kit");
 
   // -------- PARTS --------
   const categories = [
@@ -24,11 +24,10 @@ export default function CategorySection() {
 
   // -------- KIT --------
   const kits = [
-    { id: 1, img: "/images/kitfeature/Blackk.png", title: "Black Kit", link: "/shop?category=kit1" },
-    { id: 2, img: "/images/kitfeature/Blue-Kit.png", title: "Blue Kit", link: "/shop?category=kit2" },
-    { id: 3, img: "/images/kitfeature/Purple-kit.png", title: "Purple Kit", link: "/shop?category=kit3" },
-    { id: 4, img: "/images/kitfeature/Red-kit.png", title: "Red Kit", link: "/shop?category=kit4" },
-    // { id: 1, img: "/images/categories/Chain-Cover-PVCMetal.png", title: "Full Body Kit", link: "/shop?category=chain-cover-pvc" },
+    { id: 1, img: "/images/kitfeature/Blackk.png", title: "Gret Kit", link: "/product/6/18" },
+    { id: 2, img: "/images/kitfeature/Blue-Kit.png", title: "Blue Kit", link: "/product/6/19" },
+    { id: 3, img: "/images/kitfeature/Purple-kit.png", title: "Purple Kit", link: "/product/6/20" },
+    { id: 4, img: "/images/kitfeature/Red-kit.png", title: "Red Kit", link: "/product/6/17" },
   ];
 
   // -------- AUTO SCROLL (PARTS ONLY) --------
@@ -69,25 +68,23 @@ export default function CategorySection() {
         {/* Tabs */}
         <div className="flex justify-center gap-4 mb-8">
           <button
-            onClick={() => setActiveTab("parts")}
-            className={`px-6 py-2 rounded-full border font-semibold ${
-              activeTab === "parts"
+            onClick={() => setActiveTab("kit")}
+            className={`px-6 py-2 rounded-full border font-semibold ${activeTab === "kit"
                 ? "bg-red-600 text-white border-red-600"
                 : "bg-gray-100 text-gray-700 border-gray-300"
-            }`}
+              }`}
           >
-            Parts
+            Kit
           </button>
 
           <button
-            onClick={() => setActiveTab("kit")}
-            className={`px-6 py-2 rounded-full border font-semibold ${
-              activeTab === "kit"
+            onClick={() => setActiveTab("parts")}
+            className={`px-6 py-2 rounded-full border font-semibold ${activeTab === "parts"
                 ? "bg-red-600 text-white border-red-600"
                 : "bg-gray-100 text-gray-700 border-gray-300"
-            }`}
+              }`}
           >
-            Kit
+            Parts
           </button>
         </div>
 

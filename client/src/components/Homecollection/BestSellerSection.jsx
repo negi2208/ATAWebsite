@@ -3,7 +3,7 @@ import { Heart, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { addToWishlist } from "../../utils/Addwishlist";
 import { toast } from "react-hot-toast";
-
+import { resolveImageUrl } from "../../utils/ImagesUtils";
 
 export default function BestSeller() {
   const scrollRef = useRef(null);
@@ -19,6 +19,7 @@ export default function BestSeller() {
           throw new Error('Failed to fetch bestsellers');
         }
         const data = await response.json();
+        console.log(data.data)
         if (data.success) {
           setProducts(data.data);
         } else {
@@ -73,8 +74,8 @@ export default function BestSeller() {
           <div className="flex items-center justify-center mt-4 md:mt-6">
             <div className="flex-1 h-px bg-gray-300 hidden md:block"></div>
 
-            <a 
-              href="/shop" 
+            <a
+              href="/shop"
               className="mx-6 md:mx-10 text-primary-700 font-medium hover:underline text-lg"
             >
               See all products
@@ -111,18 +112,18 @@ export default function BestSeller() {
           {/* Slider */}
           <div
             ref={scrollRef}
-           className="overflow-x-auto scroll-smooth 
+            className="overflow-x-auto scroll-smooth 
              scrollbar-hide 
              [-ms-overflow-style:none] 
              [scrollbar-width:none] 
              [&::-webkit-scrollbar]:hidden"
->
-          <div className="flex gap-6 md:gap-12 justify-start md:justify-center py-8 md:py-12 min-w-max">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
-  </div>
+          >
+            <div className="flex gap-6 md:gap-12 justify-start md:justify-center py-8 md:py-12 min-w-max">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
 
         </div>
       </div>
@@ -131,14 +132,15 @@ export default function BestSeller() {
 }
 
 function ProductCard({ product }) {
+  const image = resolveImageUrl(product.image);
   const handleWishlist = async () => {
-  try {
-    await addToWishlist(product.id);
-    toast.success("Added to wishlist ❤️");
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to add to wishlist");
-  }
-};
+    try {
+      await addToWishlist(product.id);
+      toast.success("Added to wishlist ❤️");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to add to wishlist");
+    }
+  };
 
   return (
     <div className="
@@ -162,8 +164,8 @@ function ProductCard({ product }) {
           group-hover:h-32 sm:group-hover:h-40 md:group-hover:h-40"
       >
         <img
-          src={product.image}
-          alt={product.title}
+          src={image}
+          alt={"not_found"}
           className="h-full object-contain transition-all duration-500 group-hover:scale-90"
         />
       </div>
@@ -180,8 +182,8 @@ function ProductCard({ product }) {
 
       {/* PRICE */}
       <p className="text-2xl sm:text-3xl font-bold text-primary-700 text-center mt-3">
-       ₹{Number(product.price).toLocaleString("en-IN")}
-          </p>
+        ₹{Number(product.price).toLocaleString("en-IN")}
+      </p>
 
       {/* BUTTONS (hover only) */}
       <div className="flex justify-center items-center gap-3 sm:gap-4 mt-4 sm:mt-6 
@@ -192,7 +194,7 @@ function ProductCard({ product }) {
           Add to Cart
         </button> */}
 
-        <Link 
+        <Link
           to={`/product/${product.id}`}
           className="text-primary-700 font-semibold text-xs sm:text-sm hover:underline"
         >

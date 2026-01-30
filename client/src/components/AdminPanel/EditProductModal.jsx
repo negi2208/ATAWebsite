@@ -235,7 +235,18 @@ const EditProductModel = ({ open, data, onClose, onUpdated }) => {
       const fd = new FormData();
 
       Object.entries(product).forEach(([k, v]) => v && fd.append(k, v));
-      Object.entries(variant).forEach(([k, v]) => v && fd.append(k, v));
+      
+      const variantsPayload = [
+        {
+          id: variant.id,
+          part_no: variant.part_no,
+          variant_name: variant.variant_name,
+          color: variant.color,
+        },
+      ];
+
+      fd.append("variants", JSON.stringify(variantsPayload));
+
 
       if (images.front_img) fd.append("front_img", images.front_img);
       if (images.left_img) fd.append("left_img", images.left_img);

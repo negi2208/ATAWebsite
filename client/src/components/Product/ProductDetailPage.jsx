@@ -13,7 +13,7 @@ import { getGuestToken } from "../../utils/guest";
 import { resolveImageUrl } from "../../utils/ImagesUtils"
 
 export default function ProductDetailPage() {
-  const { id } = useParams();
+  const { id, variantId } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,7 +22,6 @@ export default function ProductDetailPage() {
   const [adding, setAdding] = useState(false);
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -35,7 +34,7 @@ export default function ProductDetailPage() {
         // console.log(data.data)
         if (data.success) {
           setProduct(data.data);
-          setActiveVariantIndex(0);
+          // setActiveVariantIndex(0);
         } else {
           throw new Error(data.message || 'Failed to fetch product');
         }
@@ -53,6 +52,18 @@ export default function ProductDetailPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
 
   }, [id]);
+
+  useEffect(() => {
+    if (product && variantId) {
+      const index = product.variants?.findIndex(
+        (v) => String(v.id) === String(variantId)
+      );
+
+      if (index !== -1) {
+        setActiveVariantIndex(index);
+      }
+    }
+  }, [product, variantId]);
 
   if (loading) {
     return (
@@ -230,9 +241,12 @@ export default function ProductDetailPage() {
                     {product.variants.map((variant, index) => (
                       <button
                         key={variant.id}
-                        onClick={() => setActiveVariantIndex(index)}
+                        onClick={() => {
+                          setActiveVariantIndex(index);
+                          navigate(`/product/${product.id}/${variant.id}`);
+                        }}
                         className={`px-4 py-2 rounded-lg border text-sm font-medium transition
-            ${index === activeVariantIndex
+    ${index === activeVariantIndex
                             ? "border-primary-600 bg-primary-50 text-primary-700"
                             : "border-gray-300 hover:border-gray-400"
                           }`}

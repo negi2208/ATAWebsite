@@ -70,7 +70,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/shop" element={<ShopPage />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/product/:id/:variantId?" element={<ProductDetail />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="*" element={<NotFound />} />
         </Route>

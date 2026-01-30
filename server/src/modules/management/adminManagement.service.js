@@ -20,6 +20,10 @@ export const getAdminDashboardService = async () => {
 
     const [results] = await sequelize.query(`
       SELECT 
+        pv.id AS variant_id,
+        pv.variant_name,
+        pv.color,
+
         p.id AS product_id,
         p.name,
         p.brand,
@@ -34,15 +38,16 @@ export const getAdminDashboardService = async () => {
       JOIN product_variants pv ON oi.variant_id = pv.id
       JOIN products p ON pv.product_id = p.id
       
-      GROUP BY p.id
+      GROUP BY pv.id
       ORDER BY totalOrders DESC
       LIMIT 5;
     `);
 
     const topProducts = results.map(item => ({
       id: item.product_id,
-      name: item.name,
+      name: item.variant_name,
       brand: item.brand,
+      color: item.color,
       price: Number(item.price) || 0,
       sales: Number(item.totalOrders) || 0,
       quantity_sold: Number(item.totalQuantity) || 0,
