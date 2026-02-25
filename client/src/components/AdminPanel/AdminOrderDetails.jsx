@@ -3,6 +3,7 @@ import axios from "axios";
 import { Loader2, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import { useParams, useNavigate } from "react-router";
+import { resolveImageUrl } from "../../utils/ImagesUtils";
 
 const AdminOrderDetails = () => {
   const [order, setOrder] = useState(null);
@@ -167,21 +168,21 @@ const AdminOrderDetails = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {images?.front_img && (
                     <img
-                      src={images.front_img}
+                      src={resolveImageUrl(images?.front_img)}
                       alt="Front"
                       className="h-40 w-full object-cover rounded"
                     />
                   )}
                   {images?.left_img && (
                     <img
-                      src={images.left_img}
+                      src={resolveImageUrl(images?.left_img)}
                       alt="Left"
                       className="h-40 w-full object-cover rounded"
                     />
                   )}
                   {images?.right_img && (
                     <img
-                      src={images.right_img}
+                      src={resolveImageUrl(images?.right_img)}
                       alt="Right"
                       className="h-40 w-full object-cover rounded"
                     />

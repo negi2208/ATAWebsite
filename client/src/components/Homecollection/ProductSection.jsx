@@ -3,9 +3,9 @@
 import React from 'react';
 
 // Importing images
-import banner1 from '/ProductSection/Banner1.jpeg';
+import banner1 from '/ProductSection/Banner-04.jpeg';
 import banner2 from '/ProductSection/Banner2.jpeg';
-import banner3 from '/ProductSection/Banner3.jpeg';
+import banner3 from '/ProductSection/Banner-03.jpeg';
 
 const ProductSection = () => {
   return (

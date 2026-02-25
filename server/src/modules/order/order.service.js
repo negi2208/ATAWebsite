@@ -23,22 +23,41 @@ export const OrderService = {
         throw new Error("Cart is empty");
       }
 
-      const totalAmount = cart.items.reduce(
+      // ===============================
+      // 🔥 STEP 1: SUBTOTAL
+      // ===============================
+      const subTotal = cart.items.reduce(
         (sum, i) => sum + Number(i.price) * i.quantity,
         0
       );
 
+      // ===============================
+      // 🔥 STEP 2: GST (18%)
+      // ===============================
+      const tax = Math.round(subTotal * 0.18);
+
+      // ===============================
+      // 🔥 STEP 3: FINAL TOTAL
+      // ===============================
+      const totalAmount = subTotal + tax;
+
+      // ===============================
+      // 🔥 STEP 4: CREATE ORDER
+      // ===============================
       const order = await Order.create(
         {
           user_id: user_id || null,
           cart_id: cart.id,
-          total_amount: totalAmount,
+          total_amount: totalAmount, // ✅ GST INCLUDED
           payment_status,
           order_status: "PLACED",
         },
         { transaction: t }
       );
 
+      // ===============================
+      // ORDER ITEMS
+      // ===============================
       const orderItems = cart.items.map((item) => ({
         order_id: order.id,
         product_id: item.product_id,
@@ -49,10 +68,22 @@ export const OrderService = {
 
       await OrderItem.bulkCreate(orderItems, { transaction: t });
 
-      cart.status = "ORDERED"; 
+      // ===============================
+      // CART STATUS UPDATE
+      // ===============================
+      cart.status = "ORDERED";
       await cart.save({ transaction: t });
 
-      return order;
+      // ===============================
+      // 🔥 RETURN EXTRA DATA (NO DB)
+      // ===============================
+      return {
+        ...order.toJSON(),
+        subTotal,
+        tax,
+        total: totalAmount,
+        items: orderItems,
+      };
     });
   },
 };

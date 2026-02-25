@@ -4,6 +4,8 @@ import { Order } from "../../models/order.model.js";
 import { OrderItem } from "../../models/orderItem.model.js";
 import { Payment } from "../../models/payment.model.js";
 import { User } from "../../models/user.model.js";
+import { generateInvoice } from "../../utils/generateInvoice.js";
+import { sendInvoice } from "../../utils/mailer.js";
 import { OrderService } from "../order/order.service.js";
 import {
   createPaymentOrder,
@@ -11,6 +13,8 @@ import {
   updatePaymentStatus,
   refundPayment,
 } from "./payment.service.js";
+import path from 'path'
+import { v4 as uuidv4 } from "uuid";
 
 export const placeOrder = async (req, res) => {
   try {
@@ -82,7 +86,7 @@ export const confirmPayment = async (req, res) => {
     const order = await OrderService.createFromCart({
       user_id,
       guest_token,
-      
+
     });
 
     // 3️⃣ Update payment status
@@ -92,6 +96,42 @@ export const confirmPayment = async (req, res) => {
       razorpay_payment_id,
       razorpay_signature
     );
+
+    const invoiceId = uuidv4();
+    const invoicePath = path.join(
+      process.cwd(),
+      "invoices",
+      `invoice-${invoiceId}.pdf`
+    );
+
+    const invoiceData = {
+      invoiceNumber: invoiceId,
+      invoiceDate: new Date().toLocaleDateString(),
+      seller: {
+        name: "My Company Pvt Ltd",
+        address: "Lucknow, India",
+      },
+      customer: {
+        name: order.customer_name,
+        email: order.customer_email,
+        address: order.customer_address,
+      },
+      items: order.items,
+      subTotal: order.subTotal,
+      tax: order.tax,
+      total: order.total,
+    };
+
+    // generateInvoice
+    // await generateInvoice(invoiceData, invoicePath);
+
+    // generateInvoice
+    // await sendInvoice({
+    //   email: order.customer_email,
+    //   invoicePath,
+    //   invoiceNo: invoiceId,
+    //   orderId: order.id,
+    // });
 
     return res.json({
       success: true,
@@ -162,7 +202,7 @@ export const placeCODOrder = async (req, res) => {
     // Create payment record with COD status
     await Payment.create({
       order_id: order.id,
-      razorpay_order_id: `COD_${Date.now()}`, 
+      razorpay_order_id: `COD_${Date.now()}`,
       amount,
       status: "COD",
     });

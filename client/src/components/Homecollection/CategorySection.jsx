@@ -8,11 +8,11 @@ export default function CategorySection() {
 
   // -------- PARTS --------
   const categories = [
-    { id: 1, img: "/images/categories/Back-Plate.png", title: "Back Plate", link: "/shop?category=back-plate" },
+    { id: 1, img: "/images/categories/Back-Plate01.png", title: "Back Plate", link: "/shop?category=back-plate" },
     { id: 2, img: "/images/categories/Chain-Cover-PVCMetal.png", title: "Chain Cover PVC/Metal", link: "/shop?category=chain-cover-pvc" },
     { id: 3, img: "/images/categories/Blinker-Indicator.png", title: "Blinker/Indicator", link: "/shop?category=indicator" },
     { id: 4, img: "/images/categories/Head-Light-Visor-Glass.png", title: "Head Visor", link: "/shop?category=head-light-visor" },
-    { id: 5, img: "/images/categories/Inner-Body.png", title: "Inner Body", link: "/shop?category=inner-body" },
+    { id: 5, img: "/images/categories/Inner-Body01.png", title: "Inner Body", link: "/shop?category=inner-body" },
     { id: 6, img: "/images/categories/Meter-Cowling.png", title: "Meter Cowling", link: "/shop?category=meter-cowling" },
     { id: 7, img: "/images/categories/Visor-Glass.png", title: "Visor Glass", link: "/shop?category=visor-glass" },
     { id: 8, img: "/images/categories/Rear-Mudguard.png", title: "Rear Mudguard", link: "/shop?category=rear-mudguard" },
