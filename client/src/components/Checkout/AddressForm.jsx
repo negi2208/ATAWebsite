@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 export default function AddressForm({ onNext }) {
   const [form, setForm] = useState({
-    name: "", phone: "", pincode: "", city: "", address: "", landmark: ""
+    name: "", email: "", phone: "", pincode: "", city: "", address: "", landmark: ""
   });
 
   const handleChange = (e) => {
@@ -19,7 +19,7 @@ export default function AddressForm({ onNext }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name || !form.phone || !form.pincode || !form.address) {
+    if (!form.name || !form.email || !form.phone || !form.pincode || !form.address) {
       alert("Please fill all required fields");
       return;
     }
@@ -41,6 +41,18 @@ export default function AddressForm({ onNext }) {
           className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-600 focus:outline-none"
         />
         <input
+          type="text"
+          name="email"
+          required
+          placeholder="Email *"
+          value={form.email}
+          onChange={handleChange}
+          className="w-full px-5 py-4 border border-gray-300 rounded-xl"
+        />
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <input
           type="tel"
           name="phone"
           required
@@ -51,9 +63,6 @@ export default function AddressForm({ onNext }) {
           title="Please enter a 10-digit mobile number"
           className="w-full px-5 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-600"
         />
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4">
         <input
           type="text"
           name="pincode"
@@ -63,16 +72,17 @@ export default function AddressForm({ onNext }) {
           onChange={handleChange}
           className="w-full px-5 py-4 border border-gray-300 rounded-xl"
         />
-        <input
-          type="text"
-          name="city"
-          required
-          placeholder="City *"
-          value={form.city}
-          onChange={handleChange}
-          className="w-full px-5 py-4 border border-gray-300 rounded-xl"
-        />
       </div>
+
+      <input
+        type="text"
+        name="city"
+        required
+        placeholder="City *"
+        value={form.city}
+        onChange={handleChange}
+        className="w-full px-5 py-4 border border-gray-300 rounded-xl"
+      />
 
       <textarea
         name="address"

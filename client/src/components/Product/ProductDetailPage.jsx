@@ -285,20 +285,31 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Trust Badges WITH DIVIDER */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 py-12 border-t bg-white rounded-2xl shadow-sm divide-x divide-gray-300">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 py-12 
+border-t bg-white rounded-2xl shadow-sm 
+divide-y md:divide-y-0 md:divide-x divide-gray-300">
+
             {[
               { icon: Truck, title: "Fast Shipping", desc: "Free shipping on orders over ₹1999" },
               { icon: Shield, title: "Easy Return", desc: "2 days hassle-free return policy" },
               { icon: Shield, title: "Warranty Policy", desc: "3-Year Paint Warranty" }
             ].map((item, i) => (
-              <div key={i} className="text-center px-8 first:pl-0 last:pr-0">
-                <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+
+              <div
+                key={i}
+                className="text-center px-8 py-6 flex flex-col items-center justify-center"
+              >
+                <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                   <item.icon className="w-9 h-9 text-primary-600" />
                 </div>
+
                 <h3 className="font-bold text-lg">{item.title}</h3>
                 <p className="text-sm text-gray-600 mt-2">{item.desc}</p>
+
               </div>
+
             ))}
+
           </div>
 
           {/* Tabs: Description & Reviews */}
@@ -328,19 +339,25 @@ export default function ProductDetailPage() {
 
             <div className="p-8">
               {/* DESCRIPTION TAB */}
-              {activeTab === "description" && product.description && (
+              {activeTab === "description" && (
                 <div className="text-gray-700 leading-relaxed">
                   <h3 className="text-xl font-bold mb-4">About this item</h3>
 
-                  <ul className="list-disc pl-6 space-y-3">
-                    {product.description
-                      .split(/\n|\./) // newline ya full-stop se split
-                      .map(point => point.trim())
-                      .filter(point => point.length > 0)
-                      .map((point, index) => (
-                        <li key={index}>{point}</li>
-                      ))}
-                  </ul>
+                  {product.description ? (
+                    <ul className="list-disc pl-6 space-y-3">
+                      {product.description
+                        .split(/\n|\./)
+                        .map(point => point.trim())
+                        .filter(point => point.length > 0)
+                        .map((point, index) => (
+                          <li key={index}>{point}</li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500 italic">
+                      Description not available for this product.
+                    </p>
+                  )}
                 </div>
               )}
 

@@ -30,7 +30,7 @@ const UsersManagement = () => {
       );
 
       const { success, data, message } = res.data;
-      console.log(data)
+      // console.log(data)
 
       if (success) {
         const normalized = (data.users || []).map(u => ({
@@ -84,7 +84,7 @@ const UsersManagement = () => {
         SR_No: (currentPage - 1) * itemsPerPage + index + 1,
         Name: u.name,
         Phone: u.phone,
-        Address: u.city,
+        Address: u.address,
       }))
     );
     const wb = XLSX.utils.book_new();

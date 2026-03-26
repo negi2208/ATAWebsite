@@ -7,6 +7,7 @@ import {
   X,
   HelpCircle,
   Package,
+  Boxes,
 } from "lucide-react";
 
 import CategoriesDropdown from "./CategoriesDropdown";
@@ -125,7 +126,7 @@ export default function Header() {
                 onClick={() => setIsCategoriesOpen(true)}
                 className="flex items-center gap-3 font-bold text-sm hover:text-primary-600"
               >
-                <Menu className="w-5 h-5" />
+                <Boxes className="w-5 h-5" />
                 All Categories
               </button>
 

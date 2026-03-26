@@ -41,7 +41,7 @@ const Orders = () => {
 
       const { success, data } = res.data;
 
-      console.log(data)
+      // console.log(data)
 
       if (success) {
         setCounts(data.counts || {});
@@ -77,7 +77,7 @@ const Orders = () => {
       orders.map((o, i) => ({
         SR_No: (currentPage - 1) * itemsPerPage + i + 1,
         Order_ID: o.id,
-        Customer: o.User?.name || "-",
+        Customer: o.User?.full_name,
         Variant: o.items?.[0]?.variant?.variant_name || "-",
         Product: o.items?.[0]?.variant?.product?.name || "-",
         Amount: o.total_amount,

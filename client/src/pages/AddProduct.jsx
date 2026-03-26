@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [formKey, setFormKey] = useState(0);
 
   const [product, setProduct] = useState({
     name: "",
@@ -138,15 +139,45 @@ const AddProduct = () => {
         }
       );
 
-      res.data?.success
-        ? toast.success(res.data.message)
-        : toast.error(res.data.message);
+      if (res.data?.success) {
+        toast.success(res.data.message);
+
+        setProduct({
+          name: "",
+          category_id: "",
+          product_type: "single",
+          brand: "",
+          price: "",
+          model_year: "",
+          exterior_finish: "",
+          material: "",
+          item_dimensions: "",
+          description: "",
+        });
+
+        setVariant({
+          part_no: "",
+          variant_name: "",
+          color: "",
+        });
+
+        setImages({
+          front_img: null,
+          left_img: null,
+          right_img: null,
+          extra_images: [],
+        });
+        setFormKey(prev => prev + 1)
+
+      } else {
+        toast.error(res.data.message);
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(
           error.response?.data?.message ||
-            error.message ||
-            "Server error"
+          error.message ||
+          "Server error"
         );
       }
     } finally {
@@ -168,10 +199,10 @@ const AddProduct = () => {
           {/* PRODUCT */}
           <Section title="Product Information" icon={<FaBoxOpen />}>
             <Grid>
-              <Input label="Product Name" name="name" onChange={handleProductChange} />
-              <Input label="Brand" name="brand" onChange={handleProductChange} />
-              <Input label="Price" name="price" onChange={handleProductChange} />
-              <Input label="Model Year" name="model_year" onChange={handleProductChange} />
+              <Input label="Product Name" name="name" value={product.name} onChange={handleProductChange} />
+              <Input label="Brand" name="brand" value={product.brand} onChange={handleProductChange} />
+              <Input label="Price" name="price" value={product.price} onChange={handleProductChange} />
+              <Input label="Model Year" name="model_year" value={product.model_year} onChange={handleProductChange} />
 
               <div>
                 <label className="label">Product Type</label>
@@ -206,9 +237,9 @@ const AddProduct = () => {
 
             {product.product_type === "kit" && (
               <Grid className="mt-6">
-                <Input label="Exterior Finish" name="exterior_finish" onChange={handleProductChange} />
-                <Input label="Material" name="material" onChange={handleProductChange} />
-                <Input label="Item Dimensions" name="item_dimensions" onChange={handleProductChange} />
+                <Input label="Exterior Finish" name="exterior_finish" value={product.exterior_finish} onChange={handleProductChange} />
+                <Input label="Material" name="material" value={product.material} onChange={handleProductChange} />
+                <Input label="Item Dimensions" name="item_dimensions" value={product.item_dimensions} onChange={handleProductChange} />
               </Grid>
             )}
 
@@ -217,6 +248,7 @@ const AddProduct = () => {
               <textarea
                 rows="4"
                 name="description"
+                value={product.description}
                 onChange={handleProductChange}
                 className="input"
               />
@@ -226,26 +258,28 @@ const AddProduct = () => {
           {/* VARIANT */}
           <Section title="Variant Details" icon={<FaCubes />}>
             <Grid>
-              <Input label="Part No" name="part_no" onChange={handleVariantChange} />
-              <Input label="Variant Name" name="variant_name" onChange={handleVariantChange} />
-              <Input label="Color" name="color" onChange={handleVariantChange} />
+              <Input label="Part No" name="part_no" value={variant.part_no} onChange={handleVariantChange} />
+              <Input label="Variant Name" name="variant_name" value={variant.variant_name} onChange={handleVariantChange} />
+              <Input label="Color" name="color" value={variant.color} onChange={handleVariantChange} />
             </Grid>
           </Section>
 
           {/* IMAGES */}
           <Section title="Product Images" icon={<MdImage />}>
             <Grid>
-              <FileInput label="Front Image" name="front_img" onChange={handleImageChange} />
-              <FileInput label="Left Image" name="left_img" onChange={handleImageChange} />
-              <FileInput label="Right Image" name="right_img" onChange={handleImageChange} />
+              <FileInput key={`front-${formKey}`} label="Front Image" name="front_img" onChange={handleImageChange} />
+              <FileInput key={`left-${formKey}`} label="Left Image" name="left_img" onChange={handleImageChange} />
+              <FileInput key={`right-${formKey}`} label="Right Image" name="right_img" onChange={handleImageChange} />
             </Grid>
 
             {product.product_type === "kit" && (
               <div className="mt-6">
                 <FileInput
+                  key={`extra-${formKey}`}
                   label="Extra Images"
                   name="extra_images"
                   multiple
+                  value={product.extra_images}
                   onChange={handleImageChange}
                 />
               </div>

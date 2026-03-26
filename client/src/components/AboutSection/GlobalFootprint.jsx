@@ -27,7 +27,7 @@ export default function GlobalFootprint() {
 
             {/* READ MORE Button */}
             <a
-              href="/about"
+              href="/shop"
               className="inline-flex items-center gap-2 sm:gap-3 bg-primary-500 hover:bg-primary-600 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
             >
               READ MORE

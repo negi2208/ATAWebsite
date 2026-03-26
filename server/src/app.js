@@ -50,30 +50,4 @@ app.get("/", (req, res) => {
   res.json({ success: true, message: "Server is healthy 💚" });
 });
 
-// app.post("/invoice", async (req, res) => {
-//   try {
-//     const invoiceData = req.body;
-
-//     const invoiceId = uuidv4();
-//     const fileName = `invoice-${invoiceId}.pdf`;
-//     const filePath = path.join(invoiceDir, fileName);
-
-//     await generateInvoice(invoiceData, filePath)
-
-//     res.setHeader("Content-Type", "application/pdf");
-//     res.setHeader(
-//       "Content-Disposition",
-//       `inline; filename="${fileName}"`
-//     );
-
-//     return res.sendFile(filePath);
-//   } catch (error) {
-//     return res.status(500).json({
-//       success: false,
-//       message: "Invoice generation failed",
-//       error: error.message
-//     });
-//   }
-// })
-
 export default app;

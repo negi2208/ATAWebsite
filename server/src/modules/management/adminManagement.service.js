@@ -118,7 +118,7 @@ export const getAllProductsService = async ({
     offset,
     limit,
 
-    order: [["id", "ASC"]],
+    order: [["id", "DESC"]],
 
     include: [
       {

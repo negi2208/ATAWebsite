@@ -10,6 +10,10 @@ export const User = sequelize.define(
       primaryKey: true,
     },
     full_name: DataTypes.STRING(255),
+    email: {                     // ✅ ADD THIS
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     phone: {
       type: DataTypes.STRING(20),
       unique: true,

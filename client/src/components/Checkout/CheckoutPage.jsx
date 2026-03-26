@@ -10,6 +10,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState(1);
   const [address, setAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("online");
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,11 +62,14 @@ export default function CheckoutPage() {
   /* ================= COD ORDER ================= */
   const placeCODOrder = async () => {
     try {
+      setPaymentLoading(true);
+
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/payment/cod`,
         {
           user: {
             full_name: address.name,
+            email: address.email,
             phone: address.phone,
             address: `${address.address}, ${address.city} - ${address.pincode}`,
           },
@@ -78,17 +82,22 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error(error);
       alert("Order failed. Please try again.");
+    } finally {
+      setPaymentLoading(false);
     }
   };
 
   /* ================= ONLINE PAYMENT ================= */
   const payNow = async () => {
     try {
+      setPaymentLoading(true);
+
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/payment/create`,
         {
           user: {
             full_name: address.name,
+            email: address.email,
             phone: address.phone,
             address: `${address.address}, ${address.city} - ${address.pincode}`,
           },
@@ -97,6 +106,7 @@ export default function CheckoutPage() {
         }
       );
 
+      setPaymentLoading(false);
       const { key, order, user_id } = res.data;
 
       const options = {
@@ -124,6 +134,7 @@ export default function CheckoutPage() {
 
         prefill: {
           name: address.name,
+          email: address.email,
           contact: address.phone,
         },
 
@@ -134,6 +145,7 @@ export default function CheckoutPage() {
       rzp.open();
     } catch (error) {
       console.error(error);
+      setPaymentLoading(false);
       alert("Payment failed. Please try again.");
     }
   };
@@ -205,18 +217,22 @@ export default function CheckoutPage() {
                   {paymentMethod === "online" && (
                     <button
                       onClick={payNow}
+                      disabled={paymentLoading}
                       className="bg-green-600 text-white py-4 px-14 rounded-full text-lg font-bold flex items-center gap-3 mx-auto"
                     >
-                      Pay Now <ArrowRight />
+                      {paymentLoading ? "Processing..." : "Pay Now"}
+                      {!paymentLoading && <ArrowRight />}
                     </button>
                   )}
 
                   {paymentMethod === "cod" && (
                     <button
                       onClick={placeCODOrder}
+                      disabled={paymentLoading}
                       className="bg-blue-600 text-white py-4 px-14 rounded-full text-lg font-bold flex items-center gap-3 mx-auto"
                     >
-                      Place Order <ArrowRight />
+                      {paymentLoading ? "Placing Order..." : "Place Order"}
+                      {!paymentLoading && <ArrowRight />}
                     </button>
                   )}
                 </div>

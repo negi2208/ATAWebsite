@@ -3,6 +3,8 @@ import { Cart } from "../../models/cart.model.js";
 import { Order } from "../../models/order.model.js";
 import { OrderItem } from "../../models/orderItem.model.js";
 import { Payment } from "../../models/payment.model.js";
+import { Product } from "../../models/product.model.js";
+import { ProductVariant } from "../../models/productVariant.model.js";
 import { User } from "../../models/user.model.js";
 import { generateInvoice } from "../../utils/generateInvoice.js";
 import { sendInvoice } from "../../utils/mailer.js";
@@ -25,6 +27,7 @@ export const placeOrder = async (req, res) => {
     if (!user?.id) {
       finalUser = await User.create({
         full_name: user.full_name,
+        email: user.email,
         phone: user.phone,
         address: user.address,
         status: 1,
@@ -97,7 +100,32 @@ export const confirmPayment = async (req, res) => {
       razorpay_signature
     );
 
-    const invoiceId = uuidv4();
+    const userData = await User.findByPk(user_id);
+    const orderItems = await OrderItem.findAll({
+      where: { order_id: order.id },
+      include: [
+        {
+          model: ProductVariant,
+          as: "variant",
+          attributes: ["variant_name"],
+          include: [
+            {
+              model: Product,
+              as: "product",
+              attributes: ["name"],
+            },
+          ],
+        },
+      ],
+    });
+
+    const items = orderItems.map((item) => ({
+      name: `${item.variant?.product?.name || ""} ${item.variant?.variant_name || ""}`,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+
+    const invoiceId = `INV-${new Date().getFullYear()}${Date.now().toString().slice(-6)}`
     const invoicePath = path.join(
       process.cwd(),
       "invoices",
@@ -108,30 +136,33 @@ export const confirmPayment = async (req, res) => {
       invoiceNumber: invoiceId,
       invoiceDate: new Date().toLocaleDateString(),
       seller: {
-        name: "My Company Pvt Ltd",
-        address: "Lucknow, India",
+        name: "Unique Induustries",
+        address: `KHEWAT NO 478 AND KHEWAT NO 63, VPO BHANGU,
+        DABWALI ROAD, SAHUWALA TO BHANGU ROAD,
+        Bhangu, Sirsa, Haryana, 125077`,
       },
       customer: {
-        name: order.customer_name,
-        email: order.customer_email,
-        address: order.customer_address,
+        name: userData.full_name,
+        email: userData.email,
+        address: userData.address,
       },
-      items: order.items,
+      items: items,
       subTotal: order.subTotal,
       tax: order.tax,
       total: order.total,
     };
+    console.log("invoiceData:", invoiceData)
 
     // generateInvoice
-    // await generateInvoice(invoiceData, invoicePath);
+    await generateInvoice(invoiceData, invoicePath);
 
     // generateInvoice
-    // await sendInvoice({
-    //   email: order.customer_email,
-    //   invoicePath,
-    //   invoiceNo: invoiceId,
-    //   orderId: order.id,
-    // });
+    await sendInvoice({
+      email: userData.email,
+      invoicePath,
+      invoiceNo: invoiceId,
+      orderId: order.id,
+    });
 
     return res.json({
       success: true,
@@ -174,6 +205,7 @@ export const placeCODOrder = async (req, res) => {
     if (!user?.id) {
       finalUser = await User.create({
         full_name: user.full_name,
+        email: user.email,
         phone: user.phone,
         address: user.address,
         status: 1,
@@ -205,6 +237,67 @@ export const placeCODOrder = async (req, res) => {
       razorpay_order_id: `COD_${Date.now()}`,
       amount,
       status: "COD",
+    });
+
+    const userData = await User.findByPk(finalUser.id);
+
+    const orderItems = await OrderItem.findAll({
+      where: { order_id: order.id },
+      include: [
+        {
+          model: ProductVariant,
+          as: "variant",
+          attributes: ["variant_name"],
+          include: [
+            {
+              model: Product,
+              as: "product",
+              attributes: ["name"],
+            },
+          ],
+        },
+      ],
+    });
+
+    const items = orderItems.map((item) => ({
+      name: `${item.variant?.product?.name || ""} ${item.variant?.variant_name || ""}`,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+
+    const invoiceId = `INV-${new Date().getFullYear()}${Date.now().toString().slice(-6)}`;
+
+    const invoicePath = path.join(
+      process.cwd(),
+      "invoices",
+      `invoice-${invoiceId}.pdf`
+    );
+
+    const invoiceData = {
+      invoiceNumber: invoiceId,
+      invoiceDate: new Date().toLocaleDateString(),
+      seller: {
+        name: "Unique Industries",
+        address: `KHEWAT NO 478...`,
+      },
+      customer: {
+        name: userData.full_name,
+        email: userData.email,
+        address: userData.address,
+      },
+      items: items,
+      subTotal: order.subTotal,
+      tax: order.tax,
+      total: order.total,
+    };
+
+    await generateInvoice(invoiceData, invoicePath);
+
+    await sendInvoice({
+      email: userData.email,
+      invoicePath,
+      invoiceNo: invoiceId,
+      orderId: order.id,
     });
 
     return res.json({

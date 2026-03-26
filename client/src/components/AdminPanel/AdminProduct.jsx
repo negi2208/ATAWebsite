@@ -31,7 +31,7 @@ const ProductManagement = () => {
       );
 
       const { success, data, message } = res.data;
-      console.log(data)
+      // console.log(data)
 
       if (success) {
         const flat = data.variants?.map((v) => ({
@@ -85,7 +85,6 @@ const ProductManagement = () => {
         Variant_Name: v.variant_name,
         Color: v.color,
         Product_Name: v.product_name,
-        Brand: v.brand,
         Price: v.price,
       }))
     );
